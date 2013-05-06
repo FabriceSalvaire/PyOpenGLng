@@ -70,9 +70,9 @@ class GlWidgetBase(QtOpenGL.QGLWidget):
 
         self.glortho2d = None
 
-        self.x_step = 1
-        self.y_step = 1
-        self.zoom_step = 1 + 1./10
+        self.x_step = 10
+        self.y_step = 10
+        self.zoom_step = 2. # must be float
 
         self.setAutoFillBackground(False)
         # self.setAutoBufferSwap(False)

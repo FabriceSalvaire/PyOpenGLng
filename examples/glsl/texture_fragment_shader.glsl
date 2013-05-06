@@ -23,7 +23,9 @@ out vec4 fragment_colour;
 
 void main()
 {
-  fragment_colour = texture(texture0, vertex.uv);
+  uvec4 texel = texture(texture0, vertex.uv);
+  vec4 normalised_texel = vec4(texel) / 65535;
+  fragment_colour = normalised_texel;
 }
 
 /* *********************************************************************************************** *

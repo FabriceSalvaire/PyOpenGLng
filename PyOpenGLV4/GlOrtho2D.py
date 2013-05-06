@@ -1,4 +1,4 @@
-####################################################################################################
+###################################################################################################
 #
 # PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl..
 # Copyright (C) 2013 Salvaire Fabrice
@@ -9,7 +9,7 @@
 #
 #                                              Audit
 #
-# - 00/00/2011 Fabrice
+# - 00/00/2013 Fabrice
 #   - use Vector2D & Point2D ?
 #   - middle -> center ?
 #
@@ -238,6 +238,8 @@ class ZoomManagerAbc(object):
 
         """ Basic implementation to check a zoom factor, return the 2-tuple (True, zoom_factor). """
 
+        self.zoom_factor = zoom_factor
+
         return True, zoom_factor
 
 ####################################################################################################
@@ -278,7 +280,7 @@ class GlOrtho2D(object):
  - max area: %s
  - area: %s
  - window: %s
- - zoom factor: %.1f
+ - zoom factor: %g
  - matrix:
 %s
 """
@@ -370,7 +372,7 @@ class GlOrtho2D(object):
         """ Zoom the viewport centered on a point.  The parameter *point* must be an Numpy array.
         """
 
-        self._logger.debug('zoom_at_with_scale %s %.1f' % (str(point), zoom_factor))
+        self._logger.debug('zoom_at_with_scale %s %g' % (str(point), zoom_factor))
 
         # zoom_changed unused
         zoom_changed, zoom_factor = self.zoom_manager.check_zoom(zoom_factor)

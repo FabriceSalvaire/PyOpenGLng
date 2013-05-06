@@ -9,7 +9,7 @@
 #
 #                                              Audit
 #
-# - 02/05/2012 Fabrice
+# - 02/05/2013 Fabrice
 #   - check duplicated code
 #   - 2 VBOs for rectangle ?
 #

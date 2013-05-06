@@ -59,15 +59,8 @@ class GlWidget(GlWidgetBase):
 
     def init_glortho2d(self):
 
-        screen_width = 2000
-
-        binning_max = 32
-        #!# binning_min = zoom_to_binning(100)
-        
-        #!# zoom_interval = Interval(binning_to_zoom(binning_max), binning_to_zoom(binning_min))
-
         # Set max_area so as to correspond to max_binning zoom centered at the origin
-        area_size = int(screen_width*binning_max/2)
+        area_size = 10**3
         max_area = IntervalInt2D([-area_size, area_size], [-area_size, area_size])
 
         super(GlWidget, self).init_glortho2d(max_area, zoom_manager=None)
