@@ -10,7 +10,7 @@
 ####################################################################################################
 #
 # PyOpenGLV4 documentation build configuration file, created by
-# sphinx-quickstart on Fri Apr  8 16:54:03 2011.
+# sphinx-quickstart on Fri Apr  8 16:54:03 2013.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #

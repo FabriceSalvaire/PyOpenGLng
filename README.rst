@@ -15,6 +15,8 @@ Requirements
 
 * Python 2.7
 * PyQt 4.9
+* Numpy
+* PyOpenGL
 
 Building & Installing
 ---------------------
@@ -26,12 +28,5 @@ Download and unpack the source, then run the following commands in a terminal::
 
 Running
 -------
-
-Packages for Linux
-------------------
-
-An RPM is available for Fedora.
-
-See http://github.com/FabriceSalvaire/PyOpenGLV4/downloads
 
 .. End
