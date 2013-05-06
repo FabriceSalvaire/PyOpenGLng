@@ -1,0 +1,485 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyOpenGLV4.GlType &mdash; PyOpenGLV4 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLV4 0.1.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">PyOpenGLV4 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for PyOpenGLV4.GlType</h1><div class="highlight"><pre>
+<span class="c">####################################################################################################</span>
+<span class="c">#</span>
+<span class="c"># PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl..</span>
+<span class="c"># Copyright (C) 2013 Salvaire Fabrice</span>
+<span class="c">#</span>
+<span class="c">####################################################################################################</span>
+
+<span class="sd">&quot;&quot;&quot; This module provides classes to handle OpenGL Data Types.</span>
+
+<span class="sd">It gives access to the following functions to set and get uniform values:</span>
+
+<span class="sd">* glGetUniform{f|i|ui|d}v</span>
+<span class="sd">* glUniform{1|2|3|4}{f|i|ui}</span>
+<span class="sd">* glUniform{1|2|3|4}{f|i|ui}v</span>
+<span class="sd">* glUniformMatrix{2|3|4|2x3|3x2|2x4|4x2|3x4|4x3}fv</span>
+<span class="sd">* glProgramUniform{1|2|3|4}{f|i|ui}</span>
+<span class="sd">* glProgramUniform{1|2|3|4}{f|i|ui}v</span>
+<span class="sd">* glProgramUniformMatrix{2|3|4|2x3|3x2|2x4|4x2|3x4|4x3}fv </span>
+<span class="sd">        </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="c"># __all__ = [&#39;gl_types&#39;, &#39;GlVariableType&#39;, &#39;GlVectorType&#39;, &#39;GlMatrixType&#39;, &#39;GlSamplerType&#39;]</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">OpenGL.GL</span> <span class="kn">as</span> <span class="nn">GL</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="kn">from</span> <span class="nn">.Tools.EnumFactory</span> <span class="kn">import</span> <span class="n">EnumFactory</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="c">#: OpenGL data type, cf. OpenGL Specification Table 2.2: GL data types.</span>
+<span class="n">gl_data_type</span> <span class="o">=</span> <span class="n">EnumFactory</span><span class="p">(</span><span class="s">&#39;GlDataType&#39;</span><span class="p">,</span>
+                           <span class="p">(</span><span class="s">&#39;bool&#39;</span><span class="p">,</span>
+                            <span class="s">&#39;unsigned_int&#39;</span><span class="p">,</span>
+                            <span class="s">&#39;int&#39;</span><span class="p">,</span>
+                            <span class="s">&#39;float&#39;</span><span class="p">,</span>
+                            <span class="s">&#39;double&#39;</span><span class="p">,</span>
+                            <span class="p">))</span>
+
+<span class="c">#: OpenGL to Numpy data type</span>
+<span class="n">gl_to_numpy_data_type</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">bool</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">,</span> <span class="c"># np.bool ?</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">unsigned_int</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">int</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">float</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">double</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<span class="c">#! OpenGL data type to the prototype letter</span>
+<span class="n">gl_data_type_to_prototype_letter</span> <span class="o">=</span>  <span class="p">{</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">bool</span><span class="p">:</span> <span class="s">&#39;ui&#39;</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">unsigned_int</span><span class="p">:</span> <span class="s">&#39;ui&#39;</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">int</span><span class="p">:</span> <span class="s">&#39;i&#39;</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">float</span><span class="p">:</span> <span class="s">&#39;f&#39;</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">double</span><span class="p">:</span> <span class="s">&#39;d&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+<span class="c">####################################################################################################</span>
+
+<div class="viewcode-block" id="GlType"><a class="viewcode-back" href="../../api/PyOpenGLV4/GlType.html#PyOpenGLV4.GlType.GlType">[docs]</a><span class="k">class</span> <span class="nc">GlType</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This base class defines an OpenGL data type.</span>
+
+<span class="sd">    Public attributes are:</span>
+
+<span class="sd">      :attr:`token_name`</span>
+<span class="sd">        OpenGL type name token</span>
+
+<span class="sd">      :attr:`keyword`</span>
+<span class="sd">        GLSL type keyword</span>
+
+<span class="sd">      :attr:`data_type`</span>
+<span class="sd">         OpenGL data type enumerate</span>
+
+<span class="sd">      :attr:`uniform_get_v`</span>
+<span class="sd">        Function to get the uniform value, cf. glGetUniform&lt;type&gt;v functions.</span>
+
+<span class="sd">      :attr:`uniform_set_v`</span>
+<span class="sd">        Function to set the uniform from a pointer, cf. glUniform&lt;type&gt;v functions.</span>
+
+<span class="sd">      :attr:`program_uniform_set_v`</span>
+<span class="sd">        Function to set the uniform from a pointer for the given program, cf. glProgramUniform&lt;type&gt;v functions.</span>
+
+<span class="sd">      :attr:`uniform_set`</span>
+<span class="sd">        Function to set the uniform from arguments, cf. glUniform&lt;type&gt; functions.</span>
+<span class="sd">        If it is irrelevant for the type, it is set to :obj:`None`.</span>
+
+<span class="sd">      :attr:`dtype`</span>
+<span class="sd">        corresponding Numpy data type</span>
+
+<span class="sd">    Subclasses public attributes are:</span>
+
+<span class="sd">      :attr:`number_of_dimensions`</span>
+<span class="sd">        Number of dimensions of the type</span>
+
+<span class="sd">      :attr:`shape`</span>
+<span class="sd">        Shape of the array for vector and matrix type</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_name</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">uniform_get</span><span class="p">,</span> <span class="n">uniform_set</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">token_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">GL</span><span class="p">,</span> <span class="s">&#39;GL_&#39;</span> <span class="o">+</span> <span class="n">token_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keyword</span> <span class="o">=</span> <span class="n">keyword</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uniform_get_v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">GL</span><span class="p">,</span> <span class="s">&#39;glGetUniform&#39;</span> <span class="o">+</span> <span class="n">uniform_get</span> <span class="o">+</span> <span class="s">&#39;v&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uniform_set_v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">GL</span><span class="p">,</span> <span class="s">&#39;glUniform&#39;</span> <span class="o">+</span> <span class="n">uniform_set</span> <span class="o">+</span> <span class="s">&#39;v&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">program_uniform_set_v</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">GL</span><span class="p">,</span> <span class="s">&#39;glProgramUniform&#39;</span> <span class="o">+</span> <span class="n">uniform_set</span> <span class="o">+</span> <span class="s">&#39;v&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">(</span><span class="n">GlVariableType</span><span class="p">,</span> <span class="n">GlVectorType</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uniform_set</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">GL</span><span class="p">,</span> <span class="s">&#39;glUniform&#39;</span> <span class="o">+</span> <span class="n">uniform_set</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uniform_set</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">gl_to_numpy_data_type</span><span class="p">[</span><span class="n">data_type</span><span class="p">]</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">keyword</span>
+
+    <span class="c">##############################################</span>
+    
+<div class="viewcode-block" id="GlType.print_object"><a class="viewcode-back" href="../../api/PyOpenGLV4/GlType.html#PyOpenGLV4.GlType.GlType.print_object">[docs]</a>    <span class="k">def</span> <span class="nf">print_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">type </span><span class="si">%(token_name)s</span><span class="s"></span>
+<span class="s">  keyword               </span><span class="si">%(keyword)s</span><span class="s"></span>
+<span class="s">  data_type             </span><span class="si">%(data_type)s</span><span class="s"></span>
+<span class="s">  uniform_get_v         </span><span class="si">%(uniform_get_v)s</span><span class="s"></span>
+<span class="s">  uniform_set_v         </span><span class="si">%(uniform_set_v)s</span><span class="s"></span>
+<span class="s">  program_uniform_set_v </span><span class="si">%(program_uniform_set_v)s</span><span class="s"></span>
+<span class="s">  uniform_set           </span><span class="si">%(uniform_set)s</span><span class="s"></span>
+<span class="s">  dtype                 </span><span class="si">%(dtype)s</span><span class="s"></span>
+<span class="s">&quot;&quot;&quot;</span>
+
+        <span class="k">print</span> <span class="n">message</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span>
+
+<span class="c">####################################################################################################</span>
+</div></div>
+<div class="viewcode-block" id="GlVariableType"><a class="viewcode-back" href="../../api/PyOpenGLV4/GlType.html#PyOpenGLV4.GlType.GlVariableType">[docs]</a><span class="k">class</span> <span class="nc">GlVariableType</span><span class="p">(</span><span class="n">GlType</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class defines a variable type. &quot;&quot;&quot;</span>
+
+    <span class="n">number_of_dimensions</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">):</span>
+
+        <span class="n">keyword</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">data_type</span><span class="p">)</span>
+        <span class="n">token_name</span> <span class="o">=</span> <span class="n">keyword</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="n">uniform_get</span> <span class="o">=</span> <span class="n">gl_data_type_to_prototype_letter</span><span class="p">[</span><span class="n">data_type</span><span class="p">]</span>
+        <span class="n">uniform_set</span> <span class="o">=</span> <span class="s">&#39;1&#39;</span> <span class="o">+</span> <span class="n">uniform_get</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">GlVariableType</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">token_name</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">uniform_get</span><span class="p">,</span> <span class="n">uniform_set</span><span class="p">)</span>
+
+<span class="c">####################################################################################################</span>
+</div>
+<div class="viewcode-block" id="GlVectorType"><a class="viewcode-back" href="../../api/PyOpenGLV4/GlType.html#PyOpenGLV4.GlType.GlVectorType">[docs]</a><span class="k">class</span> <span class="nc">GlVectorType</span><span class="p">(</span><span class="n">GlType</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class defines a vector type. &quot;&quot;&quot;</span>
+
+    <span class="n">number_of_dimensions</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+
+        <span class="n">letter</span> <span class="o">=</span> <span class="n">gl_data_type_to_prototype_letter</span><span class="p">[</span><span class="n">data_type</span><span class="p">]</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="s">&#39;vec&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">token_name</span> <span class="o">=</span> <span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">data_type</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">suffix</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="n">gl_data_type</span><span class="o">.</span><span class="n">bool</span><span class="p">:</span>
+            <span class="n">keyword</span> <span class="o">=</span> <span class="s">&#39;b&#39;</span> <span class="o">+</span> <span class="n">suffix</span>
+        <span class="k">elif</span> <span class="n">data_type</span> <span class="o">==</span> <span class="n">gl_data_type</span><span class="o">.</span><span class="n">float</span><span class="p">:</span>
+            <span class="n">keyword</span> <span class="o">=</span> <span class="n">suffix</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">keyword</span> <span class="o">=</span> <span class="n">letter</span> <span class="o">+</span> <span class="n">suffix</span>
+        <span class="n">uniform_get</span> <span class="o">=</span> <span class="n">letter</span>
+        <span class="n">uniform_set</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">+</span> <span class="n">uniform_get</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">GlVectorType</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">token_name</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">uniform_get</span><span class="p">,</span> <span class="n">uniform_set</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span><span class="p">,)</span>
+
+<span class="c">####################################################################################################</span>
+</div>
+<div class="viewcode-block" id="GlMatrixType"><a class="viewcode-back" href="../../api/PyOpenGLV4/GlType.html#PyOpenGLV4.GlType.GlMatrixType">[docs]</a><span class="k">class</span> <span class="nc">GlMatrixType</span><span class="p">(</span><span class="n">GlType</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class defines a matrix type. &quot;&quot;&quot;</span>
+
+    <span class="n">number_of_dimensions</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">number_of_rows</span><span class="p">,</span> <span class="n">number_of_columns</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">number_of_rows</span> <span class="o">==</span> <span class="n">number_of_columns</span><span class="p">:</span>
+            <span class="n">dimension_string</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">number_of_columns</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dimension_string</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%u</span><span class="s">x</span><span class="si">%u</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">number_of_rows</span><span class="p">,</span> <span class="n">number_of_columns</span><span class="p">)</span>
+
+        <span class="n">token_name</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">data_type</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="s">&#39;_MAT&#39;</span> <span class="o">+</span> <span class="n">dimension_string</span>
+        <span class="n">keyword</span> <span class="o">=</span> <span class="s">&#39;mat&#39;</span> <span class="o">+</span> <span class="n">dimension_string</span>
+        <span class="n">uniform_get</span> <span class="o">=</span> <span class="s">&#39;f&#39;</span>
+        <span class="n">uniform_set</span> <span class="o">=</span> <span class="s">&#39;Matrix&#39;</span> <span class="o">+</span> <span class="n">dimension_string</span> <span class="o">+</span> <span class="s">&#39;f&#39;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">GlMatrixType</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">token_name</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">uniform_get</span><span class="p">,</span> <span class="n">uniform_set</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">number_of_rows</span><span class="p">,</span> <span class="n">number_of_columns</span>
+
+<span class="c">####################################################################################################</span>
+</div>
+<div class="viewcode-block" id="GlSamplerType"><a class="viewcode-back" href="../../api/PyOpenGLV4/GlType.html#PyOpenGLV4.GlType.GlSamplerType">[docs]</a><span class="k">class</span> <span class="nc">GlSamplerType</span><span class="p">(</span><span class="n">GlType</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class defines a sampler type. &quot;&quot;&quot;</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">token_name</span><span class="p">,</span> <span class="n">keyword</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">data_type</span> <span class="o">!=</span> <span class="n">gl_data_type</span><span class="o">.</span><span class="n">float</span><span class="p">:</span>
+            <span class="n">token_name</span> <span class="o">=</span> <span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">data_type</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">token_name</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+            <span class="n">keyword</span> <span class="o">=</span> <span class="n">gl_data_type_to_prototype_letter</span><span class="p">[</span><span class="n">data_type</span><span class="p">]</span> <span class="o">+</span> <span class="n">keyword</span>
+        <span class="c"># A sampler corresponds to an unsigned integer.</span>
+        <span class="c"># Fixme: why i instead of ui</span>
+        <span class="n">uniform_data_type</span> <span class="o">=</span> <span class="n">gl_data_type</span><span class="o">.</span><span class="n">int</span>
+        <span class="n">uniform_get</span> <span class="o">=</span> <span class="s">&#39;i&#39;</span>
+        <span class="n">uniform_set</span> <span class="o">=</span> <span class="s">&#39;1i&#39;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">GlSamplerType</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">token_name</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">uniform_data_type</span><span class="p">,</span> <span class="n">uniform_get</span><span class="p">,</span> <span class="n">uniform_set</span><span class="p">)</span>
+
+        <span class="c"># To distinguish between sample and uniform data type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler_data_type</span> <span class="o">=</span> <span class="n">data_type</span>
+
+<span class="c">####################################################################################################</span>
+</div>
+<div class="viewcode-block" id="GlTypes"><a class="viewcode-back" href="../../api/PyOpenGLV4/GlType.html#PyOpenGLV4.GlType.GlTypes">[docs]</a><span class="k">class</span> <span class="nc">GlTypes</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class stores the OpenGL types in a dictionary indexed by the token name. &quot;&quot;&quot;</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gl_types</span><span class="p">):</span>
+    
+        <span class="nb">super</span><span class="p">(</span><span class="n">GlTypes</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">gl_type</span> <span class="ow">in</span> <span class="n">gl_types</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">gl_type</span><span class="o">.</span><span class="n">token_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">gl_type</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c">#</span>
+<span class="c"># Define the OpenGL Type</span>
+<span class="c">#</span>
+</div>
+<span class="n">gl_type_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">dimensions</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+<span class="c"># Variable types</span>
+<span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="p">(</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">bool</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">unsigned_int</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">int</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">double</span><span class="p">,</span>
+    <span class="p">):</span>
+    <span class="n">gl_type_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GlVariableType</span><span class="p">(</span><span class="n">data_type</span><span class="p">))</span>
+                        
+<span class="c"># Vector types</span>
+<span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="p">(</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">bool</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">unsigned_int</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">int</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">double</span><span class="p">,</span>
+    <span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dimensions</span><span class="p">:</span>
+        <span class="n">gl_type_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GlVectorType</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+
+<span class="c"># Matrix types</span>
+<span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="p">(</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">double</span><span class="p">,</span>
+    <span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dimensions</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">dimensions</span><span class="p">:</span>
+            <span class="n">gl_type_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GlMatrixType</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">))</span>
+
+<span class="c"># Sampler types</span>
+<span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="p">(</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">unsigned_int</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">int</span><span class="p">,</span>
+    <span class="n">gl_data_type</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
+    <span class="p">):</span>
+    <span class="k">for</span> <span class="n">dimension</span><span class="p">,</span> <span class="n">suffix</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s">&#39;1D&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;1D&#39;</span><span class="p">,</span> <span class="s">&#39;array&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;2D&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;2D&#39;</span><span class="p">,</span> <span class="s">&#39;array&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;2D&#39;</span><span class="p">,</span> <span class="s">&#39;rect&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;3D&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span>   <span class="s">&#39;buffer&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span>   <span class="s">&#39;cube&#39;</span><span class="p">),</span>
+        <span class="p">):</span>
+        <span class="n">token_name_parts</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;SAMPLER&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">dimension</span><span class="p">:</span>
+            <span class="n">token_name_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">suffix</span><span class="p">:</span>
+            <span class="n">token_name_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">suffix</span><span class="o">.</span><span class="n">upper</span><span class="p">())</span>
+        <span class="n">token_name</span> <span class="o">=</span> <span class="s">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">token_name_parts</span><span class="p">)</span>
+        <span class="n">keyword</span> <span class="o">=</span> <span class="s">&#39;sampler&#39;</span> <span class="o">+</span> <span class="n">dimension</span> <span class="o">+</span> <span class="n">suffix</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+        <span class="n">gl_type_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GlSamplerType</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">token_name</span><span class="p">,</span> <span class="n">keyword</span><span class="p">))</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c">#    </span>
+<span class="c"># OpenGL 4.2 TODO</span>
+<span class="c">#</span>
+<span class="c">####################################################################################################</span>
+
+<span class="c"># GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE:&#39;usampler2DMS&#39;,</span>
+<span class="c"># GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY:&#39;usampler2DMSArray&#39;,</span>
+<span class="c"># GL_INT_SAMPLER_2D_MULTISAMPLE:&#39;isampler2DMS&#39;,</span>
+<span class="c"># GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY:&#39;isampler2DMSArray&#39;,</span>
+<span class="c"># GL_SAMPLER_2D_MULTISAMPLE:&#39;sampler2DMS&#39;,</span>
+<span class="c"># GL_SAMPLER_2D_MULTISAMPLE_ARRAY:&#39;sampler2DMSArray&#39;,</span>
+
+<span class="c"># GL_UNSIGNED_INT_IMAGE_1D:&#39;uimage1D&#39;,</span>
+<span class="c"># GL_UNSIGNED_INT_IMAGE_1D_ARRAY:&#39;uimage1DArray&#39;,</span>
+<span class="c"># GL_UNSIGNED_INT_IMAGE_2D:&#39;uimage2D&#39;,</span>
+<span class="c"># GL_UNSIGNED_INT_IMAGE_2D_ARRAY:&#39;uimage2DArray&#39;,</span>
+<span class="c"># GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE:&#39;uimage2DMS&#39;,</span>
+<span class="c"># GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY:&#39;uimage2DMSArray&#39;,</span>
+<span class="c"># GL_UNSIGNED_INT_IMAGE_2D_RECT:&#39;uimage2DRect&#39;,</span>
+<span class="c"># GL_UNSIGNED_INT_IMAGE_3D:&#39;uimage3D&#39;,</span>
+<span class="c"># GL_UNSIGNED_INT_IMAGE_BUFFER:&#39;uimageBuffer&#39;,</span>
+<span class="c"># GL_UNSIGNED_INT_IMAGE_CUBE:&#39;uimageCube&#39;,</span>
+
+<span class="c"># GL_INT_IMAGE_1D:&#39;iimage1D&#39;,</span>
+<span class="c"># GL_INT_IMAGE_1D_ARRAY:&#39;iimage1DArray&#39;,</span>
+<span class="c"># GL_INT_IMAGE_2D:&#39;iimage2D&#39;,</span>
+<span class="c"># GL_INT_IMAGE_2D_ARRAY:&#39;iimage2DArray&#39;,</span>
+<span class="c"># GL_INT_IMAGE_2D_MULTISAMPLE:&#39;iimage2DMS&#39;,</span>
+<span class="c"># GL_INT_IMAGE_2D_MULTISAMPLE_ARRAY:&#39;iimage2DMSArray&#39;,</span>
+<span class="c"># GL_INT_IMAGE_2D_RECT:&#39;iimage2DRect&#39;,</span>
+<span class="c"># GL_INT_IMAGE_3D:&#39;iimage3D&#39;,</span>
+<span class="c"># GL_INT_IMAGE_BUFFER:&#39;iimageBuffer&#39;,</span>
+<span class="c"># GL_INT_IMAGE_CUBE:&#39;iimageCube&#39;,</span>
+
+<span class="c"># GL_IMAGE_1D:&#39;image1D&#39;,</span>
+<span class="c"># GL_IMAGE_1D_ARRAY:&#39;image1DArray&#39;,</span>
+<span class="c"># GL_IMAGE_2D:&#39;image2D&#39;,</span>
+<span class="c"># GL_IMAGE_2D_ARRAY:&#39;image2DArray&#39;,</span>
+<span class="c"># GL_IMAGE_2D_MULTISAMPLE:&#39;image2DMS&#39;,</span>
+<span class="c"># GL_IMAGE_2D_MULTISAMPLE_ARRAY:&#39;image2DMSArray&#39;,</span>
+<span class="c"># GL_IMAGE_2D_RECT:&#39;image2DRect&#39;,</span>
+<span class="c"># GL_IMAGE_3D:&#39;image3D&#39;,</span>
+<span class="c"># GL_IMAGE_BUFFER:&#39;imageBuffer&#39;,</span>
+<span class="c"># GL_IMAGE_CUBE:&#39;imageCube&#39;,</span>
+
+<span class="c"># GL_UNSIGNED_INT_ATOMIC_COUNTER:&#39;atomic_uint&#39;,</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="c">#: singleton for the :class:`GlTypes`</span>
+<span class="n">gl_types</span> <span class="o">=</span> <span class="n">GlTypes</span><span class="p">(</span><span class="n">gl_type_list</span><span class="p">)</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c">#</span>
+<span class="c"># Print OpenGL Types</span>
+<span class="c">#</span>
+<span class="c">####################################################################################################</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="k">for</span> <span class="n">gl_type</span> <span class="ow">in</span> <span class="n">gl_types</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
+        <span class="n">gl_type</span><span class="o">.</span><span class="n">print_object</span><span class="p">()</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c">#</span>
+<span class="c"># End</span>
+<span class="c">#</span>
+<span class="c">####################################################################################################</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">PyOpenGLV4 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

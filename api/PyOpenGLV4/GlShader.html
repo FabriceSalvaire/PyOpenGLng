@@ -1,0 +1,576 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1.7. GlShader &mdash; PyOpenGLV4 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLV4 0.1.0 documentation" href="../../index.html" />
+    <link rel="up" title="1. PyOpenGLV4" href="../PyOpenGLV4.html" />
+    <link rel="next" title="1.8. GlStippleTexture" href="GlStippleTexture.html" />
+    <link rel="prev" title="1.6. GlRandomTexture" href="GlRandomTexture.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="GlStippleTexture.html" title="1.8. GlStippleTexture"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="GlRandomTexture.html" title="1.6. GlRandomTexture"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">PyOpenGLV4 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../PyOpenGLV4.html" accesskey="U">1. <tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">PyOpenGLV4</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-PyOpenGLV4.GlShader">
+<span id="glshader"></span><h1>1.7. <tt class="xref py py-mod docutils literal"><span class="pre">GlShader</span></tt><a class="headerlink" href="#module-PyOpenGLV4.GlShader" title="Permalink to this headline">¶</a></h1>
+<p>This modules provides classes to manager OpenGL Shader.</p>
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlShader">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlShader</tt><big>(</big><em>shader_type=None</em>, <em>file_name=None</em>, <em>source_code=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines a shader source code.</p>
+<p>Instances have an internal source code buffer to accumulate the source code before to compile
+it.  We can get the content of this buffer using the <tt class="xref py py-func docutils literal"><span class="pre">str()</span></tt>.  And we can test if the shader
+is compiled using a Boolean evaluation of the instance.</p>
+<p>The shader type can be passed to the constructor or retrieved from a source file, where a
+comment line with the following pattern must be present:</p>
+<div class="highlight-python"><pre>// #shader_type SHADER_TYPE</pre>
+</div>
+<p>where <em>SHADER_TYPE</em> could be either <em>vertex</em>, <em>fragment</em> and <em>geometry</em>. It is case insensitive.</p>
+<p>Source files are preprocessed so as to replace line of the form:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#include(file.glsl)</span>
+</pre></div>
+</div>
+<p>the path is relative to the parent source file.</p>
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlShader.GlShader.FRAGMENT_SHADER">
+<tt class="descname">FRAGMENT_SHADER</tt><em class="property"> = GL_FRAGMENT_SHADER</em><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader.FRAGMENT_SHADER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlShader.GlShader.GEOMETRY_SHADER">
+<tt class="descname">GEOMETRY_SHADER</tt><em class="property"> = GL_GEOMETRY_SHADER</em><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader.GEOMETRY_SHADER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlShader.GlShader.SHADER_TYPES">
+<tt class="descname">SHADER_TYPES</tt><em class="property"> = (GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER)</em><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader.SHADER_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlShader.GlShader.VERTEX_SHADER">
+<tt class="descname">VERTEX_SHADER</tt><em class="property"> = GL_VERTEX_SHADER</em><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader.VERTEX_SHADER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShader._load_from_file">
+<tt class="descname">_load_from_file</tt><big>(</big><em>file_name</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShader._load_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader._load_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load source code from file and preprocess it.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlShader.GlShader._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x369a650&gt;</em><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShader._preprocessor">
+<tt class="descname">_preprocessor</tt><big>(</big><em>source_code</em>, <em>path</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShader._preprocessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader._preprocessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess the source code.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShader._set_shader_type">
+<tt class="descname">_set_shader_type</tt><big>(</big><em>shader_type</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShader._set_shader_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader._set_shader_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the shader type.  It raise an exception if the shader is already set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShader._set_shader_type_from_source_code">
+<tt class="descname">_set_shader_type_from_source_code</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShader._set_shader_type_from_source_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader._set_shader_type_from_source_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the shader type from the source code.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShader.clear_source">
+<tt class="descname">clear_source</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShader.clear_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader.clear_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the internal source code buffer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShader.compile">
+<tt class="descname">compile</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShader.compile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader.compile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compile the shader.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShader.load_from_file">
+<tt class="descname">load_from_file</tt><big>(</big><em>file_name</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShader.load_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader.load_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the source code from the file given by <em>file_name</em>, preprocess it and append it to
+the internal buffer. The shader type is determined from the source.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShader.load_from_string">
+<tt class="descname">load_from_string</tt><big>(</big><em>source</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShader.load_from_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShader.load_from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append the source string to the internal buffer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlShaderManager">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlShaderManager</tt><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class provides a shader manager where each shader or program are identified by a name
+and the shader sources are loaded from files.</p>
+<p>The shaders or programs can be accessed using an attribute or a dictionary interface. For
+example to get the shader <em>fixed_fragment</em> we can use either:</p>
+<div class="highlight-python"><pre>shader_manager.fixed_fragment
+shader_manager.['fixed_fragment']</pre>
+</div>
+<p>We can test if an identifier exists using:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&#39;fixed_fragment&#39;</span> <span class="ow">in</span> <span class="n">shader_manager</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlShader.GlShaderManager._instance">
+<tt class="descname">_instance</tt><em class="property"> = None</em><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderManager._instance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlShader.GlShaderManager._rlock">
+<tt class="descname">_rlock</tt><em class="property"> = &lt;_RLock owner=None count=0&gt;</em><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderManager._rlock" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderManager.has_visual">
+<tt class="descname">has_visual</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderManager.has_visual"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderManager.has_visual" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderManager.link_program">
+<tt class="descname">link_program</tt><big>(</big><em>program_name</em>, <em>shader_list</em>, <em>program_interface=None</em>, <em>shader_program_class=&lt;class 'PyOpenGLV4.GlShader.GlShaderProgram'&gt;</em>, <em>shader_program_args=()</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderManager.link_program"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderManager.link_program" title="Permalink to this definition">¶</a></dt>
+<dd><p>Link a program with the given list of shader names. This program is identified by
+<em>shader_name</em>.  The argument <em>program_interface</em> can be used to set the program interface.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderManager.load_from_file">
+<tt class="descname">load_from_file</tt><big>(</big><em>shader_name</em>, <em>shader_file_name</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderManager.load_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderManager.load_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a shader from a source file and compile it. This shader is identified by
+<em>shader_name</em>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgram">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlShaderProgram</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines a shader program.</p>
+<p>We can access the uniforms and vertex attributes defined in the shader program using the two
+class attributes: <em>uniforms</em> and <em>attributes</em>, respectively.  Both act as class that has an
+attribute for each uniform and vertex attribute.</p>
+<p>For example we can set a <em>colour</em> uniform using:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">shader_program</span><span class="o">.</span><span class="n">uniforms</span><span class="o">.</span><span class="n">colour</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and get back its values using:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">shader_program</span><span class="o">.</span><span class="n">uniforms</span><span class="o">.</span><span class="n">colour</span>
+</pre></div>
+</div>
+<p>We can also use a dictionary interface:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># to set the values</span>
+<span class="n">shader_program</span><span class="o">.</span><span class="n">uniforms</span><span class="p">[</span><span class="s">&#39;colour&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+<span class="c"># to get the values</span>
+<span class="n">shader_program</span><span class="o">.</span><span class="n">uniforms</span><span class="p">[</span><span class="s">&#39;colour&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Moreover we can test if an uniform is defined using:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="s">&#39;colour&#39;</span> <span class="ow">in</span> <span class="n">shader_program</span><span class="o">.</span><span class="n">uniforms</span>
+</pre></div>
+</div>
+<p>Similarly, we can access a vertex attribute using:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">shader_program</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">positions</span>
+</pre></div>
+</div>
+<p>For example to attach a VBO:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">shader_program</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">positions</span><span class="o">.</span><span class="n">bind_to_buffer</span><span class="p">(</span><span class="n">positions_vbo</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgram._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x369a650&gt;</em><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgram._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgram.attach_shader">
+<tt class="descname">attach_shader</tt><big>(</big><em>shader</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgram.attach_shader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgram.attach_shader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attach a shader.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgram.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgram.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgram.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the shader.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgram.bind_attribute_location_array">
+<tt class="descname">bind_attribute_location_array</tt><big>(</big><em>name</em>, <em>location</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgram.bind_attribute_location_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgram.bind_attribute_location_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind an attribute location. The program should not be linked.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgram.link">
+<tt class="descname">link</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgram.link"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgram.link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Link the program.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgram.set_program_interface">
+<tt class="descname">set_program_interface</tt><big>(</big><em>program_interface</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgram.set_program_interface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgram.set_program_interface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the programming interface.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgram.set_uniform_block_binding">
+<tt class="descname">set_uniform_block_binding</tt><big>(</big><em>name</em>, <em>binding_point</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgram.set_uniform_block_binding"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgram.set_uniform_block_binding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the binding point for an uniform block.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgram.set_uniform_block_bindings">
+<tt class="descname">set_uniform_block_bindings</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgram.set_uniform_block_bindings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgram.set_uniform_block_bindings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the uniform block binding points as defined by the programming interface.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgram.unbind">
+<tt class="descname">unbind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgram.unbind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgram.unbind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unbind the shader.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgramAttributes">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlShaderProgramAttributes</tt><big>(</big><em>shader_program</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgramAttributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgramAttributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="Tools/AttributeDictionaryInterface.html#PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterface" title="PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterface"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterface</span></tt></a></p>
+<p>This class is a wrapper to access the vertex attributes within a shader program.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgramInterface">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlShaderProgramInterface</tt><big>(</big><em>uniform_blocks</em>, <em>attributes</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgramInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgramInterface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines a programming interface for a program.</p>
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgramInterface._init_attributes">
+<tt class="descname">_init_attributes</tt><big>(</big><em>attributes</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgramInterface._init_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgramInterface._init_attributes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgramInterface._init_uniform_blocks">
+<tt class="descname">_init_uniform_blocks</tt><big>(</big><em>uniform_blocks</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgramInterface._init_uniform_blocks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgramInterface._init_uniform_blocks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgramInterfaceAttribute">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlShaderProgramInterfaceAttribute</tt><big>(</big><em>name</em>, <em>location</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgramInterfaceAttribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgramInterfaceAttribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines a programming interface for an attribute as a pair (name, location)</p>
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgramInterfaceAttribute.bind_to_buffer">
+<tt class="descname">bind_to_buffer</tt><big>(</big><em>vbo</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgramInterfaceAttribute.bind_to_buffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgramInterfaceAttribute.bind_to_buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the vertex attribute to a Vertex Buffer Object.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgramInterfaceUniformBlock">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlShaderProgramInterfaceUniformBlock</tt><big>(</big><em>name</em>, <em>binding_point</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgramInterfaceUniformBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgramInterfaceUniformBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines a programming interface for an uniform block as a pair (name,
+binding_point)</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgramUniformBlocks">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlShaderProgramUniformBlocks</tt><big>(</big><em>shader_program</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgramUniformBlocks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgramUniformBlocks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="Tools/AttributeDictionaryInterface.html#PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterface" title="PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterface"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterface</span></tt></a></p>
+<p>This class is a wrapper to access the uniform blocks within a shader program.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlShaderProgramUniforms">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlShaderProgramUniforms</tt><big>(</big><em>shader_program</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlShaderProgramUniforms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlShaderProgramUniforms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="Tools/AttributeDictionaryInterface.html#PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterfaceDescriptor" title="PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterfaceDescriptor"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterfaceDescriptor</span></tt></a></p>
+<p>This class is a wrapper to access the uniforms within a shader program.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlUniform">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlUniform</tt><big>(</big><em>shader_program</em>, <em>name</em>, <em>location</em>, <em>gl_type</em>, <em>size</em>, <em>within_uniform_block=False</em>, <em>offset=-1</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLV4.GlShader.GlVariable" title="PyOpenGLV4.GlShader.GlVariable"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLV4.GlShader.GlVariable</span></tt></a></p>
+<p>This class defines a uniform within a shader program.</p>
+<p>The argument <em>shader_program</em> is the <a class="reference internal" href="#PyOpenGLV4.GlShader.GlShaderProgram" title="PyOpenGLV4.GlShader.GlShaderProgram"><tt class="xref py py-class docutils literal"><span class="pre">GlShaderProgram</span></tt></a> instance, <em>name</em> is the
+name of the uniform in the source code, <em>location</em> is the location of the uniform, <em>gl_type</em>
+the OpenGL data type and <em>size</em> is the number of elements of the uniform.</p>
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlShader.GlUniform.VARIABLE_LABEL">
+<tt class="descname">VARIABLE_LABEL</tt><em class="property"> = 'Uniform'</em><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniform.VARIABLE_LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlUniform.get">
+<tt class="descname">get</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniform.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniform.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the uniform value(s).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlUniform.set">
+<tt class="descname">set</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniform.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniform.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the uniform value(s).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlUniformBlock">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlUniformBlock</tt><big>(</big><em>name</em>, <em>location</em>, <em>uniforms</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniformBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniformBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="Tools/AttributeDictionaryInterface.html#PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterface" title="PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterface"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterface</span></tt></a></p>
+<p>This class defines an uniform block.</p>
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlUniformBlock.uniform_block_location">
+<tt class="descname">uniform_block_location</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniformBlock.uniform_block_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniformBlock.uniform_block_location" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlUniformBlock.uniform_block_name">
+<tt class="descname">uniform_block_name</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniformBlock.uniform_block_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniformBlock.uniform_block_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlUniformMatrix">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlUniformMatrix</tt><big>(</big><em>shader_program</em>, <em>name</em>, <em>location</em>, <em>gl_type</em>, <em>size</em>, <em>within_uniform_block=False</em>, <em>offset=-1</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniformMatrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniformMatrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLV4.GlShader.GlUniformNd" title="PyOpenGLV4.GlShader.GlUniformNd"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLV4.GlShader.GlUniformNd</span></tt></a></p>
+<p>This class defines a matrix uniform.</p>
+<p>The argument <em>shader_program</em> is the <a class="reference internal" href="#PyOpenGLV4.GlShader.GlShaderProgram" title="PyOpenGLV4.GlShader.GlShaderProgram"><tt class="xref py py-class docutils literal"><span class="pre">GlShaderProgram</span></tt></a> instance, <em>name</em> is the
+name of the uniform in the source code, <em>location</em> is the location of the uniform, <em>gl_type</em>
+the OpenGL data type and <em>size</em> is the number of elements of the uniform.</p>
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlUniformMatrix.set">
+<tt class="descname">set</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniformMatrix.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniformMatrix.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the uniform value(s).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlUniformNd">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlUniformNd</tt><big>(</big><em>shader_program</em>, <em>name</em>, <em>location</em>, <em>gl_type</em>, <em>size</em>, <em>within_uniform_block=False</em>, <em>offset=-1</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniformNd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniformNd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLV4.GlShader.GlUniform" title="PyOpenGLV4.GlShader.GlUniform"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLV4.GlShader.GlUniform</span></tt></a></p>
+<p>This class is a base class for vector and matrix uniforms.</p>
+<p>The argument <em>shader_program</em> is the <a class="reference internal" href="#PyOpenGLV4.GlShader.GlShaderProgram" title="PyOpenGLV4.GlShader.GlShaderProgram"><tt class="xref py py-class docutils literal"><span class="pre">GlShaderProgram</span></tt></a> instance, <em>name</em> is the
+name of the uniform in the source code, <em>location</em> is the location of the uniform, <em>gl_type</em>
+the OpenGL data type and <em>size</em> is the number of elements of the uniform.</p>
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlUniformNd._check_value">
+<tt class="descname">_check_value</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniformNd._check_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniformNd._check_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the value dimension and shape.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlUniformNd.get">
+<tt class="descname">get</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniformNd.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniformNd.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the uniform value(s).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlUniformSampler">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlUniformSampler</tt><big>(</big><em>shader_program</em>, <em>name</em>, <em>location</em>, <em>gl_type</em>, <em>size</em>, <em>within_uniform_block=False</em>, <em>offset=-1</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniformSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniformSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLV4.GlShader.GlUniform" title="PyOpenGLV4.GlShader.GlUniform"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLV4.GlShader.GlUniform</span></tt></a></p>
+<p>This class defines a sampler uniform.</p>
+<p>The argument <em>shader_program</em> is the <a class="reference internal" href="#PyOpenGLV4.GlShader.GlShaderProgram" title="PyOpenGLV4.GlShader.GlShaderProgram"><tt class="xref py py-class docutils literal"><span class="pre">GlShaderProgram</span></tt></a> instance, <em>name</em> is the
+name of the uniform in the source code, <em>location</em> is the location of the uniform, <em>gl_type</em>
+the OpenGL data type and <em>size</em> is the number of elements of the uniform.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlUniformVariable">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlUniformVariable</tt><big>(</big><em>shader_program</em>, <em>name</em>, <em>location</em>, <em>gl_type</em>, <em>size</em>, <em>within_uniform_block=False</em>, <em>offset=-1</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniformVariable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniformVariable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLV4.GlShader.GlUniform" title="PyOpenGLV4.GlShader.GlUniform"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLV4.GlShader.GlUniform</span></tt></a></p>
+<p>This class defines a variable uniform.</p>
+<p>The argument <em>shader_program</em> is the <a class="reference internal" href="#PyOpenGLV4.GlShader.GlShaderProgram" title="PyOpenGLV4.GlShader.GlShaderProgram"><tt class="xref py py-class docutils literal"><span class="pre">GlShaderProgram</span></tt></a> instance, <em>name</em> is the
+name of the uniform in the source code, <em>location</em> is the location of the uniform, <em>gl_type</em>
+the OpenGL data type and <em>size</em> is the number of elements of the uniform.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlUniformVector">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlUniformVector</tt><big>(</big><em>shader_program</em>, <em>name</em>, <em>location</em>, <em>gl_type</em>, <em>size</em>, <em>within_uniform_block=False</em>, <em>offset=-1</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniformVector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniformVector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLV4.GlShader.GlUniformNd" title="PyOpenGLV4.GlShader.GlUniformNd"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLV4.GlShader.GlUniformNd</span></tt></a></p>
+<p>This class defines a vector uniform.</p>
+<p>The argument <em>shader_program</em> is the <a class="reference internal" href="#PyOpenGLV4.GlShader.GlShaderProgram" title="PyOpenGLV4.GlShader.GlShaderProgram"><tt class="xref py py-class docutils literal"><span class="pre">GlShaderProgram</span></tt></a> instance, <em>name</em> is the
+name of the uniform in the source code, <em>location</em> is the location of the uniform, <em>gl_type</em>
+the OpenGL data type and <em>size</em> is the number of elements of the uniform.</p>
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlUniformVector.set">
+<tt class="descname">set</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlUniformVector.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlUniformVector.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the uniform value(s).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlVariable">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlVariable</tt><big>(</big><em>shader_program</em>, <em>name</em>, <em>location</em>, <em>gl_type</em>, <em>size</em>, <em>within_uniform_block=False</em>, <em>offset=-1</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlVariable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlVariable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class is a base class for Attributes and Uniforms.</p>
+<p>The argument <em>shader_program</em> is the <a class="reference internal" href="#PyOpenGLV4.GlShader.GlShaderProgram" title="PyOpenGLV4.GlShader.GlShaderProgram"><tt class="xref py py-class docutils literal"><span class="pre">GlShaderProgram</span></tt></a> instance, <em>name</em> is the
+name of the uniform in the source code, <em>location</em> is the location of the uniform, <em>gl_type</em>
+the OpenGL data type and <em>size</em> is the number of elements of the uniform.</p>
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlShader.GlVariable.VARIABLE_LABEL">
+<tt class="descname">VARIABLE_LABEL</tt><em class="property"> = None</em><a class="headerlink" href="#PyOpenGLV4.GlShader.GlVariable.VARIABLE_LABEL" title="Permalink to this definition">¶</a></dt>
+<dd><p>This attribute is used to set the variable label: attribute or uniform.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlShader.GlVertexAttribute">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">GlVertexAttribute</tt><big>(</big><em>shader_program</em>, <em>name</em>, <em>location</em>, <em>gl_type</em>, <em>size</em>, <em>within_uniform_block=False</em>, <em>offset=-1</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlVertexAttribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlVertexAttribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLV4.GlShader.GlVariable" title="PyOpenGLV4.GlShader.GlVariable"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLV4.GlShader.GlVariable</span></tt></a></p>
+<p>This class defines a vertex attributes.</p>
+<p>The argument <em>shader_program</em> is the <a class="reference internal" href="#PyOpenGLV4.GlShader.GlShaderProgram" title="PyOpenGLV4.GlShader.GlShaderProgram"><tt class="xref py py-class docutils literal"><span class="pre">GlShaderProgram</span></tt></a> instance, <em>name</em> is the
+name of the uniform in the source code, <em>location</em> is the location of the uniform, <em>gl_type</em>
+the OpenGL data type and <em>size</em> is the number of elements of the uniform.</p>
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlShader.GlVertexAttribute.VARIABLE_LABEL">
+<tt class="descname">VARIABLE_LABEL</tt><em class="property"> = 'Attribute'</em><a class="headerlink" href="#PyOpenGLV4.GlShader.GlVertexAttribute.VARIABLE_LABEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlShader.GlVertexAttribute.bind_to_buffer">
+<tt class="descname">bind_to_buffer</tt><big>(</big><em>vbo</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#GlVertexAttribute.bind_to_buffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.GlVertexAttribute.bind_to_buffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the vertex attribute to a Vertex Buffer Object.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="PyOpenGLV4.GlShader.sorted_by_location">
+<tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">sorted_by_location</tt><big>(</big><em>a_list</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#sorted_by_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.sorted_by_location" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PyOpenGLV4.GlShader.sorted_by_offset">
+<tt class="descclassname">PyOpenGLV4.GlShader.</tt><tt class="descname">sorted_by_offset</tt><big>(</big><em>a_list</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlShader.html#sorted_by_offset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlShader.sorted_by_offset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="GlRandomTexture.html"
+                        title="previous chapter">1.6. <tt class="docutils literal docutils literal docutils literal"><span class="pre">GlRandomTexture</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="GlStippleTexture.html"
+                        title="next chapter">1.8. <tt class="docutils literal"><span class="pre">GlStippleTexture</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api/PyOpenGLV4/GlShader.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="GlStippleTexture.html" title="1.8. GlStippleTexture"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="GlRandomTexture.html" title="1.6. GlRandomTexture"
+             >previous</a> |</li>
+        <li><a href="../../index.html">PyOpenGLV4 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../PyOpenGLV4.html" >1. <tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">PyOpenGLV4</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+*************
+ :mod:`Math`
+*************
+
+.. automodule:: PyOpenGLV4.Tools.Math
+   :members:
+   :show-inheritance:
+
+.. End

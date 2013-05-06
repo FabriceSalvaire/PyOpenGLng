@@ -1,0 +1,220 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyOpenGLV4.Tools.AttributeDictionaryInterface &mdash; PyOpenGLV4 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLV4 0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLV4 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for PyOpenGLV4.Tools.AttributeDictionaryInterface</h1><div class="highlight"><pre>
+<span class="c">####################################################################################################</span>
+<span class="c"># </span>
+<span class="c"># PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl..</span>
+<span class="c"># Copyright (C) 2013 Salvaire Fabrice</span>
+<span class="c"># </span>
+<span class="c">####################################################################################################</span>
+
+<span class="c">####################################################################################################</span>
+
+<div class="viewcode-block" id="ExtendedDictionaryInterface"><a class="viewcode-back" href="../../../api/PyOpenGLV4/Tools/AttributeDictionaryInterface.html#PyOpenGLV4.Tools.AttributeDictionaryInterface.ExtendedDictionaryInterface">[docs]</a><span class="k">class</span> <span class="nc">ExtendedDictionaryInterface</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class implements an extended dictionary interface.</span>
+
+<span class="sd">      :attr:`clear`</span>
+<span class="sd">      :attr:`copy`</span>
+<span class="sd">      :attr:`fromkeys`</span>
+<span class="sd">      :attr:`get`</span>
+<span class="sd">      :attr:`has_key`</span>
+<span class="sd">      :attr:`items`</span>
+<span class="sd">      :attr:`iteritems`</span>
+<span class="sd">      :attr:`iterkeys`</span>
+<span class="sd">      :attr:`itervalues`</span>
+<span class="sd">      :attr:`keys`</span>
+<span class="sd">      :attr:`pop`</span>
+<span class="sd">      :attr:`popitem`</span>
+<span class="sd">      :attr:`setdefault`</span>
+<span class="sd">      :attr:`update`</span>
+<span class="sd">      :attr:`values`</span>
+<span class="sd">      :attr:`viewitems`</span>
+<span class="sd">      :attr:`viewkeys`</span>
+<span class="sd">      :attr:`viewvalues`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ExtendedDictionaryInterface</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span>
+
+<span class="c">####################################################################################################</span>
+</div>
+<div class="viewcode-block" id="AttributeDictionaryInterface"><a class="viewcode-back" href="../../../api/PyOpenGLV4/Tools/AttributeDictionaryInterface.html#PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterface">[docs]</a><span class="k">class</span> <span class="nc">AttributeDictionaryInterface</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class implements an attribute and dictionary interface. &quot;&quot;&quot;</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_dictionary&#39;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Get the value from its name. &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dictionary</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Set the value from its name. &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dictionary</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="c">##############################################</span>
+
+    <span class="n">__getitem__</span> <span class="o">=</span> <span class="n">__getattr__</span>
+    <span class="n">__setitem__</span> <span class="o">=</span> <span class="n">__setattr__</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Iterate over the dictionary. &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">uniform</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dictionary</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">uniform</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Test it a uniform called *name* exists. &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dictionary</span>
+
+<span class="c">####################################################################################################</span>
+</div>
+<div class="viewcode-block" id="AttributeDictionaryInterfaceDescriptor"><a class="viewcode-back" href="../../../api/PyOpenGLV4/Tools/AttributeDictionaryInterface.html#PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterfaceDescriptor">[docs]</a><span class="k">class</span> <span class="nc">AttributeDictionaryInterfaceDescriptor</span><span class="p">(</span><span class="n">AttributeDictionaryInterface</span><span class="p">):</span>
+
+    <span class="c">##############################################</span>
+    
+<div class="viewcode-block" id="AttributeDictionaryInterfaceDescriptor._get_descriptor"><a class="viewcode-back" href="../../../api/PyOpenGLV4/Tools/AttributeDictionaryInterface.html#PyOpenGLV4.Tools.AttributeDictionaryInterface.AttributeDictionaryInterfaceDescriptor._get_descriptor">[docs]</a>    <span class="k">def</span> <span class="nf">_get_descriptor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dictionary</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="c">##############################################</span>
+    </div>
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_descriptor</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_descriptor</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+
+    <span class="n">__getitem__</span> <span class="o">=</span> <span class="n">__getattr__</span>
+    <span class="n">__setitem__</span> <span class="o">=</span> <span class="n">__setattr__</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c"># </span>
+<span class="c"># End</span>
+<span class="c"># </span>
+<span class="c">####################################################################################################</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLV4 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+******************
+ :mod:`GlVersion`
+******************
+
+.. automodule:: PyOpenGLV4.GlVersion
+   :members:
+   :show-inheritance:
+
+.. End

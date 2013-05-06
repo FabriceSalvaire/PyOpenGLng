@@ -1,0 +1,354 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1.4. GlOrtho2D &mdash; PyOpenGLV4 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLV4 0.1.0 documentation" href="../../index.html" />
+    <link rel="up" title="1. PyOpenGLV4" href="../PyOpenGLV4.html" />
+    <link rel="next" title="1.5. GlPrimitiveVertexArray" href="GlPrimitiveVertexArray.html" />
+    <link rel="prev" title="1.3. GlFixedPipeline" href="GlFixedPipeline.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="GlPrimitiveVertexArray.html" title="1.5. GlPrimitiveVertexArray"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="GlFixedPipeline.html" title="1.3. GlFixedPipeline"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">PyOpenGLV4 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../PyOpenGLV4.html" accesskey="U">1. <tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">PyOpenGLV4</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-PyOpenGLV4.GlOrtho2D">
+<span id="glortho2d"></span><h1>1.4. <tt class="xref py py-mod docutils literal"><span class="pre">GlOrtho2D</span></tt><a class="headerlink" href="#module-PyOpenGLV4.GlOrtho2D" title="Permalink to this headline">¶</a></h1>
+<p>This module implements an Orthonormal 2D Viewport.</p>
+<dl class="class">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlOrtho2D.</tt><tt class="descname">GlOrtho2D</tt><big>(</big><em>max_area</em>, <em>zoom_manager</em>, <em>window</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class implements an Orthonormal 2D Viewport.</p>
+<p>The parameter <em>max_area</em> must be an <tt class="xref py py-class docutils literal"><span class="pre">GVLab.Tools.Interval.Interval2D</span></tt> instance
+that defines the maximum area allowed for the viewport.</p>
+<p>The parameter <em>zoom_manager</em> must be an <tt class="xref py py-class docutils literal"><span class="pre">ZoomManager</span></tt> instance.</p>
+<p>The parameter <em>window</em> must implement a Window Trait, that defines a method <tt class="xref py py-meth docutils literal"><span class="pre">size()</span></tt>
+returning the 2-tuple (width, height).</p>
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D._compute_display_scale">
+<tt class="descname">_compute_display_scale</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D._compute_display_scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D._compute_display_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the display scale.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D._compute_zoom_to_fit_axis">
+<tt class="descname">_compute_zoom_to_fit_axis</tt><big>(</big><em>length</em>, <em>axis</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D._compute_zoom_to_fit_axis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D._compute_zoom_to_fit_axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the zoom to fit an axis size.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D._compute_zoom_to_fit_interval">
+<tt class="descname">_compute_zoom_to_fit_interval</tt><big>(</big><em>interval</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D._compute_zoom_to_fit_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D._compute_zoom_to_fit_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the zoom to fit an interval.  The parameter <em>interval</em> must be an
+<tt class="xref py py-class docutils literal"><span class="pre">GVLab.Tools.Interval.Interval2D</span></tt> instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x3135d90&gt;</em><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.fit_axis">
+<tt class="descname">fit_axis</tt><big>(</big><em>length</em>, <em>axis</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.fit_axis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.fit_axis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the zoom so as to fit an axis size.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.get_state">
+<tt class="descname">get_state</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.get_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.get_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the viewport state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.gl_to_window_coordinate">
+<tt class="descname">gl_to_window_coordinate</tt><big>(</big><em>gl_point</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.gl_to_window_coordinate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.gl_to_window_coordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the window coordinate from the scene coordinate.  The parameter <em>gl_point</em>
+must be an Numpy array.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.gl_to_window_parity">
+<tt class="descname">gl_to_window_parity</tt><em class="property"> = array([ 1., -1.])</em><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.gl_to_window_parity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.ortho2d_bounding_box">
+<tt class="descname">ortho2d_bounding_box</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.ortho2d_bounding_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.ortho2d_bounding_box" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.resize">
+<tt class="descname">resize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.resize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.resize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resize the viewport for the new window size.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.row_bounding_box">
+<tt class="descname">row_bounding_box</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.row_bounding_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.row_bounding_box" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.set_state">
+<tt class="descname">set_state</tt><big>(</big><em>state</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.set_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.set_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the viewport state.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.translate">
+<tt class="descname">translate</tt><big>(</big><em>dx</em>, <em>axis</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.translate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate the viewport of <em>dx</em> in the <em>axis</em> direction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.view_matrix">
+<tt class="descname">view_matrix</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.view_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.view_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the view matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.viewport_scale">
+<tt class="descname">viewport_scale</tt><big>(</big><em>window_size</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.viewport_scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.viewport_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the viewport scale.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.viewport_uniform_buffer_data">
+<tt class="descname">viewport_uniform_buffer_data</tt><big>(</big><em>window_size</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.viewport_uniform_buffer_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.viewport_uniform_buffer_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the viewport uniform buffer data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.window_to_gl_coordinate">
+<tt class="descname">window_to_gl_coordinate</tt><big>(</big><em>window_point</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.window_to_gl_coordinate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.window_to_gl_coordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the scene coordinate from the window coordinate.  The parameter <em>window_point</em>
+must be an Numpy array.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.window_to_gl_distance">
+<tt class="descname">window_to_gl_distance</tt><big>(</big><em>x_window</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.window_to_gl_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.window_to_gl_distance" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.zoom_at">
+<tt class="descname">zoom_at</tt><big>(</big><em>center</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.zoom_at"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.zoom_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zoom the viewport centered on the point <em>center</em>.  The parameter <em>center</em> must be an
+Numpy array.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.zoom_at_center">
+<tt class="descname">zoom_at_center</tt><big>(</big><em>zoom_factor</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.zoom_at_center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.zoom_at_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zoom on the viewport center.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.zoom_at_with_scale">
+<tt class="descname">zoom_at_with_scale</tt><big>(</big><em>point</em>, <em>zoom_factor</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.zoom_at_with_scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.zoom_at_with_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zoom the viewport centered on a point.  The parameter <em>point</em> must be an Numpy array.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.GlOrtho2D.zoom_interval">
+<tt class="descname">zoom_interval</tt><big>(</big><em>interval</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#GlOrtho2D.zoom_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.GlOrtho2D.zoom_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zoom to an interval.  The parameter <em>interval</em> must be an
+<tt class="xref py py-class docutils literal"><span class="pre">GVLab.Tools.Interval.Interval2D</span></tt> instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlOrtho2D.ViewportArea">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlOrtho2D.</tt><tt class="descname">ViewportArea</tt><big>(</big><em>max_area</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#ViewportArea"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.ViewportArea" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines a viewport area.</p>
+<p>It implements an interval arithmetic using the class <tt class="xref py py-class docutils literal"><span class="pre">GVLab.Tools.Interval.Interval2D</span></tt>.</p>
+<p>The parameter <em>max_area</em> must be an <tt class="xref py py-class docutils literal"><span class="pre">GVLab.Tools.Interval.Interval2D</span></tt> instance
+that defines the maximum area allowed for the viewport.</p>
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.ViewportArea._check_area">
+<tt class="descname">_check_area</tt><big>(</big><em>area</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#ViewportArea._check_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.ViewportArea._check_area" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the interval <em>area</em> is included in the the max area.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.ViewportArea._check_axis_interval">
+<tt class="descname">_check_axis_interval</tt><big>(</big><em>axis_interval</em>, <em>axis</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#ViewportArea._check_axis_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.ViewportArea._check_axis_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the axis interval and return a new one that is included in the max area.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlOrtho2D.ViewportArea._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x3135d90&gt;</em><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.ViewportArea._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.ViewportArea._set_reference_point">
+<tt class="descname">_set_reference_point</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#ViewportArea._set_reference_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.ViewportArea._set_reference_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the reference point of the viewport defined as the left-bottom corner.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlOrtho2D.ViewportArea.area">
+<tt class="descname">area</tt><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#ViewportArea.area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.ViewportArea.area" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.ViewportArea.center">
+<tt class="descname">center</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#ViewportArea.center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.ViewportArea.center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the viewport center as an Numpy array.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlOrtho2D.ViewportArea.max_area">
+<tt class="descname">max_area</tt><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#ViewportArea.max_area"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.ViewportArea.max_area" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.ViewportArea.size">
+<tt class="descname">size</tt><big>(</big><em>dtype=&lt;type 'numpy.uint64'&gt;</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#ViewportArea.size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.ViewportArea.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the viewport size as an Numpy array.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.ViewportArea.translate">
+<tt class="descname">translate</tt><big>(</big><em>dx</em>, <em>axis</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#ViewportArea.translate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.ViewportArea.translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate the viewport of <em>dx</em> in the <em>axis</em> direction.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlOrtho2D.ZoomManagerAbc">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlOrtho2D.</tt><tt class="descname">ZoomManagerAbc</tt><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#ZoomManagerAbc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.ZoomManagerAbc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class implements a basic zoom manager.</p>
+<p>The initial zoom factor is set to one.</p>
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlOrtho2D.ZoomManagerAbc._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x3135d90&gt;</em><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.ZoomManagerAbc._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlOrtho2D.ZoomManagerAbc.check_zoom">
+<tt class="descname">check_zoom</tt><big>(</big><em>zoom_factor</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#ZoomManagerAbc.check_zoom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.ZoomManagerAbc.check_zoom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic implementation to check a zoom factor, return the 2-tuple (True, zoom_factor).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="PyOpenGLV4.GlOrtho2D.interval2d_from_center_and_size">
+<tt class="descclassname">PyOpenGLV4.GlOrtho2D.</tt><tt class="descname">interval2d_from_center_and_size</tt><big>(</big><em>center</em>, <em>size</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlOrtho2D.html#interval2d_from_center_and_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlOrtho2D.interval2d_from_center_and_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an <tt class="xref py py-class docutils literal"><span class="pre">GVLab.Tools.Interval.Interval2D</span></tt> instance.  The parameter <em>center</em> is a
+2-tuple that defines the center of the interval and the parameter <em>size</em> the 2-tuple (width,
+height).</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="GlFixedPipeline.html"
+                        title="previous chapter">1.3. <tt class="docutils literal docutils literal docutils literal"><span class="pre">GlFixedPipeline</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="GlPrimitiveVertexArray.html"
+                        title="next chapter">1.5. <tt class="docutils literal"><span class="pre">GlPrimitiveVertexArray</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api/PyOpenGLV4/GlOrtho2D.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="GlPrimitiveVertexArray.html" title="1.5. GlPrimitiveVertexArray"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="GlFixedPipeline.html" title="1.3. GlFixedPipeline"
+             >previous</a> |</li>
+        <li><a href="../../index.html">PyOpenGLV4 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../PyOpenGLV4.html" >1. <tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">PyOpenGLV4</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

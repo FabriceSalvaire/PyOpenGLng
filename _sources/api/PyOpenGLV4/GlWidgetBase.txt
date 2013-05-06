@@ -1,0 +1,9 @@
+*********************
+ :mod:`GlWidgetBase`
+*********************
+
+.. automodule:: PyOpenGLV4.GlWidgetBase
+   :members:
+   :show-inheritance:
+
+.. End

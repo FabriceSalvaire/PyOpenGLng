@@ -1,0 +1,9 @@
+*****************
+ :mod:`Geometry`
+*****************
+
+.. automodule:: PyOpenGLV4.Geometry
+   :members:
+   :show-inheritance:
+
+.. End

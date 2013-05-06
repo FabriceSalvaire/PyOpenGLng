@@ -1,0 +1,9 @@
+*************************************
+ :mod:`AttributeDictionaryInterface`
+*************************************
+
+.. automodule:: PyOpenGLV4.Tools.AttributeDictionaryInterface
+   :members:
+   :show-inheritance:
+
+.. End

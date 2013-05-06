@@ -1,0 +1,9 @@
+*****************
+ :mod:`GlShader`
+*****************
+
+.. automodule:: PyOpenGLV4.GlShader
+   :members:
+   :show-inheritance:
+
+.. End

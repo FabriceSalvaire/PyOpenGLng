@@ -1,0 +1,281 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1.2. GlBuffer &mdash; PyOpenGLV4 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLV4 0.1.0 documentation" href="../../index.html" />
+    <link rel="up" title="1. PyOpenGLV4" href="../PyOpenGLV4.html" />
+    <link rel="next" title="1.3. GlFixedPipeline" href="GlFixedPipeline.html" />
+    <link rel="prev" title="1.1. Geometry" href="Geometry.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="GlFixedPipeline.html" title="1.3. GlFixedPipeline"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Geometry.html" title="1.1. Geometry"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">PyOpenGLV4 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../PyOpenGLV4.html" accesskey="U">1. <tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">PyOpenGLV4</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-PyOpenGLV4.GlBuffer">
+<span id="glbuffer"></span><h1>1.2. <tt class="xref py py-mod docutils literal"><span class="pre">GlBuffer</span></tt><a class="headerlink" href="#module-PyOpenGLV4.GlBuffer" title="Permalink to this headline">¶</a></h1>
+<p>This class provides tools to manage OpenGL Buffer Objects.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="42%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Target name</th>
+<th class="head">Purpose</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>ARRAY_BUFFER</td>
+<td>Vertex attributes</td>
+</tr>
+<tr class="row-odd"><td>ATOMIC_COUNTER_BUFFER</td>
+<td>Atomic counter storage</td>
+</tr>
+<tr class="row-even"><td>COPY_READ_BUFFER</td>
+<td>Buffer copy source</td>
+</tr>
+<tr class="row-odd"><td>COPY_WRITE_BUFFER</td>
+<td>Buffer copy destination</td>
+</tr>
+<tr class="row-even"><td>DISPATCH_INDIRECT_BUFFER</td>
+<td>Indirect compute dispatch commands</td>
+</tr>
+<tr class="row-odd"><td>DRAW_INDIRECT_BUFFER</td>
+<td>Indirect command arguments</td>
+</tr>
+<tr class="row-even"><td>ELEMENT_ARRAY_BUFFER</td>
+<td>Vertex array indices</td>
+</tr>
+<tr class="row-odd"><td>PIXEL_PACK_BUFFER</td>
+<td>Pixel read target</td>
+</tr>
+<tr class="row-even"><td>PIXEL_UNPACK_BUFFER</td>
+<td>Texture data source</td>
+</tr>
+<tr class="row-odd"><td>SHADER_STORAGE_BUFFER</td>
+<td>Read=write storage for shaders</td>
+</tr>
+<tr class="row-even"><td>TEXTURE_BUFFER</td>
+<td>Texture data buffer</td>
+</tr>
+<tr class="row-odd"><td>TRANSFORM_FEEDBACK_BUFFER</td>
+<td>Transform feedback buffer</td>
+</tr>
+<tr class="row-even"><td>UNIFORM_BUFFER</td>
+<td>Uniform block storage</td>
+</tr>
+</tbody>
+</table>
+<dl class="class">
+<dt id="PyOpenGLV4.GlBuffer.GlArrayBuffer">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlBuffer.</tt><tt class="descname">GlArrayBuffer</tt><big>(</big><em>data=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlBuffer.html#GlArrayBuffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlArrayBuffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLV4.GlBuffer.GlBuffer" title="PyOpenGLV4.GlBuffer.GlBuffer"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLV4.GlBuffer.GlBuffer</span></tt></a></p>
+<p>This class wraps an OpenGl Array Buffer.</p>
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlBuffer.GlArrayBuffer._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x2cdc6d0&gt;</em><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlArrayBuffer._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlBuffer.GlArrayBuffer._target">
+<tt class="descname">_target</tt><em class="property"> = GL_ARRAY_BUFFER</em><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlArrayBuffer._target" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlBuffer.GlArrayBuffer.bind_at_location">
+<tt class="descname">bind_at_location</tt><big>(</big><em>location</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlBuffer.html#GlArrayBuffer.bind_at_location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlArrayBuffer.bind_at_location" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind and enable the Vertex Buffer Object at the given attribute location.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlBuffer.GlArrayBuffer.set">
+<tt class="descname">set</tt><big>(</big><em>data</em>, <em>usage=GL_STATIC_DRAW</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlBuffer.html#GlArrayBuffer.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlArrayBuffer.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the data of the buffer.</p>
+<p>Data type must be float 32-bit.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlBuffer.GlBuffer">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlBuffer.</tt><tt class="descname">GlBuffer</tt><big>(</big><em>data=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlBuffer.html#GlBuffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlBuffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class wraps an OpenGL Buffer.</p>
+<p>Public attributes:</p>
+<blockquote>
+<div><p>size</p>
+<p>type</p>
+</div></blockquote>
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlBuffer.GlBuffer._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x2cdc6d0&gt;</em><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlBuffer._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlBuffer.GlBuffer._set_float">
+<tt class="descname">_set_float</tt><big>(</big><em>data</em>, <em>usage=GL_STATIC_DRAW</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlBuffer.html#GlBuffer._set_float"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlBuffer._set_float" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the data of the buffer.</p>
+<p>Data type must be float 32-bit.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlBuffer.GlBuffer._target">
+<tt class="descname">_target</tt><em class="property"> = None</em><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlBuffer._target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define the target in subclass</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlBuffer.GlBuffer.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlBuffer.html#GlBuffer.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlBuffer.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind the buffer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlBuffer.GlBuffer.bind_buffer_base">
+<tt class="descname">bind_buffer_base</tt><big>(</big><em>binding_point</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlBuffer.html#GlBuffer.bind_buffer_base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlBuffer.bind_buffer_base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds the buffer object buffer to the given binding point.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlBuffer.GlBuffer.set">
+<tt class="descname">set</tt><big>(</big><em>data</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlBuffer.html#GlBuffer.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlBuffer.set" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlBuffer.GlBuffer.unbind">
+<tt class="descname">unbind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlBuffer.html#GlBuffer.unbind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlBuffer.unbind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unind the buffer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLV4.GlBuffer.GlUniformBuffer">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlBuffer.</tt><tt class="descname">GlUniformBuffer</tt><big>(</big><em>data=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlBuffer.html#GlUniformBuffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlUniformBuffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLV4.GlBuffer.GlBuffer" title="PyOpenGLV4.GlBuffer.GlBuffer"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLV4.GlBuffer.GlBuffer</span></tt></a></p>
+<p>This class wraps an OpenGl Uniform Buffer.</p>
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlBuffer.GlUniformBuffer._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x2cdc6d0&gt;</em><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlUniformBuffer._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlBuffer.GlUniformBuffer._target">
+<tt class="descname">_target</tt><em class="property"> = GL_UNIFORM_BUFFER</em><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlUniformBuffer._target" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlBuffer.GlUniformBuffer.set">
+<tt class="descname">set</tt><big>(</big><em>data</em>, <em>usage=GL_DYNAMIC_DRAW</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlBuffer.html#GlUniformBuffer.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlBuffer.GlUniformBuffer.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the data of the buffer.</p>
+<p>Data type must be float 32-bit.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Geometry.html"
+                        title="previous chapter">1.1. <tt class="docutils literal docutils literal docutils literal"><span class="pre">Geometry</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="GlFixedPipeline.html"
+                        title="next chapter">1.3. <tt class="docutils literal"><span class="pre">GlFixedPipeline</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api/PyOpenGLV4/GlBuffer.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="GlFixedPipeline.html" title="1.3. GlFixedPipeline"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Geometry.html" title="1.1. Geometry"
+             >previous</a> |</li>
+        <li><a href="../../index.html">PyOpenGLV4 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../PyOpenGLV4.html" >1. <tt class="docutils literal docutils literal docutils literal docutils literal"><span class="pre">PyOpenGLV4</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

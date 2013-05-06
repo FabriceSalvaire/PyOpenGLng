@@ -1,0 +1,155 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1.12. GlVertexArrayObject &mdash; PyOpenGLV4 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLV4 0.1.0 documentation" href="../../index.html" />
+    <link rel="up" title="1. PyOpenGLV4" href="../PyOpenGLV4.html" />
+    <link rel="next" title="1.13. GlWidgetBase" href="GlWidgetBase.html" />
+    <link rel="prev" title="1.11. GlVersion" href="GlVersion.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="GlWidgetBase.html" title="1.13. GlWidgetBase"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="GlVersion.html" title="1.11. GlVersion"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">PyOpenGLV4 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../PyOpenGLV4.html" accesskey="U">1. <tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">PyOpenGLV4</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-PyOpenGLV4.GlVertexArrayObject">
+<span id="glvertexarrayobject"></span><h1>1.12. <tt class="xref py py-mod docutils literal"><span class="pre">GlVertexArrayObject</span></tt><a class="headerlink" href="#module-PyOpenGLV4.GlVertexArrayObject" title="Permalink to this headline">¶</a></h1>
+<p>This class provides tools to manage OpenGL Vertex Array Objects.</p>
+<p>Vertex array objects represent a collection of sets of vertex attributes. Each set
+is stored as an array in a buffer object data store, with each element of the array
+having a specified format and component count. The attributes of the currently
+bound vertex array object are used as inputs to the vertex shader when executing
+drawing commands.</p>
+<p>Vertex array objects are container objects including references to buffer objects,
+and are not shared.</p>
+<p>The usual programming flow is to bind the VAO, then to bind a set of VBO at some locations and
+finnaly to unbind the VAO for latter use.</p>
+<dl class="class">
+<dt id="PyOpenGLV4.GlVertexArrayObject.GlVertexArrayObject">
+<em class="property">class </em><tt class="descclassname">PyOpenGLV4.GlVertexArrayObject.</tt><tt class="descname">GlVertexArrayObject</tt><a class="reference internal" href="../../_modules/PyOpenGLV4/GlVertexArrayObject.html#GlVertexArrayObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlVertexArrayObject.GlVertexArrayObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class wraps an OpenGL Vertex Array OpenGL.</p>
+<dl class="attribute">
+<dt id="PyOpenGLV4.GlVertexArrayObject.GlVertexArrayObject._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x34be410&gt;</em><a class="headerlink" href="#PyOpenGLV4.GlVertexArrayObject.GlVertexArrayObject._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlVertexArrayObject.GlVertexArrayObject.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlVertexArrayObject.html#GlVertexArrayObject.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlVertexArrayObject.GlVertexArrayObject.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>bind the vertex array object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLV4.GlVertexArrayObject.GlVertexArrayObject.unbind">
+<tt class="descname">unbind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLV4/GlVertexArrayObject.html#GlVertexArrayObject.unbind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLV4.GlVertexArrayObject.GlVertexArrayObject.unbind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unbind the vertex array object.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="GlVersion.html"
+                        title="previous chapter">1.11. <tt class="docutils literal docutils literal docutils literal"><span class="pre">GlVersion</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="GlWidgetBase.html"
+                        title="next chapter">1.13. <tt class="docutils literal"><span class="pre">GlWidgetBase</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api/PyOpenGLV4/GlVertexArrayObject.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="GlWidgetBase.html" title="1.13. GlWidgetBase"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="GlVersion.html" title="1.11. GlVersion"
+             >previous</a> |</li>
+        <li><a href="../../index.html">PyOpenGLV4 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../PyOpenGLV4.html" >1. <tt class="docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal docutils literal"><span class="pre">PyOpenGLV4</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
