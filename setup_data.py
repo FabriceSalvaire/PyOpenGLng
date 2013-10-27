@@ -1,6 +1,6 @@
 ####################################################################################################
 # 
-# PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl..
+# PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl.
 # Copyright (C) 2013 Salvaire Fabrice
 #
 # This program is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ setup_dict = dict(
     version='0.1.0',
     author='Fabrice Salvaire',
     author_email='fabrice.salvaire@orange.fr',
-    description='An OpenGL V4 layer on top of PyOpengl.',
+    description='An OpenGL V4 layer on top of PyOpengl.,
     license = "GPLv3",
     keywords = "OpenGL",
     url='http://fabrice-salvaire.pagesperso-orange.fr/software/index.html',
