@@ -391,7 +391,8 @@ class GlUniformVector(GlUniformNd):
             value = np.asarray(value, dtype=self._gl_type.dtype)
         self._check_value(value)
 
-        self._gl_type.program_uniform_set_v(self._shader_program.program_id, self._location, 1, value)
+        #!# self._gl_type.program_uniform_set_v(self._shader_program.program_id, self._location, 1, value)
+        self._gl_type.uniform_set_v(self._location, 1, value) # require binding
 
 ####################################################################################################
 

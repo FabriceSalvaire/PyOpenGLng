@@ -250,7 +250,6 @@ class GlWidget(GlWidgetBase):
         # data[...] = intensity_max
         # print data
         self.image = data
-        self.set_count = 1
 
         self.texture_vertex_array1 = GlTextureVertexArray(position=Point(0, 0), dimension=Offset(width, height), image=data,
                                                           integer_internal_format=integer_internal_format)

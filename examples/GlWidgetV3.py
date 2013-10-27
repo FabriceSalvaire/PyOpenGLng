@@ -120,7 +120,29 @@ class GlWidget(GlWidgetBase):
 
     def create_vertex_array_objects(self):
 
+        self.create_grid()
         self.create_textures()
+
+    ##############################################
+
+    def create_grid(self):
+
+        step = 10
+        x_min, x_max = -100, 100
+        y_min, y_max = -100, 100
+       
+        segments = []
+        for x in xrange(x_min, x_max +1, step):
+            p1 = Point(x, y_min)
+            p2 = Point(x, y_max)
+            segments.append(Segment(p1, p2))
+        for y in xrange(y_min, y_max +1, step):
+            p1 = Point(y_min, y)
+            p2 = Point(y_max, y)
+            segments.append(Segment(p1, p2))
+
+        self.grid_vertex_array = GlSegmentVertexArray(segments)
+        self.grid_vertex_array.bind_to_shader(self.position_shader_interface.attributes.position)
 
     ##############################################
 
@@ -144,7 +166,6 @@ class GlWidget(GlWidgetBase):
         # data[...] = intensity_max
         # print data
         self.image = data
-        self.set_count = 1
 
         self.texture_vertex_array1 = GlTextureVertexArray(position=Point(0, 0), dimension=Offset(width, height), image=data,
                                                           integer_internal_format=integer_internal_format)
@@ -158,7 +179,25 @@ class GlWidget(GlWidgetBase):
 
     def paint(self):
 
+        self.paint_grid()
         self.paint_textures()
+
+    ##############################################
+
+    def paint_grid(self):
+
+        shader_program = self.shader_manager.fixed_shader_program
+        shader_program.bind()
+
+        GL.glLineWidth(2.)
+        shader_program.uniforms.colour = (1., 1., 1.)
+        self.grid_vertex_array.draw()
+
+        GL.glLineWidth(3.)
+        x = 25
+        GlFixedPipeline.draw_rectangle(-x, -x, x, x)
+
+        shader_program.unbind()
 
     ##############################################
 
