@@ -25,7 +25,7 @@ class ConfigPath(object):
     @staticmethod
     def glsl(file_name):
 
-        return os.path.join(ConfigPath.module_path, 'glsl', file_name)
+        return os.path.join(ConfigPath.module_path, 'glslv4', file_name)
 
 ####################################################################################################
 

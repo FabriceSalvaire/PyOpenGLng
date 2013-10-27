@@ -1,0 +1,11 @@
+#! /bin/bash
+
+gvlab_path='/srv/data/jupiter/home/common/it/bzr-repository/gvlab/v0.8.0/python/lib/GraphicEngine'
+
+for i in PyOpenGLV4/*.py ; do
+  file=${i##*/}
+  # diff -Naur ${gvlab_path}/${file} $i
+  kdiff3 ${gvlab_path}/${file} $i
+done
+
+# End

@@ -90,7 +90,9 @@ class GlWidgetBase(QtOpenGL.QGLWidget):
         
         self.gl_version = GlVersion()
         # print self.gl_version
-        for extension in 'GL_NV_texture_shader', 'GL_EXT_texture_integer':
+        for extension in ('GL_EXT_texture_integer',
+                          #'GL_NV_texture_shader',
+                          ):
             if extension not in self.gl_version:
                 raise NameError("Doesn't have GL extension %s" % (extension))
 

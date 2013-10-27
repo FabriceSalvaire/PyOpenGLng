@@ -18,7 +18,7 @@ import OpenGL.GLU as GLU
 try:
     import OpenGL.GL.NV.path_rendering as nvpath
 except ImportError:
-    pass
+    nvpath = None
 
 ####################################################################################################
 
@@ -89,7 +89,7 @@ class GlWidget(GlWidgetBase):
 
         self.logger.debug('Initialise Shader')
 
-        import ShaderProgrames as ShaderProgrames
+        import ShaderProgramesV4 as ShaderProgrames
         self.shader_manager = ShaderProgrames.shader_manager
         self.position_shader_interface = ShaderProgrames.position_shader_program_interface
 
@@ -120,7 +120,8 @@ class GlWidget(GlWidgetBase):
     def create_vertex_array_objects(self):
 
         self.create_grid()
-        self.create_path()
+        if nvpath is not None:
+            self.create_path()
         self.create_lines()
         self.create_textures()
 
@@ -272,38 +273,11 @@ class GlWidget(GlWidgetBase):
 
     ##############################################
 
-    def set_objects(self):
-
-        if self.set_count == 10:
-            self.set_count = 1
-
-        # print 'Set count', self.set_count
-
-        self.texture_vertex_array2.set(np.array(self.image * (self.set_count/10.), dtype=self.image.dtype))
-        self.set_count += 1
-        self.updateGL()
-
-    ##############################################
-
-    def delete_objects(self):
-
-        for i in xrange(10000):
-            del self.segment_vertex_array1
-            del self.segment_vertex_array2
-            del self.segment_vertex_array3
-            del self.texture_vertex_array1
-            del self.texture_vertex_array2
-            del self.texture_vertex_array3
-
-            self.create_vertex_array_objects()
-            self.updateGL()
-
-    ##############################################
-
     def paint(self):
 
         self.paint_grid()
-        self.paint_path()
+        if nvpath is not None:
+            self.paint_path()
         self.paint_textures()
         self.paint_lines()
 

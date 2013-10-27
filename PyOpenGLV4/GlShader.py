@@ -71,7 +71,10 @@ class GlShader(object):
 
     # Fixme: use enumerate class?
     FRAGMENT_SHADER = GL.GL_FRAGMENT_SHADER
-    GEOMETRY_SHADER = GL.GL_GEOMETRY_SHADER
+    if hasattr(GL, 'GL_GEOMETRY_SHADER'):
+        GEOMETRY_SHADER = GL.GL_GEOMETRY_SHADER
+    else:
+        GEOMETRY_SHADER = None
     VERTEX_SHADER = GL.GL_VERTEX_SHADER
     # TESSELATION_CONTROL_SHADER = GL.GL_TESS_CONTROL_SHADER
     # TESSELATION_EVALUATION_SHADER = GL.GL_TESS_EVALUATION_SHADER
@@ -513,6 +516,9 @@ class GlShaderProgramUniformBlocks(AttributeDictionaryInterface):
                 indices = (int(indices),)
             uniforms = []
             for i in indices:
+                # Fixme: Mesa ?
+                if i == -1:
+                    continue
 
                 name, size, gl_type_id = GL.glGetActiveUniform(program_id, i)
                 offset = GL_Ext.glGetActiveUniformsiv(program_id, i, GL.GL_UNIFORM_OFFSET)

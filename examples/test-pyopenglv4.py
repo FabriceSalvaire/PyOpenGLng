@@ -17,8 +17,12 @@ import argparse
 argument_parser = argparse.ArgumentParser()
 
 argument_parser.add_argument('--debug',
-                             action="store_true",
+                             action="store_true", default=False,
                              help='Enable OpenGL logging')
+
+argument_parser.add_argument('--v3',
+                             action="store_true", default=False,
+                             help='Enable OpenGL V3')
 
 args = argument_parser.parse_args()
 
@@ -48,7 +52,10 @@ from PyQt4 import QtCore, QtGui
 
 ####################################################################################################
 
-from GlWidget import GlWidget
+if args.v3:
+    from GlWidgetV3 import GlWidget
+else:
+    from GlWidgetV4 import GlWidget
 
 ####################################################################################################
 
