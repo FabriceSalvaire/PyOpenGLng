@@ -9,20 +9,32 @@
 ####################################################################################################
 
 ####################################################################################################
+
+import argparse
+import logging
+import sys
+
+from PyQt4 import QtCore, QtGui
+
+####################################################################################################
 #
 # Options
 #
 
-import argparse
-argument_parser = argparse.ArgumentParser()
+argument_parser = argparse.ArgumentParser(
+    description='PyOpenGLV4 example',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
 
-argument_parser.add_argument('--debug',
-                             action="store_true", default=False,
-                             help='Enable OpenGL logging')
+argument_parser.add_argument('--debug-level',
+                             default='none',
+                             choices=('none', 'info', 'debug', 'opengl'),
+                             help='logging level')
 
-argument_parser.add_argument('--v3',
-                             action="store_true", default=False,
-                             help='Enable OpenGL V3')
+argument_parser.add_argument('--opengl',
+                             default='v3',
+                             choices=('v3', 'v4'),
+                             help='OpenGL version')
 
 args = argument_parser.parse_args()
 
@@ -31,31 +43,31 @@ args = argument_parser.parse_args()
 # Logging
 #
 
-import logging
-
 # Place here in order to enable logging
-if args.debug:
+
+if args.debug_level == 'opengl':
     import OpenGL
     OpenGL.FULL_LOGGING = True
+    level = logging.DEBUG
+elif args.debug_level == 'debug':
+    level = logging.DEBUG
+elif args.debug_level == 'info':
+    level=logging.INFO
 
-logging.basicConfig(
-    format='\033[1;32m%(asctime)s\033[0m - \033[1;34m%(name)s - %(module)s.%(funcName)s\033[0m - \033[1;31m%(levelname)s\033[0m - %(message)s',
-    level=logging.DEBUG,
-    #level=logging.INFO,
-    )
+if args.debug_level != 'none':
+    logging.basicConfig(
+        format='\033[1;32m%(asctime)s\033[0m - \033[1;34m%(name)s - %(module)s.%(funcName)s\033[0m - \033[1;31m%(levelname)s\033[0m - %(message)s',
+        level=level,
+        )
 
 ####################################################################################################
 
-import sys
-
-from PyQt4 import QtCore, QtGui
-
-####################################################################################################
-
-if args.v3:
+if args.opengl == 'v3':
     from GlWidgetV3 import GlWidget
-else:
+elif args.opengl == 'v4':
     from GlWidgetV4 import GlWidget
+else:
+    raise ValueError('Unsupported OpenGL version')
 
 ####################################################################################################
 
