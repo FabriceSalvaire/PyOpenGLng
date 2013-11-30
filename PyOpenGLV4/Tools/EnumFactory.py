@@ -5,39 +5,38 @@
 #
 ####################################################################################################
 
-""" This module provides an implementation for enumerate.
+""" This module provides an implementation for enumerate data type.
 
 The enumerate factory :func:`EnumFactory` builds a enumerate from a list of names and assigns to
 these constants a value from 0 to N-1, where N is the number of constants.  For example::
 
   enum = EnumFactory('Enum1', ('cst1', 'cst2'))
   
-builds a enumerate with *cst1* set to 0 and *cst2* set to 1.
+will build a enumerate with *cst1* set to 0 and *cst2* set to 1.
 
-We can get a constant's value using an integer context like::
+We can retrieve a constant's value using an integer context::
      
   int(enum.cst1)
 
 and the constant's name using::
 
-  repr(enum.cst1)
+  str(enum.cst1)
 
-We can test constant equality using::
+We can test if two constants are equal using::
 
   enum1.cst == enum2.cst
 
-or with something that understand the *int* protocol::
+or with an object that implements the *int* protocol::
 
   enum1.cst == obj
-  # equivalent to
+  # is equivalent to
   int(enum1.cst) == int(obj)
 
 The number of constants could be retrieved with::
 
   len(enum)
 
-The enumerate factory :func:`ExplicitEnumFactory` is a variant that permits to specify the values of
-the constants::
+  The enumerate factory :func:`ExplicitEnumFactory` is a variant that permits to specify the constant`s values::
         
   enum2 = ExplicitEnumFactory('Enum2', {'cst1':1, 'cst2':3})
 
@@ -55,7 +54,7 @@ We can test if a value is in the enumerate using::
 
 class ReadOnlyMetaClass(type):
 
-    """ This meta class implements a class where attributes are read only. """
+    """ This metaclass implements a class where attributes are read only. """
 
     ##############################################
 
@@ -67,7 +66,7 @@ class ReadOnlyMetaClass(type):
 
 class EnumMetaClass(ReadOnlyMetaClass):
 
-    """ This meta class implements the :func:`len` protocol. """
+    """ This metaclass implements the :func:`len` protocol. """
 
     ##############################################
 
@@ -79,7 +78,7 @@ class EnumMetaClass(ReadOnlyMetaClass):
 
 class ExplicitEnumMetaClass(ReadOnlyMetaClass):
 
-    """ This meta class implements the operator ``in``. """
+    """ This metaclass implements the ``in`` operator. """
 
     ##############################################
 
@@ -114,9 +113,15 @@ class EnumConstant(object):
 
     ##############################################
     
-    def __repr__(self):
+    def __str__(self):
 
         return self._name
+
+    ##############################################
+    
+    def __repr__(self):
+
+        return self._name + ' := ' + str(self._value)
     
 ####################################################################################################
 
