@@ -5,26 +5,15 @@
 #
 ####################################################################################################
 
-"""
-#. Create an openGL context
-#. Query OpenGL to get the version
-#. Build the API (gl/gles, api_number, profile)
-   Check OpenGL version >= api_number
-#. Install wrapper ?
+####################################################################################################
 
-void glGenBuffers(GLsizei n,  GLuint * buffers)
+import logging
 
-* const => input
-* len=1 => input via pointer
-* len=n => output array
-"""
-
-# Fixme: Python keyword
-#   len, type
+from lxml import etree
 
 ####################################################################################################
 
-from lxml import etree
+_module_logger = logging.getLogger(__name__)
 
 ####################################################################################################
 
@@ -112,10 +101,9 @@ class Types(object):
         else:
             # None ?
             return gl_type
-        # raise NameError("Failed to translate type %s" % (gl_type))
+            # raise NameError("Failed to translate type %s" % (gl_type))
 
 ####################################################################################################
-
 
 class Type(object):
 
@@ -333,12 +321,12 @@ class Enums(object):
 
     def __init__(self,
                  namespace,
-                 group=None, type=None, start=None, end=None, vendor=None, comment=None,
+                 group=None, type_=None, start=None, end=None, vendor=None, comment=None,
                  ):
 
         self.namespace = namespace
         self.group = group
-        self.type = type
+        self.type = type_
         self.start = start
         self.end = end
         self.vendor = vendor
@@ -449,12 +437,12 @@ class Enum(object):
 
     def __init__(self,
                  name, value,
-                 type=None, alias=None, comment=None, api=None,
+                 type_=None, alias=None, comment=None, api=None,
                  ):
 
         self.name = name
         self.value = value
-        self.type = type
+        self.type = type_
         self.alias = alias
         self.comment = comment
         self.api = api
@@ -659,7 +647,8 @@ class Parameter(object):
 
     def __init__(self,
                  name,
-                 ptype=None, group=None, length=None, const=False, pointer=0,
+                 ptype=None, group=None, length=None,
+                 const=False, pointer=0,
                  ):
 
         self.name = name
@@ -922,6 +911,8 @@ class RequiredInterface(object):
             arbitrary string (optional and unused).
     """
 
+    _logger = _module_logger.getChild('RequiredInterface')
+
     ##############################################
 
     def __init__(self,
@@ -957,10 +948,13 @@ class RequiredInterface(object):
 
     def merge(self, interface):
 
-        if isinstance(interface, RequiredInterface):
-            self._items = self._items.union(interface._items)
-        else:
+        if isinstance(interface, RemovedInterface):
+            action = 'Remove'
             self._items = self._items.difference(interface._items)
+        else:
+            action = 'Add'
+            self._items = self._items.union(interface._items)
+        self._logger.info('%s interface\n  (profile = %s) %s', action, interface.profile, interface.comment)
 
 ####################################################################################################
 
@@ -969,11 +963,11 @@ class RequiredItem(object):
     ##############################################
 
     def __init__(self,
-                 type,
+                 type_,
                  name, comment=None,
                  ):
 
-        self.type = type
+        self.type = type_
         self.name = name
         self.comment = comment
 
@@ -1009,6 +1003,8 @@ class RemovedItem(RequiredItem):
 
 class GlSpecParser(object):
 
+    _logger = _module_logger.getChild('GlSpecParser')
+
     ##############################################
 
     def __init__(self, xml_file_path, relax_ng_file_path=None):
@@ -1036,7 +1032,8 @@ class GlSpecParser(object):
 
     ##############################################
 
-    def _to_int(self, value):
+    @staticmethod
+    def _to_int(value):
 
         if value.startswith('0x'):
             base = 16
@@ -1047,12 +1044,26 @@ class GlSpecParser(object):
 
     ##############################################
 
-    def _convert_node_attributes(self, node, int_attributes=()):
+    @staticmethod
+    def _copy_dict(source_dict, renaming=None):
 
-        attributes = dict(node.attrib)
+        new_dict = {}
+        for key, value in source_dict.iteritems():
+            if renaming is not None and key in renaming:
+                key = renaming[key]
+            new_dict[key] = value
+        
+        return new_dict
+
+    ##############################################
+
+    @staticmethod
+    def _convert_node_attributes(node, int_attributes=(), renaming=None):
+
+        attributes = GlSpecParser._copy_dict(node.attrib, renaming)
         for key in int_attributes:
             if key in attributes:
-                attributes[key] = self._to_int(attributes[key])
+                attributes[key] = GlSpecParser._to_int(attributes[key])
 
         return attributes
 
@@ -1114,13 +1125,17 @@ class GlSpecParser(object):
 
     def _parse_enums(self, node):
 
-        attributes = self._convert_node_attributes(node, int_attributes=('start', 'stop'))
+        attributes = self._convert_node_attributes(node,
+                                                   int_attributes=('start', 'stop'),
+                                                   renaming={'type': 'type_'})
         enums = Enums(**attributes)
         self.enums_list.append(enums)
 
         for enum_node in node:
             if enum_node.tag == 'enum':
-                attributes = self._convert_node_attributes(enum_node, int_attributes=('value',))
+                attributes = self._convert_node_attributes(enum_node,
+                                                           int_attributes=('value',),
+                                                           renaming={'type': 'type_'})
                 enum = Enum(**attributes)
                 enums.register(enum)
                 # print enum
@@ -1137,20 +1152,16 @@ class GlSpecParser(object):
                 if 'ptype' not in command_kwargs:
                     command_kwargs['ptype'] = node.text.strip()
             elif node.tag == 'param':
-                parameter = self._parse_parameter(node, command_kwargs)
+                parameter = self._parse_parameter(node)
                 parameters.append(parameter)
         command = Command(parameters=parameters, **command_kwargs)
         self.commands.register(command)
 
     ##############################################
 
-    def _parse_parameter(self, node, command_kwargs):
+    def _parse_parameter(self, node):
 
-        kwargs = dict(node.attrib)
-        # Fixme
-        if 'len' in kwargs:
-            kwargs['length'] = kwargs['len']
-            del kwargs['len']
+        kwargs = self._copy_dict(node.attrib, renaming={'len': 'length'})
         for child in node:
             kwargs[child.tag] = child.text
             if child.tail:
@@ -1159,12 +1170,6 @@ class GlSpecParser(object):
                     kwargs['pointer'] = 2
                 elif text.endswith('*'):
                     kwargs['pointer'] = 1
-
-        # Fixme: debug, remove
-        ### if command_kwargs['name'] == 'glGetAttribLocation':
-        ###     print node.text, node.tail
-        ###     for child in node:
-        ###         print child.tag, child.text, child.tail
 
         if node.text is not None:
             text = node.text.strip()
@@ -1184,7 +1189,7 @@ class GlSpecParser(object):
         for item_node in interface_node:
             if item_node.tag != etree.Comment:
                 kwargs = dict(item_node.attrib)
-                kwargs['type'] = item_node.tag
+                kwargs['type_'] = item_node.tag
                 interface.append_new(**kwargs)
 
     ##############################################
@@ -1221,7 +1226,7 @@ class GlSpecParser(object):
 
     ##############################################
 
-    def generate_api(self, api, api_number):
+    def generate_api(self, api, api_number, profile=None):
 
         all_api_enums = Enums(namespace=None)
         for enums in self.enums_list:
@@ -1230,9 +1235,11 @@ class GlSpecParser(object):
         required_interface = RequiredInterface()
         for feature in self.feature_list:
             if feature.api == api and feature.api_number <= api_number:
-                # print 'Merge %s %s' % (feature.api, str(feature.api_number))
+                self._logger.info('Merge features of %s API %s', feature.api, str(feature.api_number))
                 for interface in feature:
-                    required_interface.merge(interface)
+                    if (profile is None or interface.profile is None
+                        or interface.profile == profile):
+                        required_interface.merge(interface)
 
         api_enums = Enums(namespace=api + '-' + str(api_number))
         api_commands = Commands()
@@ -1242,28 +1249,7 @@ class GlSpecParser(object):
             elif item.type == 'command':
                 api_commands.register(self.commands[item.name])
 
-        if True:
-            # for enum in api_enums:
-            #     print repr(enum)
-            for command in api_commands.itervalues():
-                # print repr(command)
-                # print command.prototype(self.types)
-                # print command.argument_types(self.types)
-                print command.name, self.types.translate_gl_type(command.return_type), command.argument_types(self.types)
-                
-####################################################################################################
-
-if __name__ == '__main__':
-    
-    import os
-
-    source_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    # print source_path
-    gl_xml_file_path = os.path.join(source_path, 'doc/registry-api/gl.xml')
-    # trang -I rnc -O rng doc/registry-api/registry.rnc doc/registry-api/registry-rng.xml
-    relax_ng_file_path = os.path.join(source_path, 'doc/registry-api/registry-rng.xml')
-    gl_spec_parser = GlSpecParser(gl_xml_file_path, relax_ng_file_path)
-    gl_spec_parser.generate_api(api='gl', api_number=ApiNumber('2.0'))
+        return api_enums, api_commands
 
 ####################################################################################################
 #
