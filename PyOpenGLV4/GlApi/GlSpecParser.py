@@ -565,12 +565,12 @@ class Command(object):
     ##############################################
 
     def __init__(self,
-                 name, ptype,
+                 name, return_type,
                  parameters=(),
                  ):
 
         self.name = name
-        self.return_type = ptype
+        self.return_type = return_type
         self.parameters = parameters
 
     ##############################################
@@ -591,7 +591,7 @@ class Command(object):
     def prototype(self, types):
 
         if self.return_type != 'void':
-            gl_type = types.translate_gl_type(self.return_type)
+            gl_type = types.translate_and_format_gl_type(self.return_type)
             return_type = repr(gl_type)
         else:
             return_type = 'void'
@@ -603,7 +603,7 @@ class Command(object):
 
     def argument_types(self, types):
 
-        return [parameter.translate_gl_type(types) for parameter in self.parameters]
+        return [parameter.translate_and_format_gl_type(types) for parameter in self.parameters]
 
 ####################################################################################################
 
@@ -651,7 +651,7 @@ class Parameter(object):
                  const=False, pointer=0,
                  ):
 
-        self.name = name
+        self.name = name # None for return type
         self.type = ptype
         self.group = group
         self.const = const
@@ -659,6 +659,7 @@ class Parameter(object):
 
         self.size_parameter = None
         self.array_size = None
+        self.computed_size = False
         try:
             self.array_size = int(length)
         except ValueError:
@@ -686,19 +687,32 @@ class Parameter(object):
 
     def __repr__(self):
 
-        return '%s %s' % (self._format_type(self.type), self.name)
+        if self.name is not None:
+            return '%s %s' % (self._format_type(self.type), self.name)
+        else:
+            return self._format_type(self.type)
 
     ##############################################
 
     def prototype(self, types):
 
-        return '%s %s' % (self.translate_gl_type(types), self.name)
+        if self.name is not None:
+            return '%s %s' % (self.translate_and_format_gl_type(types), self.name)
+        else:
+            self.translate_and_format_gl_type(types)
 
     ##############################################
 
     def translate_gl_type(self, types):
 
-        gl_type = types.translate_gl_type(self.type)
+        # for example: GLenum -> unsigned int
+        return types.translate_gl_type(self.type)
+
+    ##############################################
+
+    def translate_and_format_gl_type(self, types):
+
+        gl_type = self.translate_gl_type(types)
         return self._format_type(repr(gl_type))
 
 ####################################################################################################
@@ -954,7 +968,7 @@ class RequiredInterface(object):
         else:
             action = 'Add'
             self._items = self._items.union(interface._items)
-        self._logger.info('%s interface\n  (profile = %s) %s', action, interface.profile, interface.comment)
+        self._logger.debug('%s interface\n  (profile = %s) %s', action, interface.profile, interface.comment)
 
 ####################################################################################################
 
@@ -1047,6 +1061,12 @@ class GlSpecParser(object):
     @staticmethod
     def _copy_dict(source_dict, renaming=None):
 
+        """ Copy a dictionary.
+
+        The parameter *renaming* can be specified optionally to apply a key renaming from key to
+        value.
+        """
+        
         new_dict = {}
         for key, value in source_dict.iteritems():
             if renaming is not None and key in renaming:
@@ -1144,13 +1164,15 @@ class GlSpecParser(object):
 
     def _parse_command(self, command_node):
 
-        command_kwargs = None
+        command_kwargs = {}
         parameters = []
         for node in command_node:
             if node.tag == 'proto':
-                command_kwargs = {child.tag:child.text.strip() for child in node}
-                if 'ptype' not in command_kwargs:
-                    command_kwargs['ptype'] = node.text.strip()
+                # Fixme: api ?
+                return_type = self._parse_parameter(node)
+                command_kwargs['name'] = return_type.name
+                command_kwargs['return_type'] = return_type
+                return_type.name = None
             elif node.tag == 'param':
                 parameter = self._parse_parameter(node)
                 parameters.append(parameter)
@@ -1159,26 +1181,53 @@ class GlSpecParser(object):
 
     ##############################################
 
+    def _parse_ctype(self, text, kwargs):
+
+        text = text.strip()
+
+        if text.startswith('const'):
+            kwargs['const'] = True
+            text = text[5:]
+
+        if text.endswith('**'):
+            kwargs['pointer'] = 2
+            text = text[:-2]
+        if text.endswith('*const*'):
+            kwargs['pointer'] = 2
+            text = text[:-7]
+        elif text.endswith('*'):
+            kwargs['pointer'] = 1
+            text = text[:-1]
+
+        return text.strip()
+
+    ##############################################
+
     def _parse_parameter(self, node):
+
+        # Case without text and tail:
+        #   <param group="TextureTarget"><ptype>GLenum</ptype> <name>target</name></param>
+        #   
+        # Case wit text:
+        #   <param group="CompressedTextureARB" len="imageSize">const void *<name>data</name></param>
+        #   
+        # Case with tail:
+        #   <param len="COMPSIZE(uniformCount)"><ptype>GLuint</ptype> *<name>uniformIndices</name></param>
+        #
+        # Case with text and tail:
+        #   <param len="count">const <ptype>GLchar</ptype> *const*<name>path</name></param>
 
         kwargs = self._copy_dict(node.attrib, renaming={'len': 'length'})
         for child in node:
             kwargs[child.tag] = child.text
             if child.tail:
-                text = child.tail.strip()
-                if text.endswith('**'):
-                    kwargs['pointer'] = 2
-                elif text.endswith('*'):
-                    kwargs['pointer'] = 1
+                self._parse_ctype(child.tail, kwargs)
 
         if node.text is not None:
-            text = node.text.strip()
-            if 'ptype' not in kwargs:
+            text = self._parse_ctype(node.text, kwargs)
+            if 'ptype' not in kwargs: # Fixme: and text?
                 # for example: 'const void *'
-                kwargs['ptype'] = node.text.strip()
-            else:
-                if text.startswith('const'):
-                    kwargs['const'] = True
+                kwargs['ptype'] = text
 
         return Parameter(**kwargs)
 
@@ -1235,13 +1284,13 @@ class GlSpecParser(object):
         required_interface = RequiredInterface()
         for feature in self.feature_list:
             if feature.api == api and feature.api_number <= api_number:
-                self._logger.info('Merge features of %s API %s', feature.api, str(feature.api_number))
+                self._logger.debug('Merge features of %s API %s', feature.api, str(feature.api_number))
                 for interface in feature:
                     if (profile is None or interface.profile is None
                         or interface.profile == profile):
                         required_interface.merge(interface)
 
-        api_enums = Enums(namespace=api + '-' + str(api_number))
+        api_enums = Enums(namespace=api + '-' + str(api_number)) # + profile
         api_commands = Commands()
         for item in required_interface:
             if item.type == 'enum':
