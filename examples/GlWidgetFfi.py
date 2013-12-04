@@ -79,15 +79,16 @@ class GlWidget(GlWidgetBase):
         print wrapper.glGetString(wrapper.GL.GL_VERSION)
         # print wrapper.glGetString(wrapper.GL.GL_EXTENSIONS) # works
         print wrapper.glGetStringi(wrapper.GL.GL_EXTENSIONS, 1)
-        print wrapper._pythonic_wrapper.error_code_message(wrapper.glGetError())
+        print wrapper._error_code_message(wrapper.glGetError())
         print wrapper.glGetString(0)
-        print wrapper._pythonic_wrapper.error_code_message(wrapper.glGetError())
+        print wrapper._error_code_message(wrapper.glGetError())
         print wrapper.glGetString(0, check_error=False)
         try:
             print wrapper.glGetString(0, check_error=True)
         except Exception as e:
             print e.message
-        print wrapper.glGenBuffers(10)
+        with wrapper.error_context():
+            print wrapper.glGenBuffers(10)
 
         sys.exit(0)
         # QtGui.QApplication.instance().exit()

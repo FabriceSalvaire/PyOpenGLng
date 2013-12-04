@@ -192,11 +192,7 @@ class GlCommandWrapper(object):
         result = self._function(*c_parameters)
 
         if 'check_error' in kwargs and kwargs['check_error']:
-            error_code = self._wrapper.glGetError()
-            if error_code:
-                pythonic_wrapper = self._wrapper._pythonic_wrapper
-                error_message = pythonic_wrapper.error_code_message(error_code)
-                raise NameError(error_message)
+            self._wrapper.check_error()
         
         if to_python_converters:
             output_parameters = [to_python_converter() for to_python_converter in to_python_converters]
@@ -252,9 +248,49 @@ class CtypeWrapper(object):
         for command in api_commands.itervalues():
             setattr(self, str(command), GlCommandWrapper(self, command))
 
+    ##############################################
+
+    def check_error(self):
+
+        error_code = self.glGetError()
+        if error_code:
+            error_message = self._error_code_message(error_code)
+            raise NameError(error_message)
+
+    ##############################################
+
+    def _error_code_message(self, error_code):
+
+        if not error_code:
+            # GL_NO_ERROR: The value of this symbolic constant is guaranteed to be 0.
+            return 'No error has been recorded.'
+        else:
+            if error_code == self.GL.GL_INVALID_ENUM:
+                return 'An unacceptable value is specified for an enumerated argument.'
+            elif error_code == self.GL.GL_INVALID_VALUE:
+                return 'A numeric argument is out of range.'
+            elif error_code == self.GL.GL_INVALID_OPERATION:
+                return 'The specified operation is not allowed in the current state.'
+            elif error_code == self.GL.GL_INVALID_FRAMEBUFFER_OPERATION:
+                return 'The framebuffer object is not complete.'
+            elif error_code == self.GL.GL_OUT_OF_MEMORY:
+                return 'There is not enough memory left to execute the command.'
+            elif error_code == self.GL.GL_STACK_UNDERFLOW:
+                return 'An attempt has been made to perform an operation that would cause an internal stack to underflow.'
+            elif error_code == self.GL.GL_STACK_OVERFLOW:
+                return 'An attempt has been made to perform an operation that would cause an internal stack to overflow.'
+            else:
+                raise NotImplementedError
+
+    ##############################################
+
+    def error_context(self):
+
+        return ErrorContextManager(self)
+
 ####################################################################################################
 
-class PythonicWrapper(object):
+class ErrorContextManager(object):
 
     ##############################################
 
@@ -264,31 +300,24 @@ class PythonicWrapper(object):
 
     ##############################################
 
-    def error_code_message(self, error_code):
+    def __enter__(self):
+        pass
+    
+    ##############################################
+    
+    def __exit__(self, type, value, traceback):
 
-        # glGetError
+        self._wrapper.check_error()
 
-        if not error_code:
-            # GL_NO_ERROR: The value of this symbolic constant is guaranteed to be 0.
-            return 'No error has been recorded.'
-        else:
-            GL = self._wrapper.GL
-            if error_code == GL.GL_INVALID_ENUM:
-                return 'An unacceptable value is specified for an enumerated argument.'
-            elif error_code == GL.GL_INVALID_VALUE:
-                return 'A numeric argument is out of range.'
-            elif error_code == GL.GL_INVALID_OPERATION:
-                return 'The specified operation is not allowed in the current state.'
-            elif error_code == GL.GL_INVALID_FRAMEBUFFER_OPERATION:
-                return 'The framebuffer object is not complete.'
-            elif error_code == GL.GL_OUT_OF_MEMORY:
-                return 'There is not enough memory left to execute the command.'
-            elif error_code == GL.GL_STACK_UNDERFLOW:
-                return 'An attempt has been made to perform an operation that would cause an internal stack to underflow.'
-            elif error_code == GL.GL_STACK_OVERFLOW:
-                return 'An attempt has been made to perform an operation that would cause an internal stack to overflow.'
-            else:
-                raise NotImplementedError
+####################################################################################################
+
+class PythonicWrapper(object):
+
+    ##############################################
+
+    def __init__(self, wrapper):
+
+        self._wrapper = wrapper
 
 ####################################################################################################
 #
