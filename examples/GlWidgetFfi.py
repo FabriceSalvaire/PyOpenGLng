@@ -87,6 +87,7 @@ class GlWidget(GlWidgetBase):
             print wrapper.glGetString(0, check_error=True)
         except Exception as e:
             print e.message
+        print wrapper.glGenBuffers(10)
 
         sys.exit(0)
         # QtGui.QApplication.instance().exit()

@@ -573,6 +573,28 @@ class Command(object):
         self.return_type = return_type
         self.parameters = parameters
 
+        self.parameter_dict = {}
+        self.input_parameter = 0
+        self.output_parameter = 0
+        for parameter in parameters:
+            self.parameter_dict[str(parameter)] = parameter
+            if parameter.pointer:
+                if parameter.const: # input parameter
+                    self.input_parameter += 1
+                else: # output parameter
+                    self.output_parameter += 1
+                # if parameter.computed_size: 
+        for parameter in parameters:
+            # size parameter can be after pointer
+            if parameter.size_parameter is not None and not parameter.computed_size:
+                self.parameter_dict[parameter.size_parameter].back_ref = parameter
+
+    ##############################################
+
+    @property
+    def number_of_parameters(self):
+        return len(self.parameters)
+
     ##############################################
 
     def __str__(self):
@@ -591,7 +613,7 @@ class Command(object):
     def prototype(self, types):
 
         if self.return_type != 'void':
-            gl_type = types.translate_and_format_gl_type(self.return_type)
+            gl_type = types.translate_gl_type(self.return_type)
             return_type = repr(gl_type)
         else:
             return_type = 'void'
@@ -646,11 +668,12 @@ class Parameter(object):
     ##############################################
 
     def __init__(self,
-                 name,
+                 location, name,
                  ptype=None, group=None, length=None,
                  const=False, pointer=0,
                  ):
 
+        self.location = location
         self.name = name # None for return type
         self.type = ptype
         self.group = group
@@ -658,13 +681,21 @@ class Parameter(object):
         self.pointer = pointer
 
         self.size_parameter = None
-        self.array_size = None
-        self.computed_size = False
+        self.back_ref = None # back ref for size parameter
+        self.array_size = None # array size is known
+        self.computed_size = False # array size is computed by OpenGL
+        self.size_multiplier = 1
         try:
             self.array_size = int(length)
         except ValueError:
             self.computed_size = length.startswith('COMPSIZE')
-            self.size_parameter = length
+            if not self.computed_size and '*' in length:
+                # for example: 'n*2'
+                tokens = length.split('*')
+                self.size_parameter = tokens[0]
+                self.size_multiplier = int(tokens[1])
+            else:
+                self.size_parameter = length
         except TypeError:
             pass
 
@@ -682,6 +713,12 @@ class Parameter(object):
             type_string += ' [%u]' % self.array_size
         
         return type_string
+
+    ##############################################
+
+    def __str__(self):
+
+        return self.name
 
     ##############################################
 
@@ -1165,6 +1202,7 @@ class GlSpecParser(object):
     def _parse_command(self, command_node):
 
         command_kwargs = {}
+        parameter_location = 0
         parameters = []
         for node in command_node:
             if node.tag == 'proto':
@@ -1174,8 +1212,9 @@ class GlSpecParser(object):
                 command_kwargs['return_type'] = return_type
                 return_type.name = None
             elif node.tag == 'param':
-                parameter = self._parse_parameter(node)
+                parameter = self._parse_parameter(node, parameter_location)
                 parameters.append(parameter)
+                parameter_location += 1
         command = Command(parameters=parameters, **command_kwargs)
         self.commands.register(command)
 
@@ -1203,7 +1242,7 @@ class GlSpecParser(object):
 
     ##############################################
 
-    def _parse_parameter(self, node):
+    def _parse_parameter(self, node, parameter_location=None):
 
         # Case without text and tail:
         #   <param group="TextureTarget"><ptype>GLenum</ptype> <name>target</name></param>
@@ -1229,7 +1268,7 @@ class GlSpecParser(object):
                 # for example: 'const void *'
                 kwargs['ptype'] = text
 
-        return Parameter(**kwargs)
+        return Parameter(location=parameter_location, **kwargs)
 
     ##############################################
 
