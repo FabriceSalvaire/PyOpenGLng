@@ -10,9 +10,38 @@
 import ctypes
 import logging
 
+import numpy as np
+
 ####################################################################################################
 
 _module_logger = logging.getLogger(__name__)
+
+####################################################################################################
+
+# Fixme: unsigned comes from typedef
+__gl_to_ctypes_type__ = {
+    'char':ctypes.c_char,
+    'int8_t':ctypes.c_byte, # c_int8
+    'uint8_t':ctypes.c_ubyte, # c_uint8
+    'unsigned char':ctypes.c_ubyte,
+    'short':ctypes.c_short,
+    'unsigned short':ctypes.c_ushort,
+    'int32_t':ctypes.c_int32,
+    'int':ctypes.c_int32, # not 64-bit integer!
+    'unsigned int':ctypes.c_uint32,
+    'int64_t':ctypes.c_int64,
+    'uint64_t':ctypes.c_uint64,
+    'float':ctypes.c_float,
+    'float_t':ctypes.c_float,
+    'double':ctypes.c_double,
+    'intptr_t':ctypes.c_void_p, # ?
+    'ptrdiff_t':ctypes.c_void_p, # ?
+    'ssize_t':ctypes.c_uint64, # ?
+    'void': None, # ?
+    }
+
+def to_ctypes_type(parameter):
+    return __gl_to_ctypes_type__[str(parameter.c_type)]
 
 ####################################################################################################
 
@@ -25,73 +54,75 @@ class ParameterWrapper(object):
 
     ##############################################
 
-    def __init__(self, location, type_):
+    def __init__(self, parameter):
 
-        self.location = location
-        self.type = type_
+        self._location = parameter.location
+        self._type = to_ctypes_type(parameter)
 
     ##############################################
 
-    def from_parameter(self, parameter, c_parameters):
+    def from_python(self, parameter, c_parameters):
 
-        c_parameters[self.location] = self.type(parameter)
+        c_parameters[self._location] = self._type(parameter)
+
+        return None
 
 ####################################################################################################
 
-class OutputArrayWrapper(ParameterWrapper):
+class OutputArrayWrapper(object):
+
+    size_parameter_threshold = 20
 
     ##############################################
 
-    def __init__(self, size_location, size_type, pointer_location, pointer_type):
+    def __init__(self, size_parameter, pointer_parameter):
 
-        self.size_location = size_location
-        self.size_type = size_type
-        self.pointer_location = pointer_location
-        self.pointer_type = pointer_type
-
-    ##############################################
-
-    def from_parameter(self, size_parameter, c_parameters):
-
-        c_parameters[self.size_location] = self.size_type(size_parameter)
-        array_type = self.pointer_type * size_parameter
-        array = array_type(*range(100, 100 + size_parameter))
-        print ' ', array_type, list(array)
-        c_parameters[self.pointer_location] = ctypes.cast(array, ctypes.POINTER(self.pointer_type))
-
-        return self, array
+        self._size_location = size_parameter.location
+        self._size_type = to_ctypes_type(size_parameter)
+        self._pointer_location = pointer_parameter.location
+        self._pointer_type = to_ctypes_type(pointer_parameter)
 
     ##############################################
 
-    def from_c(self, array):
+    def from_python(self, size_parameter, c_parameters):
 
-        return list(array)
+        c_parameters[self._size_location] = self._size_type(size_parameter)
+
+        if size_parameter >= self.size_parameter_threshold:
+            array = np.zeros((size_parameter), dtype=self._pointer_type)
+            ctypes_parameter = array.ctypes.data
+            to_python_converter = IdentityConverter(array)
+        else:
+            array_type = self._pointer_type * size_parameter
+            ctypes_parameter = array_type()
+            to_python_converter = ListConverter(ctypes_parameter)
+        c_parameters[self._pointer_location] = ctypes_parameter
+
+        return to_python_converter
+
+####################################################################################################
+
+class ToPythonConverter(object):
+
+    ##############################################
+
+    def __init__(self, c_object):
+
+        self._c_object = c_object
+
+####################################################################################################
+
+class IdentityConverter(ToPythonConverter):
+    def __call__(self):
+        return self._c_object
+
+class ListConverter(ToPythonConverter):
+    def __call__(self):
+        return list(self._c_object)
 
 ####################################################################################################
 
 class GlCommandWrapper(object):
-
-    # Fixme: unsigned comes from typedef
-    __gl_to_ctypes_type__ = {
-        'char':ctypes.c_char,
-        'int8_t':ctypes.c_byte, # c_int8
-        'uint8_t':ctypes.c_ubyte, # c_uint8
-        'unsigned char':ctypes.c_ubyte,
-        'short':ctypes.c_short,
-        'unsigned short':ctypes.c_ushort,
-        'int32_t':ctypes.c_int32,
-        'int':ctypes.c_int32, # not 64-bit integer!
-        'unsigned int':ctypes.c_uint32,
-        'int64_t':ctypes.c_int64,
-        'uint64_t':ctypes.c_uint64,
-        'float':ctypes.c_float,
-        'float_t':ctypes.c_float,
-        'double':ctypes.c_double,
-        'intptr_t':ctypes.c_void_p, # ?
-        'ptrdiff_t':ctypes.c_void_p, # ?
-        'ssize_t':ctypes.c_uint64, # ?
-        'void': None, # ?
-        }
 
     ##############################################
 
@@ -101,14 +132,16 @@ class GlCommandWrapper(object):
         self._command = command
         self._number_of_parameters = command.number_of_parameters
 
-        gl_spec_types = wrapper._gl_spec.types
-
         try:
             self._function = getattr(self._wrapper._libGL, str(command))
         except AttributeError:
             raise NameError("OpenGL function %s was no found in libGL" % (str(command)))
 
-        # argument_types = []
+        # Only for simple prototype
+        # argument_types = [to_ctypes_type(parameter) for parameter in command.parameters]
+        # if argument_types:
+        #     self._function.argtypes = argument_types
+
         self._parameter_wrappers = []
         for parameter in command.parameters:
             if parameter.pointer:
@@ -116,29 +149,17 @@ class GlCommandWrapper(object):
             elif parameter.back_ref is not None:
                 pointer_parameter = parameter.back_ref
                 if not pointer_parameter.const: # input parameter
-                    # size parameter
-                    c_type = parameter.translate_gl_type(gl_spec_types)
-                    size_ctypes_type = self.__gl_to_ctypes_type__[str(c_type)]
-                    # pointer parameter
-                    c_type = pointer_parameter.translate_gl_type(gl_spec_types)
-                    pointer_ctypes_type = self.__gl_to_ctypes_type__[str(c_type)]
-                    # parameter wrapper
-                    parameter_wrapper = OutputArrayWrapper(parameter.location, size_ctypes_type,
-                                                           pointer_parameter.location, pointer_ctypes_type)
+                    parameter_wrapper = OutputArrayWrapper(parameter, pointer_parameter)
                     self._parameter_wrappers.append(parameter_wrapper)
                 else:
                     pass
             else:
-                c_type = parameter.translate_gl_type(gl_spec_types)
-                ctypes_type = self.__gl_to_ctypes_type__[str(c_type)]
-                self._parameter_wrappers.append(ParameterWrapper(parameter.location, ctypes_type))
-        # if not has_output_parameter and argument_types:
-        #     self._function.argtypes = argument_types
+                parameter_wrapper = ParameterWrapper(parameter)
+                self._parameter_wrappers.append(parameter_wrapper)
 
         return_type = command.return_type
         if return_type.type != 'void':
-            c_type = return_type.translate_gl_type(gl_spec_types)
-            ctypes_type = self.__gl_to_ctypes_type__[str(c_type)]
+            ctypes_type = to_ctypes_type(return_type)
             # print str(command), c_type, ctypes_type, return_type.pointer
             if return_type.pointer:
                 if ctypes_type == ctypes.c_ubyte: # return type is char *
@@ -148,25 +169,26 @@ class GlCommandWrapper(object):
             self._function.restype = ctypes_type
             self._return_void = False
         else:
+            self._function.restype = None
             self._return_void = True
 
     ##############################################
 
     def __call__(self, *args, **kwargs):
 
-        print 'Call', repr(self)
+        #print 'Call', repr(self)
         gl_spec_types = self._wrapper._gl_spec.types
-        print self._command.prototype(gl_spec_types)
+        #print self._command.prototype(gl_spec_types)
 
         c_parameters = [None]*self._number_of_parameters
-        output_parameters = []
+        to_python_converters = []
         for parameter_wrapper, parameter in zip(self._parameter_wrappers, args):
             # print parameter_wrapper, parameter
-            output_parameter = parameter_wrapper.from_parameter(parameter, c_parameters)
-            if isinstance(parameter_wrapper, OutputArrayWrapper):
-                output_parameters.append(output_parameter)
+            to_python_converter = parameter_wrapper.from_python(parameter, c_parameters)
+            if to_python_converter is not None:
+                to_python_converters.append(to_python_converter)
 
-        print ' ', c_parameters
+        # print ' ', c_parameters
         result = self._function(*c_parameters)
 
         if 'check_error' in kwargs and kwargs['check_error']:
@@ -176,9 +198,8 @@ class GlCommandWrapper(object):
                 error_message = pythonic_wrapper.error_code_message(error_code)
                 raise NameError(error_message)
         
-        if output_parameters:
-            output_parameters = [parameter_wrapper.from_c(output_parameter)
-                                 for parameter_wrapper, output_parameter in output_parameters]
+        if to_python_converters:
+            output_parameters = [to_python_converter() for to_python_converter in to_python_converters]
             if self._return_void:
                 if len(output_parameters) == 1:
                     return output_parameters[0]

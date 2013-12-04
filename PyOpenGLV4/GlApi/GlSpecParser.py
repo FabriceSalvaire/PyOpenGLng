@@ -99,7 +99,7 @@ class Types(object):
         if gl_type in self.c_types:
             return self.c_types[gl_type]
         else:
-            # None ?
+            # Fixme: None ?
             return gl_type
             # raise NameError("Failed to translate type %s" % (gl_type))
 
@@ -605,27 +605,26 @@ class Command(object):
 
     def __repr__(self):
 
-        return '%s %s (%s)' % (self.return_type, self.name,
+        return '%s %s (%s)' % (repr(self.return_type), self.name,
                                ', '.join([repr(parameter) for parameter in self.parameters]))
 
     ##############################################
 
-    def prototype(self, types):
+    def prototype(self):
 
         if self.return_type != 'void':
-            gl_type = types.translate_gl_type(self.return_type)
-            return_type = repr(gl_type)
+            return_type = repr(self.return_type.c_type)
         else:
             return_type = 'void'
 
         return '%s %s (%s)' % (return_type, self.name,
-                               ', '.join([parameter.prototype(types) for parameter in self.parameters]))
+                               ', '.join([parameter.prototype() for parameter in self.parameters]))
 
     ##############################################
 
-    def argument_types(self, types):
+    def argument_types(self):
 
-        return [parameter.translate_and_format_gl_type(types) for parameter in self.parameters]
+        return [parameter.format_gl_type() for parameter in self.parameters]
 
 ####################################################################################################
 
@@ -668,6 +667,7 @@ class Parameter(object):
     ##############################################
 
     def __init__(self,
+                 gl_types,
                  location, name,
                  ptype=None, group=None, length=None,
                  const=False, pointer=0,
@@ -679,6 +679,9 @@ class Parameter(object):
         self.group = group
         self.const = const
         self.pointer = pointer
+
+        # for example: GLenum -> unsigned int
+        self.c_type = gl_types.translate_gl_type(self.type)
 
         self.size_parameter = None
         self.back_ref = None # back ref for size parameter
@@ -731,26 +734,18 @@ class Parameter(object):
 
     ##############################################
 
-    def prototype(self, types):
+    def prototype(self):
 
         if self.name is not None:
-            return '%s %s' % (self.translate_and_format_gl_type(types), self.name)
+            return '%s %s' % (self.format_gl_type(), self.name)
         else:
-            self.translate_and_format_gl_type(types)
+            self.format_gl_type()
 
     ##############################################
 
-    def translate_gl_type(self, types):
+    def format_gl_type(self):
 
-        # for example: GLenum -> unsigned int
-        return types.translate_gl_type(self.type)
-
-    ##############################################
-
-    def translate_and_format_gl_type(self, types):
-
-        gl_type = self.translate_gl_type(types)
-        return self._format_type(repr(gl_type))
+        return self._format_type(repr(self.c_type))
 
 ####################################################################################################
 
@@ -1054,6 +1049,8 @@ class RemovedItem(RequiredItem):
 
 class GlSpecParser(object):
 
+    # Fixme: class name
+
     _logger = _module_logger.getChild('GlSpecParser')
 
     ##############################################
@@ -1268,7 +1265,7 @@ class GlSpecParser(object):
                 # for example: 'const void *'
                 kwargs['ptype'] = text
 
-        return Parameter(location=parameter_location, **kwargs)
+        return Parameter(gl_types=self.types, location=parameter_location, **kwargs)
 
     ##############################################
 

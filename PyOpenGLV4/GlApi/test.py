@@ -42,20 +42,19 @@ api = 'gl'
 api_number = ApiNumber('3.0')
 profile = 'core'
 
-if False:
+if True:
     api_enums, api_commands = gl_spec.generate_api(api, api_number, profile)
 
     # for enum in api_enums:
     #     print repr(enum)
     for command in api_commands.itervalues():
         # print repr(command)
-        print command.prototype(gl_spec.types)
-        # print command.argument_types(gl_spec.types)
-        # print command.name, gl_spec.types.translate_gl_type(command.return_type), \
-        #     command.argument_types(gl_spec.types)
+        # print command.prototype()
+        # print command.argument_types()
+        # print command.name, command.return_type.c_type, command.argument_types()
 
 wrapper = None
-if True:
+if False:
     wrapper = CtypeWrapper(gl_spec, api, api_number, profile)
 
 ####################################################################################################
