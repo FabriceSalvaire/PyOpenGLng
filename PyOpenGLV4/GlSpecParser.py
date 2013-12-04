@@ -5,13 +5,223 @@
 #
 ####################################################################################################
 
+"""
+#. Create an openGL context
+#. Query OpenGL to get the version
+#. Build the API (gl/gles, api_number, profile)
+   Check OpenGL version >= api_number
+#. Install wrapper ?
+
+void glGenBuffers(GLsizei n,  GLuint * buffers)
+
+* const => input
+* len=1 => input via pointer
+* len=n => output array
+"""
+
+# Fixme: Python keyword
+#   len, type
+
 ####################################################################################################
 
 from lxml import etree
 
 ####################################################################################################
 
-class Groups(object):
+class NameDict(dict):
+
+   ##############################################
+
+    def register(self, item):
+        
+        if item.name in self:
+            raise IndexError("item %s already registered" % (item.name))
+
+        self[item.name] = item
+
+   ##############################################
+
+    def unregister(self, item_name):
+        
+        del self[item_name]
+
+####################################################################################################
+
+class ApiNumber(object):
+
+    ##############################################
+
+    def __init__(self, number):
+
+        self.major, self.minor = [int(x) for x in number.split('.')]
+
+    ##############################################
+
+    def __int__(self):
+
+        return self.major * 1000 + self.minor
+
+    ##############################################
+
+    def __str__(self):
+
+        return "%u.%u" % (self.major, self.minor)
+
+    ##############################################
+
+    def __le__(self, api_number):
+
+        return int(self) <= int(api_number)
+
+####################################################################################################
+
+class Types(object):
+
+    """
+    API types (<types> tag)
+    
+    The <types> tag contains individual <type> tags describing each of the derived types used in the
+    API.
+    """
+
+   ##############################################
+
+    def __init__(self):
+
+        self.types = [] # name is not uniq
+        self.c_types = {}
+
+   ##############################################
+
+    def register(self, type_):
+
+        self.types.append(type_)
+        # Fixme: gles ...
+        if type_.c_type is not None and type_.requires != 'khrplatform':
+            if type_.name not in self.c_types:
+                self.c_types[type_.name] = type_
+            else:
+                raise NameError("%s" % (type_.name))
+
+    ##############################################
+
+    def translate_gl_type(self, gl_type):
+
+        if gl_type in self.c_types:
+            return self.c_types[gl_type]
+        else:
+            # None ?
+            return gl_type
+        # raise NameError("Failed to translate type %s" % (gl_type))
+
+####################################################################################################
+
+
+class Type(object):
+
+    """
+    Each <type> tag contains legal C code, with attributes or embedded tags denoting the type name.
+    
+    Attributes of <type> tags
+    -------------------------
+    
+        requires
+            another type name this type requires to complete its definition.
+        
+        name
+            name of this type (if not defined in the tag body).
+        
+        api
+            an API name (see <feature> below) which specializes this definition
+            of the named type, so that the same API types may have different definitions for
+            e.g. GL ES and GL.
+        
+        comment
+            arbitrary string (unused).
+    
+     Contents of <type> tags
+     ------------------------
+    
+    <type> contains text which is legal C code for a type declaration. It may also contain embedded
+    tags:
+    
+        <apientry/>
+            insert a platform calling convention macro here during header generation, used mostly
+            for function pointer types.
+    
+        <name>
+            contains the name of this type (if not defined in the tag attributes).
+    """
+
+    c_types = (
+        'char',
+        'int8_t',
+        'uint8_t',
+        'short',
+        'int32_t',
+        'int',
+        'int64_t',
+        'uint64_t',
+        'float',
+        'float_t',
+        'double',
+        'intptr_t',
+        'ptrdiff_t',
+        'ssize_t',
+        'void',
+        )
+
+    ##############################################
+
+    def __init__(self,
+                 name,
+                 c_code=None, requires=None, api=None, comment=None, apientry=False,
+                 ):
+
+        self.name = name
+        self.c_code = c_code
+        self.apientry = apientry
+        self.requires = requires
+        self.api = api
+        self.comment = comment
+
+        self.unsigned = False
+        self.pointer = False
+        self.c_type = None
+
+        if (self.c_code is not None
+            and self.c_code.count('\n') == 0
+            and self.c_code.startswith('typedef')
+            and not self.c_code.endswith('(')):
+            for token in self.c_code.split()[1:]:
+                if token.startswith('khronos_'):
+                    token = token[len('khronos_'):]
+                if token == 'unsigned':
+                    self.unsigned = True
+                elif token == 'signed':
+                    self.unsigned = False
+                elif token == '*':
+                    self.pointer = True
+                elif token in self.c_types:
+                    self.c_type = token
+
+    ##############################################
+
+    def __repr__(self):
+
+        if self.unsigned:
+            type_string = 'unsigned '
+        else:
+            type_string = ''
+        type_string += self.c_type # if None?
+        if self.pointer:
+            type_string += ' *'
+
+        return type_string
+
+####################################################################################################
+
+class Groups(NameDict):
 
     """
     Enumerant Groups (<groups> tag)
@@ -30,18 +240,6 @@ class Groups(object):
     Each <groups> block contains zero or more <group> tags, in arbitrary order (although they are
     typically ordered by group name, to improve human readability).
     """
-
-    ##############################################
-
-    def __init__(self):
-
-        self._group_list = []
-
-   ##############################################
-
-    def append(self, group):
-        
-        self._group_list.append(group)
 
 ####################################################################################################
 
@@ -146,14 +344,62 @@ class Enums(object):
         self.vendor = vendor
         self.comment = comment
 
-        self._enum_list = []
+        self._enum_name_dict = {}
+        self._enum_value_dict = {}
+
+    ##############################################
+
+    def __iter__(self):
+
+        return self._enum_name_dict.itervalues()
+
+    ##############################################
+
+    def __getitem__(self, key):
+
+        try:
+            return self._enum_name_dict[key]
+        except KeyError:
+            try:
+                return self._enum_value_dict[key]
+            except KeyError:
+                raise KeyError("Any enum having this name or value: " + str(key))
 
    ##############################################
 
-    def append(self, enum):
+    def register(self, enum, primary_registration=True):
         
-        self._enum_list.append(enum)
- 
+        if enum.name in self._enum_name_dict:
+            try:
+                namespace = enum.enums.namespace
+            except Exception:
+                namespace = '(namespace not yed defined)'
+            raise IndexError("enum %s already registered in %s" % (enum.name, namespace))
+
+        self._enum_name_dict[enum.name] = enum
+        self._enum_value_dict[enum.value] = enum
+        if primary_registration:
+            if enum.enums is not None:
+                raise NameError('Back enums reference is already affected')
+            else:
+                enum.enums = self
+
+   ##############################################
+
+    def unregister(self, enum_name):
+
+        enum = self._enum_name_dict[enum_name]
+        del self._enum_value_dict[enum.value]
+        del self._enum_name_dict[enum_name]
+
+    ##############################################
+
+    def merge(self, api, enums):
+
+        for enum in enums._enum_name_dict.itervalues():
+            if enum.api is None or enum.api == api:
+                self.register(enum, primary_registration=False)
+
 ####################################################################################################
 
 class Enum(object):
@@ -212,6 +458,7 @@ class Enum(object):
         self.alias = alias
         self.comment = comment
         self.api = api
+        self.enums = None
 
     ##############################################
 
@@ -221,13 +468,25 @@ class Enum(object):
 
     ##############################################
 
+    def __str__(self):
+
+        return self.name
+
+    ##############################################
+
+    def __int__(self):
+
+        return self.value
+
+    ##############################################
+
     def repr_long(self):
 
         return repr(self) + " (type: %(type)s, alias: %(alias)s, api: %(api)s, comment: %(comment)s)" % self.__dict__
 
 ####################################################################################################
 
-class Commands(object):
+class Commands(NameDict):
 
     """
     Command Blocks (<commands> tag)
@@ -247,18 +506,6 @@ class Commands(object):
     Each <commands> block contains zero or more <command> tags, in arbitrary order (although they
     are typically ordered by sorting on the command name, to improve human readability).
     """
-
-    ##############################################
-
-    def __init__(self):
-
-        self._command_list = []
-
-   ##############################################
-
-    def append(self, group):
-        
-        self._command_list.append(group)
 
 ####################################################################################################
 
@@ -330,13 +577,45 @@ class Command(object):
     ##############################################
 
     def __init__(self,
-                 name,
-                 return_type=None, parameters=(),
+                 name, ptype,
+                 parameters=(),
                  ):
 
         self.name = name
-        self.return_type = return_type
+        self.return_type = ptype
         self.parameters = parameters
+
+    ##############################################
+
+    def __str__(self):
+
+        return self.name
+
+    ##############################################
+
+    def __repr__(self):
+
+        return '%s %s (%s)' % (self.return_type, self.name,
+                               ', '.join([repr(parameter) for parameter in self.parameters]))
+
+    ##############################################
+
+    def prototype(self, types):
+
+        if self.return_type != 'void':
+            gl_type = types.translate_gl_type(self.return_type)
+            return_type = repr(gl_type)
+        else:
+            return_type = 'void'
+
+        return '%s %s (%s)' % (return_type, self.name,
+                               ', '.join([parameter.prototype(types) for parameter in self.parameters]))
+
+    ##############################################
+
+    def argument_types(self, types):
+
+        return [parameter.translate_gl_type(types) for parameter in self.parameters]
 
 ####################################################################################################
 
@@ -380,13 +659,58 @@ class Parameter(object):
 
     def __init__(self,
                  name,
-                 ptype=None, group=None, len=None,
+                 ptype=None, group=None, length=None, const=False, pointer=0,
                  ):
 
         self.name = name
         self.type = ptype
         self.group = group
-        self.len = len
+        self.const = const
+        self.pointer = pointer
+
+        self.size_parameter = None
+        self.array_size = None
+        try:
+            self.array_size = int(length)
+        except ValueError:
+            self.computed_size = length.startswith('COMPSIZE')
+            self.size_parameter = length
+        except TypeError:
+            pass
+
+    ##############################################
+
+    def _format_type(self, type_string):
+        
+        if self.const:
+            type_string = 'const ' + type_string
+        if self.pointer:
+            type_string += ' ' + '*'*self.pointer
+        if self.size_parameter is not None:
+            type_string += ' [%s]' % self.size_parameter
+        elif self.array_size is not None:
+            type_string += ' [%u]' % self.array_size
+        
+        return type_string
+
+    ##############################################
+
+    def __repr__(self):
+
+        return '%s %s' % (self._format_type(self.type), self.name)
+
+    ##############################################
+
+    def prototype(self, types):
+
+        return '%s %s' % (self.translate_gl_type(types), self.name)
+
+    ##############################################
+
+    def translate_gl_type(self, types):
+
+        gl_type = types.translate_gl_type(self.type)
+        return self._format_type(repr(gl_type))
 
 ####################################################################################################
 
@@ -438,11 +762,19 @@ class Feature(object):
 
         self.api = api
         self.name = name
-        self.number = number
+        # self.number = number
         self.protect = protect
         self.comment = comment
 
+        self.api_number = ApiNumber(number)
+
         self._interface_list = []
+
+    ##############################################
+
+    def __iter__(self):
+
+        return iter(self._interface_list)
 
     ##############################################
 
@@ -600,14 +932,35 @@ class RequiredInterface(object):
         self.comment = comment
         self.api = api
 
-        self._items = []
+        self._items = set()
 
     ##############################################
 
-    def append(self, **kwargs):
+    def __iter__(self):
+
+        return iter(self._items)
+
+    ##############################################
+
+    def append(self, item):
+
+        self._items.add(item)
+
+    ##############################################
+
+    def append_new(self, **kwargs):
 
         item = RequiredItem(**kwargs)
-        self._items.append(item)
+        self.append(item)
+
+    ##############################################
+
+    def merge(self, interface):
+
+        if isinstance(interface, RequiredInterface):
+            self._items = self._items.union(interface._items)
+        else:
+            self._items = self._items.difference(interface._items)
 
 ####################################################################################################
 
@@ -624,16 +977,28 @@ class RequiredItem(object):
         self.name = name
         self.comment = comment
 
+    ##############################################
+
+    def __hash__(self):
+
+        return hash(self.name)
+
+    ##############################################
+
+    def __eq__(self, other):
+
+        return self.name == other.name 
+
 ####################################################################################################
 
 class RemovedInterface(RequiredInterface):
 
     ##############################################
 
-    def append(self, **kwargs):
+    def append_new(self, **kwargs):
 
         item = RemovedItem(**kwargs)
-        self._items.append(item)
+        self.append(item)
 
 ####################################################################################################
 
@@ -653,9 +1018,10 @@ class GlSpecParser(object):
         if relax_ng_file_path is not None:
             self._validate(relax_ng_file_path)
 
-        self.enums_list = []
+        self.types = Types()
         self.groups = Groups()
         self.commands = Commands()
+        self.enums_list = []
         self.feature_list = []
         self.extension_list = []
 
@@ -692,6 +1058,14 @@ class GlSpecParser(object):
 
     ##############################################
 
+    def _iter_on_node(self, node, tag, callback):
+
+        for child in node:
+            if child.tag == tag:
+                callback(child)
+
+    ##############################################
+
     def _parse(self):
 
         root = self._tree.getroot()
@@ -701,31 +1075,40 @@ class GlSpecParser(object):
         for node in root:
             # print type(node), node.tag
             if node.tag == 'types':
-                pass
+                self._iter_on_node(node, 'type', self._parse_type)
             elif node.tag == 'groups':
-                for group_node in node:
-                    self._parse_group(group_node)
+                self._iter_on_node(node, 'group', self._parse_group)
             elif node.tag == 'enums':
                 self._parse_enums(node)
             elif node.tag == 'commands':
-                for command_node in node:
-                    self._parse_command(command_node)
+                self._iter_on_node(node, 'command', self._parse_command)
             elif node.tag == 'feature':
                 self._parse_feature(node)
             elif node.tag == 'extensions':
-                for extension_node in node:
-                    self._parse_extension(extension_node)
+                self._iter_on_node(node, 'extension', self._parse_extension)
+
+    ##############################################
+
+    def _parse_type(self, type_node):
+
+        kwargs = dict(type_node.attrib)
+        if type_node.text is not None:
+            kwargs['c_code'] = type_node.text.strip()
+        for node in type_node:
+            if node.tag == 'apientry':
+                kwargs['apientry'] = True
+            elif node.tag == 'name':
+                kwargs['name'] = node.text
+        type_= Type(**kwargs)
+        self.types.register(type_)
 
     ##############################################
 
     def _parse_group(self, group_node):
 
-        if group_node.tag != 'group':
-            raise ValueError("Bad group")
-
         enum_name_list = [enum_node.attrib['name'] for enum_node in group_node]
         group = Group(enum_name_list=enum_name_list, **group_node.attrib)
-        self.groups.append(group)
+        self.groups.register(group)
 
     ##############################################
 
@@ -739,34 +1122,60 @@ class GlSpecParser(object):
             if enum_node.tag == 'enum':
                 attributes = self._convert_node_attributes(enum_node, int_attributes=('value',))
                 enum = Enum(**attributes)
-                enums.append(enum)
+                enums.register(enum)
                 # print enum
 
     ##############################################
 
     def _parse_command(self, command_node):
 
-        if command_node.tag != 'command':
-            raise ValueError("Bad group")
-
-        return_type = None
-        command_name = None
+        command_kwargs = None
         parameters = []
         for node in command_node:
             if node.tag == 'proto':
-                return_type = node.text
-                if return_type is not None:
-                    return_type = return_type.strip()
-                if len(node) != 1 and node[0].tag == 'name':
-                    raise ValueError("Bad proto")
-                command_name = node[0].text
+                command_kwargs = {child.tag:child.text.strip() for child in node}
+                if 'ptype' not in command_kwargs:
+                    command_kwargs['ptype'] = node.text.strip()
             elif node.tag == 'param':
-                kwargs = dict(node.attrib)
-                kwargs.update({child.tag:child.text for child in node})
-                parameter = Parameter(**kwargs)
-                parameters.append(Parameter)
-        command = Command(command_name, return_type, parameters)
-        self.commands.append(command)
+                parameter = self._parse_parameter(node, command_kwargs)
+                parameters.append(parameter)
+        command = Command(parameters=parameters, **command_kwargs)
+        self.commands.register(command)
+
+    ##############################################
+
+    def _parse_parameter(self, node, command_kwargs):
+
+        kwargs = dict(node.attrib)
+        # Fixme
+        if 'len' in kwargs:
+            kwargs['length'] = kwargs['len']
+            del kwargs['len']
+        for child in node:
+            kwargs[child.tag] = child.text
+            if child.tail:
+                text = child.tail.strip()
+                if text.endswith('**'):
+                    kwargs['pointer'] = 2
+                elif text.endswith('*'):
+                    kwargs['pointer'] = 1
+
+        # Fixme: debug, remove
+        ### if command_kwargs['name'] == 'glGetAttribLocation':
+        ###     print node.text, node.tail
+        ###     for child in node:
+        ###         print child.tag, child.text, child.tail
+
+        if node.text is not None:
+            text = node.text.strip()
+            if 'ptype' not in kwargs:
+                # for example: 'const void *'
+                kwargs['ptype'] = node.text.strip()
+            else:
+                if text.startswith('const'):
+                    kwargs['const'] = True
+
+        return Parameter(**kwargs)
 
     ##############################################
 
@@ -776,7 +1185,7 @@ class GlSpecParser(object):
             if item_node.tag != etree.Comment:
                 kwargs = dict(item_node.attrib)
                 kwargs['type'] = item_node.tag
-                interface.append(**kwargs)
+                interface.append_new(**kwargs)
 
     ##############################################
 
@@ -810,6 +1219,38 @@ class GlSpecParser(object):
             self._parse_interface(interface_node, interface)
             extension.append(interface)
 
+    ##############################################
+
+    def generate_api(self, api, api_number):
+
+        all_api_enums = Enums(namespace=None)
+        for enums in self.enums_list:
+            all_api_enums.merge(api, enums)
+
+        required_interface = RequiredInterface()
+        for feature in self.feature_list:
+            if feature.api == api and feature.api_number <= api_number:
+                # print 'Merge %s %s' % (feature.api, str(feature.api_number))
+                for interface in feature:
+                    required_interface.merge(interface)
+
+        api_enums = Enums(namespace=api + '-' + str(api_number))
+        api_commands = Commands()
+        for item in required_interface:
+            if item.type == 'enum':
+                api_enums.register(all_api_enums[item.name], primary_registration=False)
+            elif item.type == 'command':
+                api_commands.register(self.commands[item.name])
+
+        if True:
+            # for enum in api_enums:
+            #     print repr(enum)
+            for command in api_commands.itervalues():
+                # print repr(command)
+                # print command.prototype(self.types)
+                # print command.argument_types(self.types)
+                print command.name, self.types.translate_gl_type(command.return_type), command.argument_types(self.types)
+                
 ####################################################################################################
 
 if __name__ == '__main__':
@@ -817,11 +1258,12 @@ if __name__ == '__main__':
     import os
 
     source_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-    print source_path
+    # print source_path
     gl_xml_file_path = os.path.join(source_path, 'doc/registry-api/gl.xml')
     # trang -I rnc -O rng doc/registry-api/registry.rnc doc/registry-api/registry-rng.xml
     relax_ng_file_path = os.path.join(source_path, 'doc/registry-api/registry-rng.xml')
     gl_spec_parser = GlSpecParser(gl_xml_file_path, relax_ng_file_path)
+    gl_spec_parser.generate_api(api='gl', api_number=ApiNumber('2.0'))
 
 ####################################################################################################
 #
