@@ -89,6 +89,32 @@ class GlWidget(GlWidgetBase):
             print e.message
         with wrapper.error_context():
             print wrapper.glGenBuffers(10)
+        with wrapper.error_context():
+            texture_id = wrapper.glGenTextures(1)
+            wrapper.glActiveTexture(wrapper.GL.GL_TEXTURE0)
+            wrapper.glBindTexture(wrapper.GL.GL_TEXTURE_1D, texture_id)
+            wrapper.glTexParameteri(wrapper.GL.GL_TEXTURE_1D, wrapper.GL.GL_TEXTURE_MAG_FILTER, wrapper.GL.GL_NEAREST)
+            wrapper.glTexParameteri(wrapper.GL.GL_TEXTURE_1D, wrapper.GL.GL_TEXTURE_MIN_FILTER, wrapper.GL.GL_NEAREST)
+            # stipple_pattern_image = np.zeros((100), dtype=np.uint8)
+            # level = 0
+            # border = 0
+            # internal_format = wrapper.GL.GL_LUMINANCE
+            # data_format = wrapper.GL.GL_LUMINANCE
+            # data_type = wrapper.GL.GL_UNSIGNED_BYTE
+            # wrapper.glTexImage1D(wrapper.GL.GL_TEXTURE_1D,
+            #                      level, internal_format, width, border, data_format, data_type,
+            #                      stipple_pattern_image)
+        with wrapper.error_context():
+            buffer_id = wrapper.glGenBuffers(1)
+            wrapper.glBindBuffer(wrapper.GL.GL_ARRAY_BUFFER, buffer_id)
+            N = 10
+            data = np.arange(N, dtype=np.uint8)
+            print data
+            wrapper.glBufferData(wrapper.GL.GL_ARRAY_BUFFER, data, wrapper.GL.GL_STATIC_DRAW)
+            # data_back = wrapper.glGetBufferSubData(wrapper.GL.GL_ARRAY_BUFFER, 0, data.nbytes)
+            data_back = np.zeros(data.size, dtype=data.dtype)
+            rc = wrapper.glGetBufferSubData(wrapper.GL.GL_ARRAY_BUFFER, 0, data_back)
+            print data_back
 
         sys.exit(0)
         # QtGui.QApplication.instance().exit()

@@ -197,6 +197,8 @@ class Type(object):
 
     def __repr__(self):
 
+        # Fixme: str ?
+
         if self.unsigned:
             type_string = 'unsigned '
         else:
@@ -731,6 +733,26 @@ class Parameter(object):
             return '%s %s' % (self._format_type(self.type), self.name)
         else:
             return self._format_type(self.type)
+
+    ##############################################
+
+    def long_repr(self):
+
+        template = """Parameter %(name)s
+  location         %(location)u
+  type             %(type)s
+  group            %(group)s
+  const            %(const)s
+  pointer          %(pointer)s
+  c type           %(c_type)s
+  size parameter   %(size_parameter)s
+  back ref         %(back_ref)s
+  computed size    %(computed_size)s
+  size_multiplier %(size_multiplier)u
+"""
+# array_size %(array_size)u # can be %s
+
+        return template % self.__dict__
 
     ##############################################
 

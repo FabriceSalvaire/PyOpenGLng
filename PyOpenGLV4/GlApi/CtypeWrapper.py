@@ -7,6 +7,7 @@
 
 ####################################################################################################
 
+import collections
 import ctypes
 import logging
 
@@ -35,13 +36,16 @@ __gl_to_ctypes_type__ = {
     'float_t':ctypes.c_float,
     'double':ctypes.c_double,
     'intptr_t':ctypes.c_void_p, # ?
-    'ptrdiff_t':ctypes.c_void_p, # ?
+    'ptrdiff_t':ctypes.c_void_p, # int64 ?
     'ssize_t':ctypes.c_uint64, # ?
-    'void': None, # ?
     }
 
 def to_ctypes_type(parameter):
-    return __gl_to_ctypes_type__[str(parameter.c_type)]
+    c_type = str(parameter.c_type)
+    if parameter.pointer and c_type == 'void':
+        return ctypes.c_void_p
+    else:
+        return __gl_to_ctypes_type__[c_type]
 
 ####################################################################################################
 
@@ -69,36 +73,81 @@ class ParameterWrapper(object):
 
 ####################################################################################################
 
-class OutputArrayWrapper(object):
-
-    size_parameter_threshold = 20
+class ArrayWrapper(object):
 
     ##############################################
 
     def __init__(self, size_parameter, pointer_parameter):
+
+        # self._size_parameter = size_parameter
+        # self._pointer_parameter = pointer_parameter
 
         self._size_location = size_parameter.location
         self._size_type = to_ctypes_type(size_parameter)
         self._pointer_location = pointer_parameter.location
         self._pointer_type = to_ctypes_type(pointer_parameter)
 
+####################################################################################################
+
+class OutputArrayWrapper(ArrayWrapper):
+
+    size_parameter_threshold = 20
+
     ##############################################
 
-    def from_python(self, size_parameter, c_parameters):
+    def from_python(self, parameter, c_parameters):
 
-        c_parameters[self._size_location] = self._size_type(size_parameter)
+        # print self._pointer_parameter.long_repr(), self._pointer_type, type(parameter)
 
-        if size_parameter >= self.size_parameter_threshold:
-            array = np.zeros((size_parameter), dtype=self._pointer_type)
-            ctypes_parameter = array.ctypes.data
+        if self._pointer_type == ctypes.c_void_p:
+            array = parameter
+            c_parameters[self._size_location] = self._size_type(array.size)
+            ctypes_parameter = array.ctypes.data # _as(ctypes.c_void_p)
+            c_parameters[self._pointer_location] = ctypes_parameter
             to_python_converter = IdentityConverter(array)
         else:
-            array_type = self._pointer_type * size_parameter
-            ctypes_parameter = array_type()
-            to_python_converter = ListConverter(ctypes_parameter)
-        c_parameters[self._pointer_location] = ctypes_parameter
+            size_parameter = parameter
+
+            c_parameters[self._size_location] = self._size_type(size_parameter)
+            
+            if size_parameter >= self.size_parameter_threshold:
+                array = np.zeros((size_parameter), dtype=self._pointer_type)
+                ctypes_parameter = array.ctypes.data_as(ctypes.c_void_p)
+                # ctypes.POINTER(self._pointer_type)
+                to_python_converter = IdentityConverter(array)
+            else:
+                array_type = self._pointer_type * size_parameter
+                ctypes_parameter = array_type()
+                to_python_converter = ListConverter(ctypes_parameter)
+            c_parameters[self._pointer_location] = ctypes_parameter
 
         return to_python_converter
+
+####################################################################################################
+
+class InputArrayWrapper(ArrayWrapper):
+
+    ##############################################
+
+    def from_python(self, array, c_parameters):
+
+        if isinstance(array, np.ndarray):
+            if self._pointer_type == ctypes.c_void_p:
+                size_parameter = array.size
+            else:
+                size_parameter = array.nbytes
+            ctypes_parameter = array.ctypes.data_as(ctypes.c_void_p)
+        elif isinstance(array, collections.Iterable):
+            size_parameter = len(array)
+            array_type = self._pointer_type * size_parameter
+            ctypes_parameter = array_type(array)
+        else:
+            raise ValueError
+
+        c_parameters[self._size_location] = self._size_type(size_parameter)
+        c_parameters[self._pointer_location] = ctypes_parameter
+
+        return None
 
 ####################################################################################################
 
@@ -148,11 +197,11 @@ class GlCommandWrapper(object):
                 pass
             elif parameter.back_ref is not None:
                 pointer_parameter = parameter.back_ref
-                if not pointer_parameter.const: # input parameter
+                if not pointer_parameter.const:
                     parameter_wrapper = OutputArrayWrapper(parameter, pointer_parameter)
-                    self._parameter_wrappers.append(parameter_wrapper)
                 else:
-                    pass
+                    parameter_wrapper = InputArrayWrapper(parameter, pointer_parameter)
+                self._parameter_wrappers.append(parameter_wrapper)
             else:
                 parameter_wrapper = ParameterWrapper(parameter)
                 self._parameter_wrappers.append(parameter_wrapper)
@@ -176,9 +225,8 @@ class GlCommandWrapper(object):
 
     def __call__(self, *args, **kwargs):
 
-        #print 'Call', repr(self)
-        gl_spec_types = self._wrapper._gl_spec.types
-        #print self._command.prototype(gl_spec_types)
+        # print 'Call', repr(self)
+        # print self._command.prototype()
 
         c_parameters = [None]*self._number_of_parameters
         to_python_converters = []
@@ -198,7 +246,11 @@ class GlCommandWrapper(object):
             output_parameters = [to_python_converter() for to_python_converter in to_python_converters]
             if self._return_void:
                 if len(output_parameters) == 1:
-                    return output_parameters[0]
+                    output_parameter = output_parameters[0]
+                    if len(output_parameter) == 1:
+                        return output_parameter[0]
+                    else:
+                        return output_parameter
                 else:
                     return output_parameters
             else:
