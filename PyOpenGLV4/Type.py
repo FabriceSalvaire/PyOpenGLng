@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ####################################################################################################
 #
 # PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl.
@@ -16,7 +18,53 @@ It gives access to the following functions to set and get uniform values:
 * glProgramUniform{1|2|3|4}{f|i|ui}
 * glProgramUniform{1|2|3|4}{f|i|ui}v
 * glProgramUniformMatrix{2|3|4|2x3|3x2|2x4|4x2|3x4|4x3}fv 
-        
+
+GL data types:
+
+    ======== =========== ====================================================================
+    GL Type   Bit Width  Description
+    ======== =========== ====================================================================
+    boolean    1 or more Boolean
+    byte       8         Signed two’s complement binary integer
+    ubyte      8         Unsigned binary integer
+    char       8         Characters making up strings
+    short     16         Signed two’s complement binary integer
+    ushort    16         Unsigned binary integer
+    int       32         Signed two’s complement binary integer
+    uint      32         Unsigned binary integer
+    fixed     32         Signed two’s complement 16.16 scaled integer
+    int64     64         Signed two’s complement binary integer
+    uint64    64         Unsigned binary integer
+    sizei     32         Non-negative binary integer size
+    enum      32         Enumerated binary integer value
+    intptr    ptrbits    Signed twos complement binary integer
+    sizeiptr  ptrbits    Non-negative binary integer size
+    sync      ptrbits    Sync object handle
+    bitfield  32         Bit field
+    half      16         Half-precision floating-point value encoded in an unsigned scalar
+    float     32         Floating-point value
+    clampf    32         Floating-point value clamped to [0, 1]
+    double    64         Floating-point value
+    clampd    64         Floating-point value clamped to [0, 1]
+    ======== =========== ====================================================================
+
+Correspondence of command suffix type descriptors to GL argument types:
+
+    ===============  =====================
+    Type Descriptor  Corresponding GL Type
+    ===============  =====================
+    b                byte
+    s                short
+    i                int
+    i64              int64
+    f                float
+    d                double
+    ub               ubyte
+    us               ushort
+    ui               uint
+    ui64             uint64
+    ===============  =====================
+
 """
 
 ####################################################################################################
@@ -47,7 +95,7 @@ gl_data_type = EnumFactory('GlDataType',
 #: OpenGL to Numpy data type
 gl_to_numpy_data_type = {
     gl_data_type.bool: np.uint32, # np.bool ?
-    gl_data_type.unsigned_int: np.uint16,
+    gl_data_type.unsigned_int: np.uint32,
     gl_data_type.int: np.int32,
     gl_data_type.float: np.float32,
     gl_data_type.double: np.float64,
@@ -55,12 +103,18 @@ gl_to_numpy_data_type = {
 
 #! OpenGL data type to the prototype letter
 gl_data_type_to_prototype_letter =  {
-    gl_data_type.bool: 'ui',
+    gl_data_type.bool: 'ui', # should be 'b'
     gl_data_type.unsigned_int: 'ui',
     gl_data_type.int: 'i',
     gl_data_type.float: 'f',
     gl_data_type.double: 'd',
     }
+
+####################################################################################################
+
+def get_gl_attr(name):
+    """ Retrieve an attribute within the GL module. """
+    return getattr(GL, name)
 
 ####################################################################################################
 
@@ -71,13 +125,13 @@ class GlType(object):
     Public attributes are:
 
       :attr:`token_name`
-        OpenGL type name token
+        OpenGL type name token, for example :attr:`GL.GL_FLOAT_VEC4`
 
       :attr:`keyword`
-        GLSL type keyword
+        GLSL type keyword, for example ``vec4``
 
       :attr:`data_type`
-         OpenGL data type enumerate
+         OpenGL data type enumerate, for example :attr:`gl_data_type.float`
 
       :attr:`uniform_get_v`
         Function to get the uniform value, cf. glGetUniform<type>v functions.
@@ -109,16 +163,18 @@ class GlType(object):
     
     def __init__(self, token_name, keyword, data_type, uniform_get, uniform_set):
 
-        self.token_name = getattr(GL, 'GL_' + token_name)
         self.keyword = keyword
         self.data_type = data_type
-        self.uniform_get_v = getattr(GL, 'glGetUniform' + uniform_get + 'v')
-        self.uniform_set_v = getattr(GL, 'glUniform' + uniform_set + 'v')
-        self.program_uniform_set_v = getattr(GL, 'glProgramUniform' + uniform_set + 'v')
+
+        self.token_name = get_gl_attr('GL_' + token_name)
+        self.uniform_get_v = get_gl_attr('glGetUniform' + uniform_get + 'v')
+        self.uniform_set_v = get_gl_attr('glUniform' + uniform_set + 'v')
+        self.program_uniform_set_v = get_gl_attr('glProgramUniform' + uniform_set + 'v')
         if isinstance(self, (GlVariableType, GlVectorType)):
-            self.uniform_set = getattr(GL, 'glUniform' + uniform_set)
+            self.uniform_set = get_gl_attr('glUniform' + uniform_set)
         else:
             self.uniform_set = None
+
         self.dtype = gl_to_numpy_data_type[data_type]
 
     ##############################################
@@ -131,7 +187,7 @@ class GlType(object):
     
     def print_object(self):
 
-        message = """
+        template = """
 type %(token_name)s
   keyword               %(keyword)s
   data_type             %(data_type)s
@@ -142,7 +198,7 @@ type %(token_name)s
   dtype                 %(dtype)s
 """
 
-        print message % self.__dict__
+        print template % self.__dict__
 
 ####################################################################################################
 
@@ -157,7 +213,7 @@ class GlVariableType(GlType):
     
     def __init__(self, data_type):
 
-        keyword = repr(data_type)
+        keyword = str(data_type)
         token_name = keyword.upper()
         uniform_get = gl_data_type_to_prototype_letter[data_type]
         uniform_set = '1' + uniform_get
@@ -178,7 +234,7 @@ class GlVectorType(GlType):
 
         letter = gl_data_type_to_prototype_letter[data_type]
         suffix = 'vec' + str(size)
-        token_name = (repr(data_type) + '_' + suffix).upper()
+        token_name = (str(data_type) + '_' + suffix).upper()
         if data_type == gl_data_type.bool:
             keyword = 'b' + suffix
         elif data_type == gl_data_type.float:
@@ -209,7 +265,7 @@ class GlMatrixType(GlType):
         else:
             dimension_string = '%ux%u' % (number_of_rows, number_of_columns)
 
-        token_name = repr(data_type).upper() + '_MAT' + dimension_string
+        token_name = str(data_type).upper() + '_MAT' + dimension_string
         keyword = 'mat' + dimension_string
         uniform_get = 'f'
         uniform_set = 'Matrix' + dimension_string + 'f'
@@ -229,7 +285,7 @@ class GlSamplerType(GlType):
     def __init__(self, data_type, token_name, keyword):
 
         if data_type != gl_data_type.float:
-            token_name = (repr(data_type) + '_' + token_name).upper()
+            token_name = (str(data_type) + '_' + token_name).upper()
             keyword = gl_data_type_to_prototype_letter[data_type] + keyword
         # A sampler corresponds to an unsigned integer.
         # Fixme: why i instead of ui
@@ -239,7 +295,7 @@ class GlSamplerType(GlType):
 
         super(GlSamplerType, self).__init__(token_name, keyword, uniform_data_type, uniform_get, uniform_set)
 
-        # To distinguish between sample and uniform data type
+        # To distinguish between sampler and uniform data type
         self.sampler_data_type = data_type
 
 ####################################################################################################
@@ -261,6 +317,8 @@ class GlTypes(dict):
 #
 # Define the OpenGL Type
 #
+
+# Fixme: namespace pollution, use an init function, or a lazy initialisation
 
 gl_type_list = []
 dimensions = (2, 3, 4)

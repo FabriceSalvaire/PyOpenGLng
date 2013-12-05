@@ -29,8 +29,8 @@ import OpenGL.GL as GL
 
 ####################################################################################################
 
-from .GlVertexArrayObject import GlVertexArrayObject
-from .GlBuffer import GlArrayBuffer
+from .VertexArrayObject import GlVertexArrayObject
+from .Buffer import GlArrayBuffer
 
 ####################################################################################################
 

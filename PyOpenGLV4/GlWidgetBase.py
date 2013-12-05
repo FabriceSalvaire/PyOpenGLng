@@ -44,8 +44,8 @@ import OpenGL.GL as GL
 
 ####################################################################################################
 
-from .GlOrtho2D import GlOrtho2D, XAXIS, YAXIS, ZoomManagerAbc
-from .GlVersion import GlVersion
+from .Ortho2D import Ortho2D, XAXIS, YAXIS, ZoomManagerAbc
+from .GlFeatures import GlVersion, GlFeatures
 from .Tools.Interval import IntervalInt2D
 
 ####################################################################################################
@@ -89,11 +89,12 @@ class GlWidgetBase(QtOpenGL.QGLWidget):
         self._logger.debug('Initialise GL - Super')
         
         self.gl_version = GlVersion()
+        self.gl_features = GlFeatures()
         # print self.gl_version
         for extension in ('GL_EXT_texture_integer',
                           #'GL_NV_texture_shader',
                           ):
-            if extension not in self.gl_version:
+            if extension not in self.gl_features:
                 raise NameError("Doesn't have GL extension %s" % (extension))
 
     ##############################################
@@ -122,7 +123,7 @@ class GlWidgetBase(QtOpenGL.QGLWidget):
 
     def init_glortho2d(self, max_area=None, zoom_manager=None):
 
-        self._logger.debug('Initialise GlOrtho2D - Super')
+        self._logger.debug('Initialise Ortho2D - Super')
 
         if max_area is None:
             area_size = 10**3
@@ -133,7 +134,7 @@ class GlWidgetBase(QtOpenGL.QGLWidget):
             self._logger.debug('  use default ZoomManagerAbc')
             zoom_manager = ZoomManagerAbc()
 
-        self.glortho2d = GlOrtho2D(max_area, zoom_manager, self)
+        self.glortho2d = Ortho2D(max_area, zoom_manager, self)
 
     ##############################################
 

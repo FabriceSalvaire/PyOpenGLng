@@ -11,8 +11,7 @@ import os
 
 ####################################################################################################
 
-from PyOpenGLV4.GlShader import GlShaderManager, GlShaderProgramInterface
-from PyOpenGLV4.GlRandomTexture import GlRandomTexture, GlRandomTextureShaderProgram
+from PyOpenGLV4.Shader import GlShaderManager, GlShaderProgramInterface
 
 ####################################################################################################
 
@@ -37,8 +36,6 @@ position_shader_program_interface = GlShaderProgramInterface(uniform_blocks=('vi
 texture_shader_program_interface = GlShaderProgramInterface(uniform_blocks=('viewport',),
                                                             attributes=('position',
                                                                         'position_uv'))
-
-random_texture = GlRandomTexture(size=1000, texture_unit=1)
 
 if shader_manager.has_visual():
     

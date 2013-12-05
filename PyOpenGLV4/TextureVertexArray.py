@@ -20,8 +20,8 @@ GL.GL_RG_INTEGER = OpenGL.constant.Constant('GL_RG_INTEGER', 0x8228)
 
 ####################################################################################################
 
-from .GlVertexArrayObject import GlVertexArrayObject
-from .GlBuffer import GlArrayBuffer
+from .VertexArrayObject import GlVertexArrayObject
+from .Buffer import GlArrayBuffer
 
 ####################################################################################################
 

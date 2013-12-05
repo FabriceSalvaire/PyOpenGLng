@@ -37,7 +37,7 @@ import OpenGL.GL.ARB.vertex_shader as GL_VS
 
 ####################################################################################################
 
-import PyOpenGLV4.GlType as GlType
+import PyOpenGLV4.Type as GlType
 import PyOpenGLV4.OpenGlExt as GL_Ext
 from .Tools.AttributeDictionaryInterface import (AttributeDictionaryInterface,
                                                            AttributeDictionaryInterfaceDescriptor)

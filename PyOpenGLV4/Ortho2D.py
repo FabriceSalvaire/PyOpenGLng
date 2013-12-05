@@ -244,7 +244,7 @@ class ZoomManagerAbc(object):
 
 ####################################################################################################
 
-class GlOrtho2D(object):
+class Ortho2D(object):
 
     """ This class implements an Orthonormal 2D Viewport.
     """
@@ -276,7 +276,7 @@ class GlOrtho2D(object):
 
     def __str__(self):
 
-        string_format = """GlOrtho2D:
+        string_format = """Ortho2D:
  - max area: %s
  - area: %s
  - window: %s

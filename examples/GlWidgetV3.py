@@ -20,14 +20,13 @@ import OpenGL.GLU as GLU
 
 from PyOpenGLV4.GlWidgetBase import GlWidgetBase
 
-from PyOpenGLV4.Geometry import Point, Offset, Segment, Rectangle
-from PyOpenGLV4.GlBuffer import GlUniformBuffer
+from PyOpenGLV4.Geometry import Point, Offset, Segment
+from PyOpenGLV4.Buffer import GlUniformBuffer
 #!# from PyOpenGLV4.GlOrtho2D import ZoomManagerAbc
-from PyOpenGLV4.GlPrimitiveVertexArray import GlSegmentVertexArray, GlRectangleVertexArray
-from PyOpenGLV4.GlStippleTexture import GlStippleTexture
-from PyOpenGLV4.GlTextureVertexArray import GlTextureVertexArray
+from PyOpenGLV4.PrimitiveVertexArray import GlSegmentVertexArray
+from PyOpenGLV4.TextureVertexArray import GlTextureVertexArray
 from PyOpenGLV4.Tools.Interval import IntervalInt2D
-import PyOpenGLV4.GlFixedPipeline as GlFixedPipeline
+import PyOpenGLV4.FixedPipeline as GlFixedPipeline
 
 ####################################################################################################
 
