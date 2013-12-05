@@ -40,12 +40,28 @@ __gl_to_ctypes_type__ = {
     'ssize_t':ctypes.c_uint64, # ?
     }
 
-def to_ctypes_type(parameter):
+__numpy_to_ctypes_type__ = {
+    '<u1':ctypes.c_uint8,
+    '<u2':ctypes.c_uint16,
+    '<u4':ctypes.c_uint32,
+    '<u8':ctypes.c_uint64,
+    '<i1':ctypes.c_int8,
+    '<i2':ctypes.c_int16,
+    '<i4':ctypes.c_int32,
+    '<i8':ctypes.c_int64,
+    '<f4':ctypes.c_float,
+    '<f8':ctypes.c_double,
+    }
+
+def gl_to_ctypes_type(parameter):
     c_type = str(parameter.c_type)
     if parameter.pointer and c_type == 'void':
         return ctypes.c_void_p
     else:
         return __gl_to_ctypes_type__[c_type]
+
+def numpy_to_ctypes_type(array):
+    return __numpy_to_ctypes_type__.get(array.dtype.str, None)
 
 ####################################################################################################
 
@@ -61,7 +77,7 @@ class ParameterWrapper(object):
     def __init__(self, parameter):
 
         self._location = parameter.location
-        self._type = to_ctypes_type(parameter)
+        self._type = gl_to_ctypes_type(parameter)
 
     ##############################################
 
@@ -83,9 +99,9 @@ class ArrayWrapper(object):
         # self._pointer_parameter = pointer_parameter
 
         self._size_location = size_parameter.location
-        self._size_type = to_ctypes_type(size_parameter)
+        self._size_type = gl_to_ctypes_type(size_parameter)
         self._pointer_location = pointer_parameter.location
-        self._pointer_type = to_ctypes_type(pointer_parameter)
+        self._pointer_type = gl_to_ctypes_type(pointer_parameter)
 
 ####################################################################################################
 
@@ -100,28 +116,38 @@ class OutputArrayWrapper(ArrayWrapper):
         # print self._pointer_parameter.long_repr(), self._pointer_type, type(parameter)
 
         if self._pointer_type == ctypes.c_void_p:
+            # Generic pointer: thus the array data type is not specified by the API
+            # The output array is provided by user
             array = parameter
             c_parameters[self._size_location] = self._size_type(array.size)
-            ctypes_parameter = array.ctypes.data # _as(ctypes.c_void_p)
+            ctypes_parameter = array.ctypes.data_as(ctypes.c_void_p)
             c_parameters[self._pointer_location] = ctypes_parameter
-            to_python_converter = IdentityConverter(array)
+            return None
+        elif isinstance(parameter, np.ndarray):
+            # Typed pointer
+            # The output array is provided by user
+            array = parameter
+            if numpy_to_ctypes_type(array) != self._pointer_type:
+                raise ValueError("Type mismatch: %s instead of %s" % (array.dtype, self._pointer_type.__name__))
+            c_parameters[self._size_location] = self._size_type(array.size)
+            ctypes_parameter = array.ctypes.data_as(ctypes.POINTER(self._pointer_type))
+            c_parameters[self._pointer_location] = ctypes_parameter
+            return None
         else:
+            # Typed pointer
+            # The array size is provided by user
             size_parameter = parameter
-
             c_parameters[self._size_location] = self._size_type(size_parameter)
-            
             if size_parameter >= self.size_parameter_threshold:
                 array = np.zeros((size_parameter), dtype=self._pointer_type)
-                ctypes_parameter = array.ctypes.data_as(ctypes.c_void_p)
-                # ctypes.POINTER(self._pointer_type)
+                ctypes_parameter = array.ctypes.data_as(ctypes.POINTER(self._pointer_type))
                 to_python_converter = IdentityConverter(array)
             else:
                 array_type = self._pointer_type * size_parameter
                 ctypes_parameter = array_type()
                 to_python_converter = ListConverter(ctypes_parameter)
             c_parameters[self._pointer_location] = ctypes_parameter
-
-        return to_python_converter
+            return to_python_converter
 
 ####################################################################################################
 
@@ -173,6 +199,8 @@ class ListConverter(ToPythonConverter):
 
 class GlCommandWrapper(object):
 
+    _logger = _module_logger.getChild('GlCommandWrapper')
+
     ##############################################
 
     def __init__(self, wrapper, command):
@@ -187,7 +215,7 @@ class GlCommandWrapper(object):
             raise NameError("OpenGL function %s was no found in libGL" % (str(command)))
 
         # Only for simple prototype
-        # argument_types = [to_ctypes_type(parameter) for parameter in command.parameters]
+        # argument_types = [gl_to_ctypes_type(parameter) for parameter in command.parameters]
         # if argument_types:
         #     self._function.argtypes = argument_types
 
@@ -208,8 +236,7 @@ class GlCommandWrapper(object):
 
         return_type = command.return_type
         if return_type.type != 'void':
-            ctypes_type = to_ctypes_type(return_type)
-            # print str(command), c_type, ctypes_type, return_type.pointer
+            ctypes_type = gl_to_ctypes_type(return_type)
             if return_type.pointer:
                 if ctypes_type == ctypes.c_ubyte: # return type is char *
                     ctypes_type = ctypes.c_char_p
@@ -225,23 +252,22 @@ class GlCommandWrapper(object):
 
     def __call__(self, *args, **kwargs):
 
-        # print 'Call', repr(self)
-        # print self._command.prototype()
-
         c_parameters = [None]*self._number_of_parameters
         to_python_converters = []
         for parameter_wrapper, parameter in zip(self._parameter_wrappers, args):
-            # print parameter_wrapper, parameter
             to_python_converter = parameter_wrapper.from_python(parameter, c_parameters)
             if to_python_converter is not None:
                 to_python_converters.append(to_python_converter)
 
-        # print ' ', c_parameters
+        self._logger.info("Call\n" + '  ' + self._command.prototype() + '\n  ' + str(c_parameters))
+
         result = self._function(*c_parameters)
 
+        # Check error
         if 'check_error' in kwargs and kwargs['check_error']:
             self._wrapper.check_error()
-        
+
+        # Manage return
         if to_python_converters:
             output_parameters = [to_python_converter() for to_python_converter in to_python_converters]
             if self._return_void:
@@ -275,9 +301,8 @@ class CtypeWrapper(object):
 
         self._gl_spec = gl_spec
 
-        api_enums, api_commands = self._gl_spec.generate_api(api, api_number, profile)
-
         self._libGL = ctypes.cdll.LoadLibrary('libGL.so')
+        api_enums, api_commands = self._gl_spec.generate_api(api, api_number, profile)
         self._init_enums(api_enums)
         self._init_commands(api_commands)
 
@@ -289,9 +314,10 @@ class CtypeWrapper(object):
 
         gl_enums = GlEnums()
         for enum in api_enums:
-            setattr(gl_enums, str(enum), int(enum))
-        # self._gl_enums = gl_enums
-        self.GL = gl_enums # Fixme: namespace?
+            enum_name, enum_value = str(enum), int(enum)
+            setattr(self, enum_name, enum_value)
+            setattr(gl_enums, enum_name, enum_value)
+        self.enums = gl_enums
 
     ##############################################
 
@@ -317,26 +343,26 @@ class CtypeWrapper(object):
             # GL_NO_ERROR: The value of this symbolic constant is guaranteed to be 0.
             return 'No error has been recorded.'
         else:
-            if error_code == self.GL.GL_INVALID_ENUM:
+            if error_code == self.GL_INVALID_ENUM:
                 return 'An unacceptable value is specified for an enumerated argument.'
-            elif error_code == self.GL.GL_INVALID_VALUE:
+            elif error_code == self.GL_INVALID_VALUE:
                 return 'A numeric argument is out of range.'
-            elif error_code == self.GL.GL_INVALID_OPERATION:
+            elif error_code == self.GL_INVALID_OPERATION:
                 return 'The specified operation is not allowed in the current state.'
-            elif error_code == self.GL.GL_INVALID_FRAMEBUFFER_OPERATION:
+            elif error_code == self.GL_INVALID_FRAMEBUFFER_OPERATION:
                 return 'The framebuffer object is not complete.'
-            elif error_code == self.GL.GL_OUT_OF_MEMORY:
+            elif error_code == self.GL_OUT_OF_MEMORY:
                 return 'There is not enough memory left to execute the command.'
-            elif error_code == self.GL.GL_STACK_UNDERFLOW:
+            elif error_code == self.GL_STACK_UNDERFLOW:
                 return 'An attempt has been made to perform an operation that would cause an internal stack to underflow.'
-            elif error_code == self.GL.GL_STACK_OVERFLOW:
+            elif error_code == self.GL_STACK_OVERFLOW:
                 return 'An attempt has been made to perform an operation that would cause an internal stack to overflow.'
             else:
                 raise NotImplementedError
 
     ##############################################
 
-    def error_context(self):
+    def error_checker(self):
 
         return ErrorContextManager(self)
 

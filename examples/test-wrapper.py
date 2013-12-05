@@ -56,13 +56,13 @@ elif args.debug_level == 'info':
 
 if args.debug_level != 'none':
     logging.basicConfig(
-        format='\033[1;32m%(asctime)s\033[0m - \033[1;34m%(name)s - %(module)s.%(funcName)s\033[0m - \033[1;31m%(levelname)s\033[0m - %(message)s',
+        format='\033[1;32m%(asctime)s\033[0m - \033[1;34m%(name)s.%(funcName)s\033[0m - \033[1;31m%(levelname)s\033[0m - %(message)s',
         level=level,
         )
 
 ####################################################################################################
 
-from GlWidgetFfi import GlWidget
+from GlWidgetWrapper import GlWidget
 
 ####################################################################################################
 
