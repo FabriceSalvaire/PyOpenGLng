@@ -65,6 +65,19 @@ def numpy_to_ctypes_type(array):
 
 ####################################################################################################
 
+__command_directives__ = {
+    'glShaderSource':{'length':None,},
+    # length = NULL for null terminated string and solve len(back_ref) == 2
+    }
+
+####################################################################################################
+
+def check_numpy_type(array, ctypes_type):
+    if numpy_to_ctypes_type(array) != ctypes_type:
+        raise ValueError("Type mismatch: %s instead of %s" % (array.dtype, ctypes_type.__name__))
+
+####################################################################################################
+
 class GlEnums(object):
     pass
 
@@ -89,14 +102,67 @@ class ParameterWrapper(object):
 
 ####################################################################################################
 
+class PointerWrapper(object):
+
+    ##############################################
+
+    def __init__(self, parameter):
+
+        self._location = parameter.location
+        self._type = gl_to_ctypes_type(parameter)
+
+    ##############################################
+
+    def from_python(self, parameter, c_parameters):
+
+        if isinstance(parameter, np.ndarray):
+            array = parameter
+            if self._type != ctypes.c_void_p:
+                check_numpy_type(array, self._type)
+            ctypes_parameter = array.ctypes.data_as(ctypes.POINTER(self._type))
+            c_parameters[self._location] = ctypes_parameter
+        else:
+            raise NotImplementedError
+
+        return None
+
+####################################################################################################
+
+class ReferenceWrapper(object):
+
+    ##############################################
+
+    def __init__(self, parameter):
+
+        self._location = parameter.location
+        self._type = gl_to_ctypes_type(parameter)
+
+    ##############################################
+
+    def from_python(self, c_parameters):
+
+        ctypes_parameter = self._type()
+        c_parameters[self._location] = ctypes.byref(ctypes_parameter)
+        to_python_converter = ValueConverter(ctypes_parameter)
+
+        return to_python_converter
+
+####################################################################################################
+
 class ArrayWrapper(object):
 
     ##############################################
 
-    def __init__(self, size_parameter, pointer_parameter):
+    def __init__(self, size_parameter):
 
-        # self._size_parameter = size_parameter
-        # self._pointer_parameter = pointer_parameter
+        # Fixme: size_multiplier
+
+        # excepted some particular cases
+        pointer_parameter = size_parameter.back_ref[0] 
+
+        # Fixme: for debug
+        self._size_parameter = size_parameter
+        self._pointer_parameter = pointer_parameter
 
         self._size_location = size_parameter.location
         self._size_type = gl_to_ctypes_type(size_parameter)
@@ -123,12 +189,19 @@ class OutputArrayWrapper(ArrayWrapper):
             ctypes_parameter = array.ctypes.data_as(ctypes.c_void_p)
             c_parameters[self._pointer_location] = ctypes_parameter
             return None
+        if self._pointer_type == ctypes.c_char:
+            # The array size is provided by user
+            size_parameter = parameter
+            c_parameters[self._size_location] = self._size_type(size_parameter)
+            ctypes_parameter = ctypes.create_string_buffer(size_parameter)
+            c_parameters[self._pointer_location] = ctypes_parameter
+            to_python_converter = ValueConverter(ctypes_parameter)
+            return to_python_converter
         elif isinstance(parameter, np.ndarray):
             # Typed pointer
             # The output array is provided by user
             array = parameter
-            if numpy_to_ctypes_type(array) != self._pointer_type:
-                raise ValueError("Type mismatch: %s instead of %s" % (array.dtype, self._pointer_type.__name__))
+            check_numpy_type(array, self._pointer_type)
             c_parameters[self._size_location] = self._size_type(array.size)
             ctypes_parameter = array.ctypes.data_as(ctypes.POINTER(self._pointer_type))
             c_parameters[self._pointer_location] = ctypes_parameter
@@ -157,7 +230,24 @@ class InputArrayWrapper(ArrayWrapper):
 
     def from_python(self, array, c_parameters):
 
-        if isinstance(array, np.ndarray):
+        # print array
+        # print self._pointer_parameter.long_repr()
+        # print self._pointer_type
+
+        if self._pointer_parameter.pointer == 2:
+            if self._pointer_type == ctypes.c_char: # Fixme: should be c_char_p
+                if isinstance(array, str):
+                    size_parameter = 1
+                    string_array_type = ctypes.c_char_p * 1
+                    string_array = string_array_type(ctypes.c_char_p(array))
+                else:
+                    size_parameter = len(array)
+                    string_array_type = ctypes.c_char_p * size_parameter
+                    string_array = string_array_type(*[ctypes.c_char_p(x) for x in array])
+                ctypes_parameter = string_array
+            else:
+                raise NotImplementedError
+        elif isinstance(array, np.ndarray):
             if self._pointer_type == ctypes.c_void_p:
                 size_parameter = array.size
             else:
@@ -195,6 +285,10 @@ class ListConverter(ToPythonConverter):
     def __call__(self):
         return list(self._c_object)
 
+class ValueConverter(ToPythonConverter):
+    def __call__(self):
+        return self._c_object.value
+
 ####################################################################################################
 
 class GlCommandWrapper(object):
@@ -219,21 +313,40 @@ class GlCommandWrapper(object):
         # if argument_types:
         #     self._function.argtypes = argument_types
 
+        command_directive = __command_directives__.get(str(command), None)
+
         self._parameter_wrappers = []
+        self._reference_parameter_wrappers = []
         for parameter in command.parameters:
-            if parameter.pointer:
+            parameter_wrapper = None
+            if command_directive and parameter.name in command_directive:
+                # Fixme: purpose?
                 pass
-            elif parameter.back_ref is not None:
-                pointer_parameter = parameter.back_ref
-                if not pointer_parameter.const:
-                    parameter_wrapper = OutputArrayWrapper(parameter, pointer_parameter)
+            elif parameter.pointer:
+                if parameter.size_parameter is None and parameter.array_size == 1:
+                    parameter_wrapper = ReferenceWrapper(parameter)
+                elif parameter.size_parameter is None or parameter.computed_size:
+                    parameter_wrapper = PointerWrapper(parameter)
                 else:
-                    parameter_wrapper = InputArrayWrapper(parameter, pointer_parameter)
-                self._parameter_wrappers.append(parameter_wrapper)
+                    pass
+            elif parameter.back_ref:
+                if parameter.back_ref[0].const:
+                    # Only theses functions have len(back_ref) > 1
+                    #   glAreTexturesResident
+                    #   glGetDebugMessageLog
+                    #   glPrioritizeTextures 
+                    #   glShaderSource
+                    parameter_wrapper = InputArrayWrapper(parameter)
+                else:
+                    parameter_wrapper = OutputArrayWrapper(parameter)
             else:
                 parameter_wrapper = ParameterWrapper(parameter)
-                self._parameter_wrappers.append(parameter_wrapper)
-
+            if parameter_wrapper is not None:
+                if isinstance(parameter_wrapper, ReferenceWrapper):
+                    self._reference_parameter_wrappers.append(parameter_wrapper)
+                else:
+                    self._parameter_wrappers.append(parameter_wrapper)
+                
         return_type = command.return_type
         if return_type.type != 'void':
             ctypes_type = gl_to_ctypes_type(return_type)
@@ -252,25 +365,39 @@ class GlCommandWrapper(object):
 
     def __call__(self, *args, **kwargs):
 
+        # Set the input parameters and append python converters for output
         c_parameters = [None]*self._number_of_parameters
         to_python_converters = []
         for parameter_wrapper, parameter in zip(self._parameter_wrappers, args):
             to_python_converter = parameter_wrapper.from_python(parameter, c_parameters)
             if to_python_converter is not None:
                 to_python_converters.append(to_python_converter)
+        for parameter_wrapper in self._reference_parameter_wrappers:
+            to_python_converter = parameter_wrapper.from_python(c_parameters)
+            if to_python_converter is not None:
+                to_python_converters.append(to_python_converter)
 
-        self._logger.info("Call\n" + '  ' + self._command.prototype() + '\n  ' + str(c_parameters))
+        self._logger.info('Call\n'
+                          '  ' + self._command.prototype() + '\n'
+                          '  ' + str([parameter_wrapper.__class__.__name__
+                                      for parameter_wrapper in self._parameter_wrappers]) + '\n'
+                          '  ' + str(c_parameters) + '\n'
+                          '  ' + str([to_python_converter.__class__.__name__
+                                      for to_python_converter in to_python_converters])
+                          )
 
         result = self._function(*c_parameters)
 
         # Check error
-        if 'check_error' in kwargs and kwargs['check_error']:
+        if kwargs.get('check_error', False):
             self._wrapper.check_error()
 
         # Manage return
         if to_python_converters:
             output_parameters = [to_python_converter() for to_python_converter in to_python_converters]
             if self._return_void:
+                # Extract uniq element
+                # Fixme: to func?
                 if len(output_parameters) == 1:
                     output_parameter = output_parameters[0]
                     if len(output_parameter) == 1:

@@ -1,0 +1,52 @@
+#! /usr/bin/env python
+# -*- Python -*-
+
+####################################################################################################
+#
+# PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl.
+# Copyright (C) 2013 Salvaire Fabrice
+#
+####################################################################################################
+
+####################################################################################################
+
+import logging    
+
+####################################################################################################
+#
+# Logging
+#
+
+logging.basicConfig(
+    format='\033[1;32m%(asctime)s\033[0m - \033[1;34m%(name)s.%(funcName)s\033[0m - \033[1;31m%(levelname)s\033[0m - %(message)s',
+    level=logging.INFO,
+    )
+
+####################################################################################################
+
+from PyOpenGLV4.GlApi.GlSpecParser import GlSpecParser, ApiNumber, default_api_path
+
+####################################################################################################
+
+gl_spec = GlSpecParser(default_api_path('gl'))
+
+api = 'gl'
+# api_number = '3.0'
+api_number = '4.4'
+profile = 'core'
+
+api_enums, api_commands = gl_spec.generate_api(api, ApiNumber(api_number), profile)
+
+####################################################################################################
+
+for command in api_commands.itervalues():
+    for parameter in command.parameters:
+        if len(parameter.back_ref) > 1:
+            # print command.return_type.long_repr()
+            print command.prototype()
+
+####################################################################################################
+# 
+# End
+# 
+####################################################################################################

@@ -7,6 +7,7 @@
 
 ####################################################################################################
 
+import os
 import logging
 
 from lxml import etree
@@ -14,6 +15,12 @@ from lxml import etree
 ####################################################################################################
 
 _module_logger = logging.getLogger(__name__)
+
+####################################################################################################
+
+def default_api_path(file_name):
+    api_path = os.path.join(os.path.dirname(os.path.realpath(__file__)))
+    return  os.path.join(api_path, file_name + '.xml')
 
 ####################################################################################################
 
@@ -470,7 +477,7 @@ class Enum(object):
 
     ##############################################
 
-    def repr_long(self):
+    def long_repr(self):
 
         return repr(self) + " (type: %(type)s, alias: %(alias)s, api: %(api)s, comment: %(comment)s)" % self.__dict__
 
@@ -589,7 +596,7 @@ class Command(object):
         for parameter in parameters:
             # size parameter can be after pointer
             if parameter.size_parameter is not None and not parameter.computed_size:
-                self.parameter_dict[parameter.size_parameter].back_ref = parameter
+                self.parameter_dict[parameter.size_parameter].back_ref.append(parameter)
 
     ##############################################
 
@@ -614,12 +621,7 @@ class Command(object):
 
     def prototype(self):
 
-        if self.return_type != 'void':
-            return_type = repr(self.return_type.c_type)
-        else:
-            return_type = 'void'
-
-        return '%s %s (%s)' % (return_type, self.name,
+        return '%s %s (%s)' % (self.return_type.prototype(), self.name,
                                ', '.join([parameter.prototype() for parameter in self.parameters]))
 
     ##############################################
@@ -686,7 +688,7 @@ class Parameter(object):
         self.c_type = gl_types.translate_gl_type(self.type)
 
         self.size_parameter = None
-        self.back_ref = None # back ref for size parameter
+        self.back_ref = [] # back ref for size parameter
         self.array_size = None # array size is known
         self.computed_size = False # array size is computed by OpenGL
         self.size_multiplier = 1
@@ -739,7 +741,7 @@ class Parameter(object):
     def long_repr(self):
 
         template = """Parameter %(name)s
-  location         %(location)u
+  location         %(location_)s
   type             %(type)s
   group            %(group)s
   const            %(const)s
@@ -748,11 +750,16 @@ class Parameter(object):
   size parameter   %(size_parameter)s
   back ref         %(back_ref)s
   computed size    %(computed_size)s
-  size_multiplier %(size_multiplier)u
+  size_multiplier  %(size_multiplier)u
+  array_size       %(array_size_)s
 """
-# array_size %(array_size)u # can be %s
 
-        return template % self.__dict__
+        # Fixme:
+        d = dict(self.__dict__)
+        d['array_size_'] = str(self.array_size)
+        d['location_'] = str(self.location)
+
+        return template % d
 
     ##############################################
 
@@ -761,13 +768,18 @@ class Parameter(object):
         if self.name is not None:
             return '%s %s' % (self.format_gl_type(), self.name)
         else:
-            self.format_gl_type()
+            return self.format_gl_type()
 
     ##############################################
 
     def format_gl_type(self):
 
-        return self._format_type(repr(self.c_type))
+        c_type = self.c_type
+        if isinstance(c_type, Type):
+            c_type = repr(self.c_type)
+        # else c_type = 'void'
+
+        return self._format_type(c_type)
 
 ####################################################################################################
 
