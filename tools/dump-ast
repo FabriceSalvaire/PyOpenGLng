@@ -2,11 +2,9 @@
 # -*- python -*-
 
 ####################################################################################################
-#
-# Copyright (C) 2012 Genomic Vision Company.  All Rights Reserved.
-# Contact: fabrice.salvaire@genomicvision.com
-#
-# This file is part of the GVLab software.
+# 
+# PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl.
+# Copyright (C) 2013 Salvaire Fabrice
 #
 ####################################################################################################
 
