@@ -19,8 +19,9 @@ import OpenGL.GL as GL
 
 ####################################################################################################
 
+import PyOpenGLV4.GlApi as GlApi
 from PyOpenGLV4.GlApi.CtypeWrapper import CtypeWrapper
-from PyOpenGLV4.GlApi.GlSpecParser import GlSpecParser, ApiNumber
+from PyOpenGLV4.GlApi.GlSpecParser import GlSpecParser, ApiNumber, default_api_path
 from PyOpenGLV4.GlWidgetBase import GlWidgetBase
 
 ####################################################################################################
@@ -46,10 +47,7 @@ class GlWidget(GlWidgetBase):
         super(GlWidget, self).initializeGL()
         self._init_shader()
         
-        api_path = '/home/gv/fabrice/unison-osiris/inactive-projects/PyOpenGLV4/doc/registry-api'
-        gl_xml_file_path = os.path.join(api_path, 'gl.xml')
-        gl_spec = GlSpecParser(gl_xml_file_path)
-        GL = CtypeWrapper(gl_spec, api='gl', api_number=ApiNumber('3.0'), profile='core')
+        GL = GlApi.init() # api_number='3.0'
 
         self._test_wrapper(GL)
 
@@ -137,6 +135,11 @@ class GlWidget(GlWidgetBase):
             GL.glCompileShader(shader_id)
             log, length = GL.glGetShaderInfoLog(shader_id, 1000)
             print length, ':', log
+            print GL.glGetShaderInfoLog.__doc__
+
+        # Open manual
+        # GL.glShaderSource.manual()
+        # GL.glShaderSource.manual(local=True)
 
         # void glGetActiveAttrib(GLuint program,  GLuint index,  GLsizei bufSize,  GLsizei *length,  GLint *size,  GLenum *type,  GLchar *name);
 

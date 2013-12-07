@@ -5,17 +5,29 @@
 #
 ####################################################################################################
 
+""" This module implements a ctypes wrapper for OpenGL.
+"""
+
+# Fixme: add doc string to function
+
 ####################################################################################################
 
 import collections
 import ctypes
 import logging
+import os
+import subprocess
+import sys
 
 import numpy as np
 
 ####################################################################################################
 
 _module_logger = logging.getLogger(__name__)
+
+####################################################################################################
+
+__manual_path__ = os.path.join(os.path.dirname(__file__), 'man')
 
 ####################################################################################################
 
@@ -89,8 +101,15 @@ class ParameterWrapper(object):
 
     def __init__(self, parameter):
 
+        self._parameter = parameter
         self._location = parameter.location
         self._type = gl_to_ctypes_type(parameter)
+
+    ##############################################
+
+    def __repr__(self):
+
+        return self._parameter.prototype() + ' ' + self.__class__.__name__
 
     ##############################################
 
@@ -108,8 +127,15 @@ class PointerWrapper(object):
 
     def __init__(self, parameter):
 
+        self._parameter = parameter
         self._location = parameter.location
         self._type = gl_to_ctypes_type(parameter)
+
+    ##############################################
+
+    def __repr__(self):
+
+        return self._parameter.prototype() + ' ' + self.__class__.__name__
 
     ##############################################
 
@@ -134,8 +160,15 @@ class ReferenceWrapper(object):
 
     def __init__(self, parameter):
 
+        self._parameter = parameter
         self._location = parameter.location
         self._type = gl_to_ctypes_type(parameter)
+
+    ##############################################
+
+    def __repr__(self):
+
+        return self._parameter.prototype() + ' ' + self.__class__.__name__
 
     ##############################################
 
@@ -168,6 +201,12 @@ class ArrayWrapper(object):
         self._size_type = gl_to_ctypes_type(size_parameter)
         self._pointer_location = pointer_parameter.location
         self._pointer_type = gl_to_ctypes_type(pointer_parameter)
+
+    ##############################################
+
+    def __repr__(self):
+
+        return self._pointer_parameter.prototype() + ' ' + self.__class__.__name__
 
 ####################################################################################################
 
@@ -304,7 +343,7 @@ class GlCommandWrapper(object):
         self._number_of_parameters = command.number_of_parameters
 
         try:
-            self._function = getattr(self._wrapper._libGL, str(command))
+            self._function = getattr(self._wrapper.libGL, str(command))
         except AttributeError:
             raise NameError("OpenGL function %s was no found in libGL" % (str(command)))
 
@@ -321,14 +360,14 @@ class GlCommandWrapper(object):
             parameter_wrapper = None
             if command_directive and parameter.name in command_directive:
                 # Fixme: purpose?
-                pass
+                pass # skip and will be set to None
             elif parameter.pointer:
                 if parameter.size_parameter is None and parameter.array_size == 1:
                     parameter_wrapper = ReferenceWrapper(parameter)
                 elif parameter.size_parameter is None or parameter.computed_size:
                     parameter_wrapper = PointerWrapper(parameter)
                 else:
-                    pass
+                    pass # skip and will be set bia back_ref
             elif parameter.back_ref:
                 if parameter.back_ref[0].const:
                     # Only theses functions have len(back_ref) > 1
@@ -360,6 +399,9 @@ class GlCommandWrapper(object):
         else:
             self._function.restype = None
             self._return_void = True
+
+        parameter_doc = ', '.join([repr(parameter_wrapper) for parameter_wrapper in self._parameter_wrappers])
+        self.__doc__ = "%s (%s)" % (self._command, parameter_doc)
 
     ##############################################
 
@@ -418,17 +460,57 @@ class GlCommandWrapper(object):
 
         return str(self._command.name) + ' ' + str(self._function.argtypes) + ' -> ' + str(self._function.restype)
 
+    ##############################################
+
+    def _xml_manual_name(self):
+        # Fixme: some commands are merged together: e.g. glVertexAttrib.xml
+        return str(self._command) + '.xml'
+    def xml_manual_path(self):
+        return os.path.join(__manual_path__, self._xml_manual_name())
+
+    def xml_manual_url(self, local=False):
+        if local:
+            return 'file://' + self.xml_manual_path()
+        else:
+            return 'http://www.opengl.org/sdk/docs/man/xhtml/' + self._xml_manual_name()
+
+    ##############################################
+
+    def manual(self, local=False):
+
+        if sys.platform.startswith('linux'):
+            url = self.xml_manual_url(local)
+            # browser = 'xdg-open'
+            # subprocess.Popen([browser, url])
+            import webbrowser
+            webbrowser.open(url)
+        else:
+            raise NotImplementedError
+
 ####################################################################################################
 
 class CtypeWrapper(object):
 
-   ##############################################
+    libGL = None
+
+    ##############################################
+
+    @classmethod
+    def load_library(cls, libGL_name):
+
+        cls.libGL = ctypes.cdll.LoadLibrary(libGL_name)
+        cls.libGL.glGetString.restype = ctypes.c_char_p
+        GL_VERSION = int('0x1F02', 16)
+        version_string = cls.libGL.glGetString(GL_VERSION)
+
+        return version_string
+
+    ##############################################
 
     def __init__(self, gl_spec, api, api_number, profile=None):
 
         self._gl_spec = gl_spec
 
-        self._libGL = ctypes.cdll.LoadLibrary('libGL.so')
         api_enums, api_commands = self._gl_spec.generate_api(api, api_number, profile)
         self._init_enums(api_enums)
         self._init_commands(api_commands)

@@ -14,6 +14,10 @@ from lxml import etree
 
 ####################################################################################################
 
+from .ApiNumber import ApiNumber
+
+####################################################################################################
+
 _module_logger = logging.getLogger(__name__)
 
 ####################################################################################################
@@ -40,34 +44,6 @@ class NameDict(dict):
     def unregister(self, item_name):
         
         del self[item_name]
-
-####################################################################################################
-
-class ApiNumber(object):
-
-    ##############################################
-
-    def __init__(self, number):
-
-        self.major, self.minor = [int(x) for x in number.split('.')]
-
-    ##############################################
-
-    def __int__(self):
-
-        return self.major * 1000 + self.minor
-
-    ##############################################
-
-    def __str__(self):
-
-        return "%u.%u" % (self.major, self.minor)
-
-    ##############################################
-
-    def __le__(self, api_number):
-
-        return int(self) <= int(api_number)
 
 ####################################################################################################
 
@@ -1346,6 +1322,8 @@ class GlSpecParser(object):
     ##############################################
 
     def generate_api(self, api, api_number, profile=None):
+
+        self._logger.info("Generate API %s %s profile:%s" % (api, api_number, profile))
 
         all_api_enums = Enums(namespace=None)
         for enums in self.enums_list:
