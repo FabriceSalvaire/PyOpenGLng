@@ -1,6 +1,6 @@
 ####################################################################################################
 # 
-# PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl.
+# PyOpenGLng - An OpenGL V4 layer on top of PyOpengl.
 # Copyright (C) 2013 Salvaire Fabrice
 #
 # This program is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ def read(file_name):
 ####################################################################################################
 
 setup_dict = dict(
-    name='PyOpenGLV4',
+    name='PyOpenGLng',
     version='0.1.0',
     author='Fabrice Salvaire',
     author_email='fabrice.salvaire@orange.fr',
@@ -47,7 +47,7 @@ setup_dict = dict(
     license = "GPLv3",
     keywords = "OpenGL",
     url='http://fabrice-salvaire.pagesperso-orange.fr/software/index.html',
-    packages=['PyOpenGLV4'],
+    packages=['PyOpenGLng'],
     data_files = [],
     long_description=read('README.pypi'),
     # cf. http://pypi.python.org/pypi?%3Aaction=list_classifiers

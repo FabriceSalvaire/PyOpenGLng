@@ -1,6 +1,6 @@
 ####################################################################################################
 #
-# PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl.
+# PyOpenGLng - An OpenGL V4 layer on top of PyOpengl.
 # Copyright (C) 2013 Salvaire Fabrice
 #
 ####################################################################################################
@@ -18,15 +18,15 @@ import OpenGL.GLU as GLU
 
 ####################################################################################################
 
-from PyOpenGLV4.GlWidgetBase import GlWidgetBase
+from PyOpenGLng.HighLevelApi.GlWidgetBase import GlWidgetBase
 
-from PyOpenGLV4.Geometry import Point, Offset, Segment
-from PyOpenGLV4.Buffer import GlUniformBuffer
-#!# from PyOpenGLV4.GlOrtho2D import ZoomManagerAbc
-from PyOpenGLV4.PrimitiveVertexArray import GlSegmentVertexArray
-from PyOpenGLV4.TextureVertexArray import GlTextureVertexArray
-from PyOpenGLV4.Tools.Interval import IntervalInt2D
-import PyOpenGLV4.FixedPipeline as GlFixedPipeline
+#!# from PyOpenGLng.HighLevelApi.GlOrtho2D import ZoomManagerAbc
+from PyOpenGLng.HighLevelApi.Buffer import GlUniformBuffer
+from PyOpenGLng.HighLevelApi.Geometry import Point, Offset, Segment
+from PyOpenGLng.HighLevelApi.PrimitiveVertexArray import GlSegmentVertexArray
+from PyOpenGLng.HighLevelApi.TextureVertexArray import GlTextureVertexArray
+from PyOpenGLng.Tools.Interval import IntervalInt2D
+import PyOpenGLng.HighLevelApi.FixedPipeline as GlFixedPipeline
 
 ####################################################################################################
 

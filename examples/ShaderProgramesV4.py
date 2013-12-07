@@ -1,6 +1,6 @@
 ####################################################################################################
 # 
-# PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl.
+# PyOpenGLng - An OpenGL V4 layer on top of PyOpengl.
 # Copyright (C) 2013 Salvaire Fabrice
 # 
 ####################################################################################################
@@ -11,8 +11,8 @@ import os
 
 ####################################################################################################
 
-from PyOpenGLV4.GlShader import GlShaderManager, GlShaderProgramInterface
-from PyOpenGLV4.GlRandomTexture import GlRandomTexture, GlRandomTextureShaderProgram
+from PyOpenGLng.HighLevelApi.Shader import GlShaderManager, GlShaderProgramInterface
+from PyOpenGLng.HighLevelApi.RandomTexture import GlRandomTexture, GlRandomTextureShaderProgram
 
 ####################################################################################################
 

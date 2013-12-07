@@ -2,7 +2,7 @@
 
 ####################################################################################################
 # 
-# PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl.
+# PyOpenGLng - An OpenGL V4 layer on top of PyOpengl.
 # Copyright (C) 2013 Salvaire Fabrice
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 # 
 ####################################################################################################
 
-for d in bin PyOpenGLV4 ; do
+for d in bin PyOpenGLng ; do
   for i in `find $d -name '*.py' | sort -n` ; do
     echo Check $i
     pylint --output-format=parseable --rcfile=pylintrc.ini --errors-only $i

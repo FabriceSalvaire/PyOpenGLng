@@ -56,13 +56,18 @@ elif args.debug_level == 'info':
 
 if args.debug_level != 'none':
     logging.basicConfig(
-        format='\033[1;32m%(asctime)s\033[0m - \033[1;34m%(name)s.%(funcName)s\033[0m - \033[1;31m%(levelname)s\033[0m - %(message)s',
+        format='\033[1;32m%(asctime)s\033[0m - \033[1;34m%(name)s - %(module)s.%(funcName)s\033[0m - \033[1;31m%(levelname)s\033[0m - %(message)s',
         level=level,
         )
 
 ####################################################################################################
 
-from GlWidgetWrapper import GlWidget
+if args.opengl == 'v3':
+    from GlWidgetV3 import GlWidget
+elif args.opengl == 'v4':
+    from GlWidgetV4 import GlWidget
+else:
+    raise ValueError('Unsupported OpenGL version')
 
 ####################################################################################################
 
@@ -72,7 +77,7 @@ class MainWindow(QtGui.QMainWindow):
         
         super(MainWindow, self).__init__()
 
-        self.resize(100, 100)
+        self.resize(1000, 800)
 
         self.central_widget = QtGui.QWidget(self)
         self.horizontal_layout = QtGui.QHBoxLayout(self.central_widget)

@@ -1,6 +1,6 @@
 ####################################################################################################
 #
-# PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl.
+# PyOpenGLng - An OpenGL V4 layer on top of PyOpengl.
 # Copyright (C) 2013 Salvaire Fabrice
 #
 ####################################################################################################
@@ -22,16 +22,16 @@ except ImportError:
 
 ####################################################################################################
 
-from PyOpenGLV4.GlWidgetBase import GlWidgetBase
+from PyOpenGLng.HighLevelApi.GlWidgetBase import GlWidgetBase
 
-from PyOpenGLV4.Geometry import Point, Offset, Segment, Rectangle
-from PyOpenGLV4.GlBuffer import GlUniformBuffer
-#!# from PyOpenGLV4.GlOrtho2D import ZoomManagerAbc
-from PyOpenGLV4.GlPrimitiveVertexArray import GlSegmentVertexArray, GlRectangleVertexArray
-from PyOpenGLV4.GlStippleTexture import GlStippleTexture
-from PyOpenGLV4.GlTextureVertexArray import GlTextureVertexArray
-from PyOpenGLV4.Tools.Interval import IntervalInt2D
-import PyOpenGLV4.GlFixedPipeline as GlFixedPipeline
+#!# from PyOpenGLng.HighLevelApi.GlOrtho2D import ZoomManagerAbc
+from PyOpenGLng.HighLevelApi.Buffer import GlUniformBuffer
+from PyOpenGLng.HighLevelApi.Geometry import Point, Offset, Segment, Rectangle
+from PyOpenGLng.HighLevelApi.PrimitiveVertexArray import GlSegmentVertexArray, GlRectangleVertexArray
+from PyOpenGLng.HighLevelApi.StippleTexture import GlStippleTexture
+from PyOpenGLng.HighLevelApi.TextureVertexArray import GlTextureVertexArray
+from PyOpenGLng.Tools.Interval import IntervalInt2D
+import PyOpenGLng.HighLevelApi.FixedPipeline as GlFixedPipeline
 
 ####################################################################################################
 

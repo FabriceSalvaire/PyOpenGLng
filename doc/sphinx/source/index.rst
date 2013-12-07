@@ -6,7 +6,7 @@
   :maxdepth: 2
   :numbered:
 
-  api/PyOpenGLV4.rst
+  api/PyOpenGLng.rst
 
 =========
  Indexes

@@ -1,5 +1,5 @@
-build
-doc/sphinx/build
-doc/sphinx/source/api
 .git
 .gitignore
+doc/sphinx/build
+doc/sphinx/source/api
+build

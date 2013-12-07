@@ -1,14 +1,14 @@
 ===================
-PyOpenGLV4 V0.1.0
+PyOpenGLng V0.1.0
 ===================
 
-:Info: The home page of PyOpenGLV4 is located at http://fabricesalvaire.github.com/PyOpenGLV4
+:Info: The home page of PyOpenGLng is located at http://fabricesalvaire.github.com/PyOpenGLng
 
 Source Repository
 -----------------
 
-The PyOpenGLV4 project is hosted at github
-http://github.com/FabriceSalvaire/PyOpenGLV4
+The PyOpenGLng project is hosted at github
+http://github.com/FabriceSalvaire/PyOpenGLng
 
 Requirements
 ------------

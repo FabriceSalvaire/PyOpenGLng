@@ -1,13 +1,12 @@
 ####################################################################################################
 #
-# PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl.
+# PyOpenGLng - An OpenGL V4 layer on top of PyOpengl.
 # Copyright (C) 2013 Salvaire Fabrice
 #
 ####################################################################################################
 
 ####################################################################################################
 
-import os
 import logging
 import sys
 
@@ -15,14 +14,12 @@ import numpy as np
 
 from PyQt4 import QtCore, QtGui
 
-import OpenGL.GL as GL
+# import OpenGL.GL as GL
 
 ####################################################################################################
 
-import PyOpenGLV4.GlApi as GlApi
-from PyOpenGLV4.GlApi.CtypeWrapper import CtypeWrapper
-from PyOpenGLV4.GlApi.GlSpecParser import GlSpecParser, ApiNumber, default_api_path
-from PyOpenGLV4.GlWidgetBase import GlWidgetBase
+import PyOpenGLng.Wrapper as GlWrapper
+from PyOpenGLng.HighLevelApi.GlWidgetBase import GlWidgetBase
 
 ####################################################################################################
 
@@ -47,7 +44,7 @@ class GlWidget(GlWidgetBase):
         super(GlWidget, self).initializeGL()
         self._init_shader()
         
-        GL = GlApi.init() # api_number='3.0'
+        GL = GlWrapper.init() # api_number='3.0'
 
         self._test_wrapper(GL)
 

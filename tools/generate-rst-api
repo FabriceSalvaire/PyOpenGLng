@@ -3,7 +3,7 @@
 
 ####################################################################################################
 # 
-# PyOpenGLV4 - An OpenGL V4 layer on top of PyOpengl.
+# PyOpenGLng - An OpenGL V4 layer on top of PyOpengl.
 # Copyright (C) 2013 Salvaire Fabrice
 #
 # This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ from RstFactory import RstFactory
 
 ####################################################################################################
 
-module_path = 'PyOpenGLV4'
+module_path = 'PyOpenGLng'
 rst_directory = 'doc/sphinx/source/api'
 excluded_directory = ()
 
