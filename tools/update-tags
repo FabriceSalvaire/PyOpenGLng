@@ -2,7 +2,7 @@
 
 ####################################################################################################
 # 
-# PyOpenGLng - An OpenGL V4 layer on top of PyOpengl.
+# PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2013 Salvaire Fabrice
 #
 # This program is free software: you can redistribute it and/or modify
