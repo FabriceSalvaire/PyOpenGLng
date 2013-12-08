@@ -3,3 +3,12 @@
 doc/sphinx/build
 doc/sphinx/source/api
 build
+PyOpenGLng/GlApi/man2.pickle
+PyOpenGLng/GlApi/man3.pickle
+PyOpenGLng/GlApi/man4.pickle
+doc/man2
+doc/man3
+doc/man4
+doc/manglsl
+doc/registry-api
+PyOpenGLng/GlApi/gl.xml

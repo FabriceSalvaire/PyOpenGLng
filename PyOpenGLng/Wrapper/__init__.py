@@ -12,6 +12,7 @@ import sys
 ####################################################################################################
 
 from ..GlApi.ApiNumber import ApiNumber
+from ..GlApi.ManualParser import Manual
 
 ####################################################################################################
 
@@ -19,7 +20,7 @@ _module_logger = logging.getLogger(__name__)
 
 ####################################################################################################
 
-def init(wrapper='ctypes', api='gl', api_number=None, profile='core'):
+def init(wrapper='ctypes', api='gl', api_number=None, profile='core', check_api_number=True):
 
     """ Initialise the OpenGL wrapper.
 
@@ -45,15 +46,19 @@ def init(wrapper='ctypes', api='gl', api_number=None, profile='core'):
 
     version_string = Wrapper.load_library(libGL_name)
 
-    match = re.match(r'^(?P<major>\d+)\.(?P<minor>\d+).*', version_string)
-    if match is not None:
-        __api_number__ = ApiNumber('.'.join(match.groups()))
-    else:
-        raise ValueError("Can't decode GL Version String: " + version_string)
+    if check_api_number:
+        if version_string is None:
+            raise ValueError("An OpenGL context is required to retrieve the OpenGL implementation version")
+       
+        match = re.match(r'^(?P<major>\d+)\.(?P<minor>\d+).*', version_string)
+        if match is not None:
+            __api_number__ = ApiNumber('.'.join(match.groups()))
+        else:
+            raise ValueError("Can't decode GL Version String: " + version_string)
 
     if api_number is not None:
         api_number = ApiNumber(api_number)
-        if __api_number__ < api_number:
+        if check_api_number and __api_number__ < api_number:
             raise NameError("required API [%s %s profile=%s]"
                             " is not supported by OpenGL implementation (version is %s)" %
                             (api, api_number, profile, __api_number__))
@@ -63,7 +68,9 @@ def init(wrapper='ctypes', api='gl', api_number=None, profile='core'):
     from ..GlApi import GlSpecParser, default_api_path
     gl_spec = GlSpecParser(default_api_path('gl'))
 
-    GL = Wrapper(gl_spec, api, api_number, profile)
+    manuals = Manual.load()
+
+    GL = Wrapper(gl_spec, api, api_number, profile, manuals)
         
     return GL
 

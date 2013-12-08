@@ -1,0 +1,49 @@
+#! /usr/bin/env python
+# -*- python -*-
+
+####################################################################################################
+#
+# PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
+# Copyright (C) 2013 Salvaire Fabrice
+#
+####################################################################################################
+
+####################################################################################################
+
+import argparse
+import cPickle as pickle
+
+####################################################################################################
+
+from PyOpenGLng.GlApi.ManualParser import ManualParser
+
+####################################################################################################
+#
+# Options
+#
+
+argument_parser = argparse.ArgumentParser(
+    description='Piclke Manual',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+
+argument_parser.add_argument('manual_path',
+                             metavar='ManualPath',
+                             help='Manual path')
+argument_parser.add_argument('pickle_file',
+                             metavar='FILE.pickle',
+                             help='Output pickle file')
+
+args = argument_parser.parse_args()
+
+####################################################################################################
+
+manual_parser = ManualParser(args.manual_path)
+with open(args.pickle_file, 'w') as f:
+    pickle.dump(manual_parser.manual, f, -1)
+
+####################################################################################################
+# 
+# End
+# 
+####################################################################################################

@@ -1,0 +1,62 @@
+#! /bin/bash
+
+####################################################################################################
+#
+# Khronos CVS Login
+#
+
+svn_login='--username anonymous --password anonymous'
+
+####################################################################################################
+#
+# Download Registry API
+#
+
+svn_url='https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api/'
+
+echo "Download from cvs.khronos.org: Registry API"
+if [ -e doc/registry-api ]; then
+  pushd doc/registry-api
+  svn update
+  popd &> /dev/null
+else
+  svn co ${svn_login} ${svn_url}/$i/ doc/registry-api
+fi
+
+####################################################################################################
+#
+# Download Man Pages
+#
+
+svn_url='https://cvs.khronos.org/svn/repos/ogl/trunk/ecosystem/public/sdk/docs/'
+
+for i in man4 man3 man2 manglsl; do 
+  echo
+  echo "Download from cvs.khronos.org: $i"
+  if [ -e doc/$i ]; then
+    pushd doc/$i
+    svn update
+    popd &> /dev/null
+  else
+    svn co ${svn_login} ${svn_url}/$i/ doc/$i
+  fi
+done
+
+####################################################################################################
+#
+# Pickle Manual
+#
+
+for i in man4 man3 man2; do 
+  ./bin/pickle-manual doc/$i PyOpenGLng/GlApi/$i.pickle
+done
+
+####################################################################################################
+
+cp doc/registry-api/gl.xml PyOpenGLng/GlApi
+
+####################################################################################################
+# 
+# End
+# 
+####################################################################################################

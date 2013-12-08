@@ -5,7 +5,8 @@
 #
 ####################################################################################################
 
-""" This module implements a ctypes wrapper for OpenGL.
+""" This module implements a ctypes wrapper for OpenGL based on information provided by the GlApi
+OpenGL API parser.
 """
 
 # Fixme: add doc string to function
@@ -400,8 +401,13 @@ class GlCommandWrapper(object):
             self._function.restype = None
             self._return_void = True
 
+        manual_page = self._manual_page()
+        if manual_page is not None:
+            doc = '%s - %s\n\n' % (self._command, manual_page.purpose)
+        else:
+            doc = ''
         parameter_doc = ', '.join([repr(parameter_wrapper) for parameter_wrapper in self._parameter_wrappers])
-        self.__doc__ = "%s (%s)" % (self._command, parameter_doc)
+        self.__doc__ = doc + "%s (%s)" % (self._command, parameter_doc)
 
     ##############################################
 
@@ -462,13 +468,36 @@ class GlCommandWrapper(object):
 
     ##############################################
 
+    def _manual_page(self):
+
+        command_name = str(self._command)
+        for name in ['man' + str(i) for i in xrange(4, 1, -1)]:
+            manual = self._wrapper._manuals[name]
+            if command_name in manual:
+                return manual[command_name]
+        else:
+            raise KeyError
+
+    ##############################################
+
     def _xml_manual_name(self):
-        # Fixme: some commands are merged together: e.g. glVertexAttrib.xml
-        return str(self._command) + '.xml'
+
+        # some commands are merged together: e.g. glVertexAttrib.xml
+        try:
+            page_name = self._manual_page().page_name
+        except KeyError:
+            page_name = str(self._command)
+        return page_name + '.xml'
+
+    ##############################################
+
     def xml_manual_path(self):
         return os.path.join(__manual_path__, self._xml_manual_name())
 
+    ##############################################
+
     def xml_manual_url(self, local=False):
+
         if local:
             return 'file://' + self.xml_manual_path()
         else:
@@ -486,6 +515,12 @@ class GlCommandWrapper(object):
             webbrowser.open(url)
         else:
             raise NotImplementedError
+
+    ##############################################
+
+    def help(self):
+
+        print self.__doc__
 
 ####################################################################################################
 
@@ -507,9 +542,10 @@ class CtypeWrapper(object):
 
     ##############################################
 
-    def __init__(self, gl_spec, api, api_number, profile=None):
+    def __init__(self, gl_spec, api, api_number, profile=None, manuals=None):
 
         self._gl_spec = gl_spec
+        self._manuals = manuals
 
         api_enums, api_commands = self._gl_spec.generate_api(api, api_number, profile)
         self._init_enums(api_enums)
