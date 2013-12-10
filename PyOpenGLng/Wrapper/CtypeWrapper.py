@@ -142,12 +142,18 @@ class PointerWrapper(object):
 
     def from_python(self, parameter, c_parameters):
 
-        if isinstance(parameter, np.ndarray):
+        if self._type == ctypes.c_char and self._parameter.const:
+            # const char *
+            ctypes_parameter = ctypes.c_char_p(str(parameter))
+            c_parameters[self._location] = ctypes_parameter
+        elif isinstance(parameter, np.ndarray):
             array = parameter
             if self._type != ctypes.c_void_p:
                 check_numpy_type(array, self._type)
             ctypes_parameter = array.ctypes.data_as(ctypes.POINTER(self._type))
             c_parameters[self._location] = ctypes_parameter
+        elif parameter is None:
+            c_parameters[self._location] = None # already done
         else:
             raise NotImplementedError
 
@@ -290,6 +296,8 @@ class InputArrayWrapper(ArrayWrapper):
         elif isinstance(array, np.ndarray):
             if self._pointer_type == ctypes.c_void_p:
                 size_parameter = array.size
+            if self._pointer_type == ctypes.c_float: # fixme
+                size_parameter = 1 # array.shape[0]
             else:
                 size_parameter = array.nbytes
             ctypes_parameter = array.ctypes.data_as(ctypes.c_void_p)
@@ -298,7 +306,7 @@ class InputArrayWrapper(ArrayWrapper):
             array_type = self._pointer_type * size_parameter
             ctypes_parameter = array_type(array)
         else:
-            raise ValueError
+            raise ValueError(str(array))
 
         c_parameters[self._size_location] = self._size_type(size_parameter)
         c_parameters[self._pointer_location] = ctypes_parameter
@@ -416,6 +424,9 @@ class GlCommandWrapper(object):
         # Set the input parameters and append python converters for output
         c_parameters = [None]*self._number_of_parameters
         to_python_converters = []
+        if len(self._parameter_wrappers) != len(args):
+            self._logger.warning("Call %s: Number of arguments [%u] and parameter wrappers [%u] are not equal",
+                                 str(self._command), len(args), len(self._parameter_wrappers))
         for parameter_wrapper, parameter in zip(self._parameter_wrappers, args):
             to_python_converter = parameter_wrapper.from_python(parameter, c_parameters)
             if to_python_converter is not None:
@@ -476,16 +487,17 @@ class GlCommandWrapper(object):
             if command_name in manual:
                 return manual[command_name]
         else:
-            raise KeyError
+            return None
 
     ##############################################
 
     def _xml_manual_name(self):
 
         # some commands are merged together: e.g. glVertexAttrib.xml
-        try:
-            page_name = self._manual_page().page_name
-        except KeyError:
+        page = self._manual_page()
+        if page is not None:
+            page_name = page.page_name
+        else:
             page_name = str(self._command)
         return page_name + '.xml'
 
@@ -527,6 +539,7 @@ class GlCommandWrapper(object):
 class CtypeWrapper(object):
 
     libGL = None
+    
 
     ##############################################
 

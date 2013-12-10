@@ -24,8 +24,12 @@ def init(wrapper='ctypes', api='gl', api_number=None, profile='core', check_api_
 
     """ Initialise the OpenGL wrapper.
 
-    It must be called after an OpenGl context was created in order to check the OpenGL implementation
-    version.
+    If the parameter *api_number* is :obj:`None` or the flag *check_api_number* is True, then this
+    procedure must be called after an OpenGl context is active, else the OpenGl implementation's
+    version cannot be retrieved. On Linux, see the source of the Mesa 3D Graphics Library tool
+    *glxinfo* for more details.
+
+    ..  On Fedora: package mesa-demos and file src/xdemos/glxinfo.c
     """
 
     if api not in ('gl', 'gles'):
@@ -44,6 +48,7 @@ def init(wrapper='ctypes', api='gl', api_number=None, profile='core', check_api_
     else:
         raise NotImplementedError
 
+    # Fixme: store ApiNumber in CtypeWrapper
     version_string = Wrapper.load_library(libGL_name)
 
     if check_api_number:

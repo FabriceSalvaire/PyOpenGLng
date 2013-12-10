@@ -26,10 +26,7 @@ import logging
 
 ####################################################################################################
 
-from OpenGL.GL.ARB import vertex_array_object as gl_vao
-
-from OpenGL.arrays import arraydatatype as gl_array_data_type
-GLuintArray = gl_array_data_type.GLuintArray
+from . import GL
 
 ####################################################################################################
 
@@ -43,14 +40,14 @@ class GlVertexArrayObject(object):
     
     def __init__(self):
 
-        self._vao_id = gl_vao.glGenVertexArrays(1)
+        self._vao_id = GL.glGenVertexArrays(1)
 
     ##############################################
     
     def __del__(self):
 
         self._logger.debug("Delete VAO %u" % (self._vao_id))
-        gl_vao.glDeleteVertexArrays(1, [self._vao_id])
+        GL.glDeleteVertexArrays(1, [self._vao_id])
 
     ##############################################
     
@@ -58,7 +55,7 @@ class GlVertexArrayObject(object):
 
         """ bind the vertex array object. """
 
-        gl_vao.glBindVertexArray(self._vao_id)
+        GL.glBindVertexArray(self._vao_id)
 
     ##############################################
     
@@ -66,7 +63,7 @@ class GlVertexArrayObject(object):
 
         """ Unbind the vertex array object. """
 
-        gl_vao.glBindVertexArray(0)
+        GL.glBindVertexArray(0)
 
 ####################################################################################################
 #

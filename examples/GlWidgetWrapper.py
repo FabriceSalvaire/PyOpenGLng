@@ -14,8 +14,6 @@ import numpy as np
 
 from PyQt4 import QtCore, QtGui
 
-# import OpenGL.GL as GL
-
 ####################################################################################################
 
 import PyOpenGLng.Wrapper as GlWrapper

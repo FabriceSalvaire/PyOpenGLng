@@ -13,16 +13,15 @@ from PyQt4 import QtCore, QtGui
 
 import numpy as np
 
-import OpenGL.GL as GL
-import OpenGL.GLU as GLU
+#!# import OpenGL.GL as GL3
+#!# import OpenGL.GLU as GLU
 
 ####################################################################################################
 
-from PyOpenGLng.HighLevelApi.GlWidgetBase import GlWidgetBase
-
-#!# from PyOpenGLng.HighLevelApi.GlOrtho2D import ZoomManagerAbc
+from PyOpenGLng.HighLevelApi import GL
 from PyOpenGLng.HighLevelApi.Buffer import GlUniformBuffer
 from PyOpenGLng.HighLevelApi.Geometry import Point, Offset, Segment
+from PyOpenGLng.HighLevelApi.GlWidgetBase import GlWidgetBase
 from PyOpenGLng.HighLevelApi.PrimitiveVertexArray import GlSegmentVertexArray
 from PyOpenGLng.HighLevelApi.TextureVertexArray import GlTextureVertexArray
 from PyOpenGLng.Tools.Interval import IntervalInt2D
@@ -106,9 +105,9 @@ class GlWidget(GlWidgetBase):
                          '\n' + str(self.glortho2d))
 
         # See also DSA http://www.opengl.org/registry/specs/EXT/direct_state_access.txt
-        GL.glMatrixMode(GL.GL_PROJECTION)
-        GL.glLoadIdentity()
-        GLU.gluOrtho2D(* self.glortho2d.ortho2d_bounding_box())
+        #!# GL3.glMatrixMode(GL3.GL_PROJECTION)
+        #!# GL3.glLoadIdentity()
+        #!# GLU.gluOrtho2D(* self.glortho2d.ortho2d_bounding_box())
 
         viewport_uniform_buffer_data = self.glortho2d.viewport_uniform_buffer_data(self.size())
         self.logger.debug('Viewport Uniform Buffer Data '
@@ -192,9 +191,9 @@ class GlWidget(GlWidgetBase):
         shader_program.uniforms.colour = (1., 1., 1.)
         self.grid_vertex_array.draw()
 
-        GL.glLineWidth(3.)
-        x = 25
-        GlFixedPipeline.draw_rectangle(-x, -x, x, x)
+        #!# GL.glLineWidth(3.)
+        #!# x = 25
+        #!# GlFixedPipeline.draw_rectangle(-x, -x, x, x)
 
         shader_program.unbind()
 

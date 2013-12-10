@@ -31,17 +31,13 @@ import os
 
 import numpy as np
 
-import OpenGL.GL as GL
-# for glGetActiveAttrib Pythonic version
-import OpenGL.GL.ARB.vertex_shader as GL_VS
-
 ####################################################################################################
 
-import Type as GlType
-import OpenGlExt as GL_Ext
-from ..Tools.AttributeDictionaryInterface import (AttributeDictionaryInterface,
-                                                           AttributeDictionaryInterfaceDescriptor)
+from . import GL
+from ..Tools.AttributeDictionaryInterface import (AttributeDictionaryInterface, AttributeDictionaryInterfaceDescriptor)
 from ..Tools.Singleton import SingletonMetaClass
+import OpenGlExt as GL_Ext
+import Type as GlType
 
 ####################################################################################################
 
@@ -234,7 +230,7 @@ class GlShader(object):
         GL.glShaderSource(self._shader_id, self._source)
         GL.glCompileShader(self._shader_id)
 
-        log = GL.glGetShaderInfoLog(self._shader_id)
+        log, length = GL.glGetShaderInfoLog(self._shader_id, 1000)
         message = """
 Compile Shader:
   -----------------------------------------------------------------------------
@@ -247,7 +243,8 @@ Log:
 """
         self._logger.debug(message % (self._source, log))
 
-        if not GL.glGetShaderiv(self._shader_id, GL.GL_COMPILE_STATUS):
+        # Fixme: high level function
+        if not GL_Ext.glGetShaderiv(self._shader_id, GL.GL_COMPILE_STATUS):
             raise ValueError(log)
 
         self._compiled = True
@@ -392,7 +389,7 @@ class GlUniformVector(GlUniformNd):
         self._check_value(value)
 
         #!# self._gl_type.program_uniform_set_v(self._shader_program.program_id, self._location, 1, value)
-        self._gl_type.uniform_set_v(self._location, 1, value) # require binding
+        self._gl_type.uniform_set_v(self._location, value) # require binding
 
 ####################################################################################################
 
@@ -426,10 +423,10 @@ class GlShaderProgramUniforms(AttributeDictionaryInterfaceDescriptor):
         super(GlShaderProgramUniforms, self).__init__()
 
         program_id = shader_program.program_id
-        number_of_active_uniforms = GL.glGetProgramiv(program_id, GL.GL_ACTIVE_UNIFORMS)
+        number_of_active_uniforms = GL_Ext.glGetProgramiv(program_id, GL.GL_ACTIVE_UNIFORMS)
         for i in xrange(number_of_active_uniforms):
 
-            name, size, gl_type_id = GL.glGetActiveUniform(program_id, i)
+            name, length, size, gl_type_id = GL.glGetActiveUniform(program_id, i, 1000)
             location = GL.glGetUniformLocation(program_id, name)
             if location == -1: # uniform block
                 continue
@@ -508,7 +505,7 @@ class GlShaderProgramUniformBlocks(AttributeDictionaryInterface):
 
         program_id = shader_program.program_id
 
-        number_of_active_uniform_blocks = GL.glGetProgramiv(program_id, GL.GL_ACTIVE_UNIFORM_BLOCKS)
+        number_of_active_uniform_blocks = GL_Ext.glGetProgramiv(program_id, GL.GL_ACTIVE_UNIFORM_BLOCKS)
         for uniform_block_location in xrange(number_of_active_uniform_blocks):
             uniform_block_name = GL_Ext.glGetActiveUniformBlockName(program_id, uniform_block_location)
             indices = GL_Ext.glGetActiveUniformBlockiv(program_id, uniform_block_location, GL.GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES)
@@ -521,7 +518,7 @@ class GlShaderProgramUniformBlocks(AttributeDictionaryInterface):
                 if i == -1:
                     continue
 
-                name, size, gl_type_id = GL.glGetActiveUniform(program_id, i)
+                name, length, size, gl_type_id = GL.glGetActiveUniform(program_id, i, 1000)
                 offset = GL_Ext.glGetActiveUniformsiv(program_id, i, GL.GL_UNIFORM_OFFSET)
                 gl_type = GlType.gl_types[gl_type_id]
 
@@ -574,9 +571,9 @@ class GlShaderProgramAttributes(AttributeDictionaryInterface):
 
         program_id = shader_program.program_id
         
-        number_of_active_attributes = GL.glGetProgramiv(program_id, GL.GL_ACTIVE_ATTRIBUTES)
+        number_of_active_attributes = GL_Ext.glGetProgramiv(program_id, GL.GL_ACTIVE_ATTRIBUTES)
         for i in xrange(number_of_active_attributes):
-            name, size, gl_type_id =  GL_VS.glGetActiveAttribARB(program_id, i)
+            name, length, size, gl_type_id =  GL.glGetActiveAttrib(program_id, i, 1000)
             location = GL.glGetAttribLocation(program_id, name)
             gl_type = GlType.gl_types[gl_type_id]
             self._dictionary[name] = GlVertexAttribute(shader_program, name, location, gl_type, size)
@@ -737,7 +734,7 @@ class GlShaderProgram(object):
 
         GL.glLinkProgram(self.program_id)
 
-        log = GL.glGetProgramInfoLog(self.program_id)
+        log, length = GL.glGetProgramInfoLog(self.program_id, 1000)
         message = """
 Link program '%s'
 Log:
@@ -746,7 +743,7 @@ Log:
   -----------------------------------------------------------------------------
 """
         self._logger.debug(message % (self._name, log))
-        if not GL.glGetProgramiv(self.program_id, GL.GL_LINK_STATUS):
+        if not GL_Ext.glGetProgramiv(self.program_id, GL.GL_LINK_STATUS):
             raise ValueError(log)
 
         self._linked = True
@@ -819,11 +816,14 @@ Log:
     def __repr__(self):
 
         text = "Shader Program '%s':\n" % (self._name)
+        text += 'Uniform Blocks:\n'
         for uniform_block in self.uniform_blocks:
             text += str(uniform_block)
+        text += 'Uniforms:\n'
         for uniform in sorted_by_location(self.uniforms):
             text += ' - %s\n' % (uniform)
         text += '\n'
+        text += 'Attributes:\n'
         for attribute in sorted_by_location(self.attributes):
             text += ' - %s\n' % (attribute)
 

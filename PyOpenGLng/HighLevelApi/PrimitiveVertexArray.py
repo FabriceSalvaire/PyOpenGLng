@@ -25,12 +25,11 @@ The aim of these classes has to be used by a Geometry Shader.
 import logging
 import numpy as np
 
-import OpenGL.GL as GL
-
 ####################################################################################################
 
-from .VertexArrayObject import GlVertexArrayObject
+from . import GL
 from .Buffer import GlArrayBuffer
+from .VertexArrayObject import GlVertexArrayObject
 
 ####################################################################################################
 

@@ -13,13 +13,9 @@ import logging
 
 import numpy as np
 
-import OpenGL
-import OpenGL.GL as GL
-# Fix: define GL_R32F cf. /usr/include/GL/glext.h
-GL.GL_R32F = OpenGL.constant.Constant('GL_R32F', 0x822E)
-
 ####################################################################################################
 
+from . import GL
 from .Shader import GlShaderProgram
 
 ####################################################################################################
@@ -73,7 +69,7 @@ class GlRandomTexture(object):
 
         """ Create the texture. """
 
-        self._gl_textures_id = GL.glGenTextures(1, None)
+        self._gl_textures_id = GL.glGenTextures(1)
 
         self.bind()
 

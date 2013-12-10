@@ -11,7 +11,9 @@
 
 import numpy as np
 
-import OpenGL.GL as GL
+####################################################################################################
+
+from . import GL
 
 ####################################################################################################
 
@@ -58,7 +60,7 @@ class GlStippleTexture(object):
 
         """ Create the texture. """
 
-        self._gl_textures_id = GL.glGenTextures(1, None)
+        self._gl_textures_id = GL.glGenTextures(1)
 
         self.bind()
 

@@ -75,10 +75,9 @@ Correspondence of command suffix type descriptors to GL argument types:
 
 import numpy as np
 
-import OpenGL.GL as GL
-
 ####################################################################################################
 
+from . import GL
 from ..Tools.EnumFactory import EnumFactory
 
 ####################################################################################################
@@ -114,7 +113,10 @@ gl_data_type_to_prototype_letter =  {
 
 def get_gl_attr(name):
     """ Retrieve an attribute within the GL module. """
-    return getattr(GL, name)
+    try:
+        return getattr(GL, name)
+    except AttributeError:
+        return None
 
 ####################################################################################################
 

@@ -28,7 +28,7 @@ argument_parser = argparse.ArgumentParser(
 
 argument_parser.add_argument('--debug-level',
                              default='none',
-                             choices=('none', 'info', 'debug', 'opengl'),
+                             choices=('none', 'warning', 'info', 'debug', 'opengl'),
                              help='logging level')
 
 argument_parser.add_argument('--opengl',
@@ -53,6 +53,8 @@ elif args.debug_level == 'debug':
     level = logging.DEBUG
 elif args.debug_level == 'info':
     level=logging.INFO
+elif args.debug_level == 'warning':
+    level = logging.WARNING
 
 if args.debug_level != 'none':
     logging.basicConfig(

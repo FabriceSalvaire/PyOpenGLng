@@ -15,38 +15,10 @@ from PyQt4 import QtCore, QtOpenGL
 
 ####################################################################################################
 
-import OpenGL
-
-# If True, then wrap functions with logging operations which reports each call along with its
-# arguments to the OpenGL.calltrace logger at the INFO level. This is *extremely* slow. You should
-# *not* enable this in production code!
-# OpenGL.FULL_LOGGING = True
-
-# If set to a False value before importing any OpenGL.* libraries will completely disable
-# error-checking. This can dramatically improve performance, but makes debugging far harder.
-# OpenGL.ERROR_CHECKING = False
-
-# If set to a True value before importing the numpy/lists support modules, will cause array
-# operations to raise OpenGL.error.CopyError if the operation would cause a data-copy in order to
-# make the passed data-type match the target data-type.
-# OpenGL.ERROR_ON_COPY = True
-
-# Only include OpenGL 3.1 compatible entry points. Note that this will generally break most PyOpenGL
-# code that hasn't been explicitly made "legacy free" via a significant rewrite.
-# OpenGL.FORWARD_COMPATIBLE_ONLY # True
-
-# if True, attempt to use the OpenGL_accelerate package to provide Cython-coded accelerators for
-# core wrapping operations.
-# default = True
-# OpenGL.USE_ACCELERATE = False
-
-import OpenGL.GL as GL
-
-####################################################################################################
-
-from .Ortho2D import Ortho2D, XAXIS, YAXIS, ZoomManagerAbc
-from .GlFeatures import GlVersion, GlFeatures
+from . import GL
 from ..Tools.Interval import IntervalInt2D
+from .GlFeatures import GlVersion, GlFeatures
+from .Ortho2D import Ortho2D, XAXIS, YAXIS, ZoomManagerAbc
 
 ####################################################################################################
 

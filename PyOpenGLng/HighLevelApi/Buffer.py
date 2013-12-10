@@ -33,9 +33,9 @@ import logging
 
 import numpy as np
 
-import OpenGL.GL as GL
-from OpenGL.GL.ARB import vertex_buffer_object as gl_vbo
-from OpenGL.arrays import arraydatatype as gl_array_data_type
+####################################################################################################
+
+from . import GL
 
 ####################################################################################################
 
@@ -62,7 +62,7 @@ class GlBuffer(object):
     
     def __init__(self, data=None):
 
-        self._buffer_object_id = gl_vbo.glGenBuffersARB(1)
+        self._buffer_object_id = GL.glGenBuffers(1)
 
         self.size = 0
         self.type = None
@@ -75,7 +75,7 @@ class GlBuffer(object):
     def __del__(self):
 
         self._logger.debug("Delete Object %u" % (self._buffer_object_id))
-        gl_vbo.glDeleteBuffersARB(1, [self._buffer_object_id])
+        GL.glDeleteBuffers(1, [self._buffer_object_id])
 
     ##############################################
     
@@ -83,7 +83,7 @@ class GlBuffer(object):
 
         """ Bind the buffer. """
 
-        gl_vbo.glBindBufferARB(self._target, self._buffer_object_id)
+        GL.glBindBuffer(self._target, self._buffer_object_id)
 
     ##############################################
     
@@ -91,7 +91,7 @@ class GlBuffer(object):
 
         """ Unind the buffer. """
 
-        gl_vbo.glBindBufferARB(self._target, 0)
+        GL.glBindBuffer(self._target, 0)
 
     ##############################################
     
@@ -122,8 +122,7 @@ class GlBuffer(object):
             raise ValueError()
 
         self.bind()
-        data_size = gl_array_data_type.ArrayDatatype.arrayByteCount(data)
-        gl_vbo.glBufferDataARB(self._target, data_size, data, usage)
+        GL.glBufferData(self._target, data, usage)
         self.unbind()
 
 ####################################################################################################

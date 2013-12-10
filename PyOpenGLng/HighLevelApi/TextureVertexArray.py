@@ -13,15 +13,11 @@ import logging
 
 import numpy as np
 
-import OpenGL
-import OpenGL.GL as GL
-# Fix: define GL_RG_INTEGER cf. /usr/include/GL/glext.h
-GL.GL_RG_INTEGER = OpenGL.constant.Constant('GL_RG_INTEGER', 0x8228)
-
 ####################################################################################################
 
-from .VertexArrayObject import GlVertexArrayObject
+from . import GL
 from .Buffer import GlArrayBuffer
+from .VertexArrayObject import GlVertexArrayObject
 
 ####################################################################################################
 
@@ -85,7 +81,7 @@ class GlTextureVertexArray(GlVertexArrayObject):
 
         """ Create the texture. """
 
-        self._gl_textures_id = GL.glGenTextures(1, None)
+        self._gl_textures_id = GL.glGenTextures(1)
 
         self._bind_texture()
 
