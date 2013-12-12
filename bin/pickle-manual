@@ -8,6 +8,9 @@
 #
 ####################################################################################################
 
+""" Gather data from the xml files of the manual and generate a pickle file.
+"""
+
 ####################################################################################################
 
 import argparse
@@ -23,13 +26,14 @@ from PyOpenGLng.GlApi.ManualParser import ManualParser
 #
 
 argument_parser = argparse.ArgumentParser(
-    description='Piclke Manual',
+    description='Pickle Manual',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
 argument_parser.add_argument('manual_path',
                              metavar='ManualPath',
                              help='Manual path')
+
 argument_parser.add_argument('pickle_file',
                              metavar='FILE.pickle',
                              help='Output pickle file')

@@ -5,11 +5,117 @@
 #
 ####################################################################################################
 
-""" This module implements a ctypes wrapper for OpenGL based on information provided by the GlApi
-OpenGL API parser.
-"""
+""" This module implements a ctypes wrapper for OpenGL based on information provided by the OpenGL
+API parser GlApi.
 
-# Fixme: add doc string to function
+Prototype Translation
+---------------------
+
+The C language defines strictly for a function by a prototype how to use the parameters and its
+output.
+
+The OpenGL API only use fundamental types, pointer and array for parameters and return. The API do
+not use structures or unions which are compound types. Example of fundamental types are integer,
+float and char. Pointer or array are used to pass or return a multiple of a fundamental types. Also
+the API use pointer parameters to return more than one items, as usual in C since a function can
+only return one item at once. Pointers are also used to write data at a given place, which act as a
+kind of input-output parameter. We can know if a pointer parameter is an input by the presence of
+the *const* qualifier.
+
+Arrays in C do not embed their sizes, thus this information must be provided either implicitly,
+either explicitly or using a sentinel, like for null-terminated string. The XML schema that defines
+the OpenGL API provides partially this information. We can know exactly the size of an array, if the
+array size is fixed or passed by a second parameter. However it the size depends of the context, for
+example a query enum, the size is tagged as a computation from one or more parameters. But for these
+cases the schema do not provide a computation described by a meta-language.
+
+The main concept of this wrapper is to use the schema to generate a Python API with a natural
+behaviour. 
+
+Fundamental types
+~~~~~~~~~~~~~~~~~
+
+Prototypes which are only made of fundamental types, for example::
+
+  void glBindBuffer (GLenum target, GLuint buffer)
+  ->
+  glBindBuffer (unsigned int target ParameterWrapper, unsigned int buffer ParameterWrapper)
+
+are translated to :class:`ParameterWrapper` and passed by copy. These parameters constitutes the
+input of the function.
+
+Input parameters passed as pointer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These parameters are qualified as const and are managed by an *InputArrayWrapper* when the size is
+not tagged as computed. The pointer parameter takes the place of the size parameter and its
+parameter slot is removed of the prototype in Python. The size filled by the wrapper. For example::
+
+  void glBufferData (GLenum target, GLsizeiptr size, const void * [size] data, GLenum usage)
+  ->
+  glBufferData (unsigned int target ParameterWrapper,
+                const void * [size] data InputArrayWrapper,
+                unsigned int usage ParameterWrapper)
+
+The array can be passed as an iterable or a numpy array. An information leak in the actual schema is
+due to the fact the size can represents the number of elements or a number of byte. Usually a
+generic pointer indicates a size specified in byte. CHECK
+
+Some functions have double pointer parameters. The function *glShaderSource* is an interresting case
+since it features a double pointer and the size parameter is used for two parameters:
+
+  void glShaderSource (GLuint shader, GLsizei count, const GLchar ** [count] string, const GLint * [count] length)
+  glShaderSource (unsigned int shader ParameterWrapper,
+                  const char ** [count] string InputArrayWrapper)
+
+According to the specification, the *string* parameter is an array of (optionally) null-terminated
+strings and the *length* pointer must be set to NULL in this case.
+
+For example::
+
+  void glTexImage1D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border,
+                     GLenum format, GLenum type, const void * [COMPSIZE(format,type,width)] pixels)
+  ->
+  glTexImage1D (unsigned int target ParameterWrapper, int level ParameterWrapper,
+                int internalformat ParameterWrapper, int width ParameterWrapper,
+                int border ParameterWrapper, unsigned int format ParameterWrapper,
+                unsigned int type ParameterWrapper,
+                const void * [COMPSIZE(format,type,width)] pixels PointerWrapper)
+
+output parameters passed as pointer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These parameters are not qualified as const and are managed by an *InputArrayWrapper* when the size
+is not tagged as computed. The pointer parameter takes the place of the size parameter and its
+parameter slot is removed of the prototype in Python. The size filled by the wrapper. For example::
+
+  void glGenBuffers (GLsizei n, GLuint * [n] buffers)
+  ->
+  glGenBuffers (unsigned int * [n] buffers OutputArrayWrapper)  
+
+  void glGetBufferSubData (GLenum target, GLintptr offset, GLsizeiptr size, void * [size] data)
+  ->
+  glGetBufferSubData (unsigned int target ParameterWrapper, ptrdiff_t offset ParameterWrapper,
+                      void * [size] data OutputArrayWrapper)
+
+  void glGetShaderSource (GLuint shader, GLsizei bufSize, GLsizei * [1] length, GLchar * [bufSize] source)
+  ->
+  glGetShaderSource (unsigned int shader ParameterWrapper, char * [bufSize] source OutputArrayWrapper)
+
+  void glGetIntegerv (GLenum pname, GLint * [COMPSIZE(pname)] data)
+  ->
+  glGetIntegerv (unsigned int pname ParameterWrapper, int * [COMPSIZE(pname)] data PointerWrapper)
+
+Return parameter passed as pointer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For example::
+
+  const GLubyte * glGetString (GLenum name)
+  ->
+  glGetString (unsigned int name ParameterWrapper)
+
+"""
 
 ####################################################################################################
 
