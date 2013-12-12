@@ -328,6 +328,18 @@ class Enums(object):
 
     ##############################################
 
+    def iter_sorted(self):
+
+        return sorted(self._enum_name_dict.itervalues(), cmp=lambda a, b: cmp(a.name, b.name))
+
+    ##############################################
+
+    def __len__(self):
+
+        return len(self._enum_name_dict)
+
+    ##############################################
+
     def __getitem__(self, key):
 
         try:
@@ -479,6 +491,12 @@ class Commands(NameDict):
     Each <commands> block contains zero or more <command> tags, in arbitrary order (although they
     are typically ordered by sorting on the command name, to improve human readability).
     """
+
+    ##############################################
+
+    def iter_sorted(self):
+
+        return sorted(self.itervalues(), cmp=lambda a, b: cmp(a.name, b.name))
 
 ####################################################################################################
 
@@ -1065,12 +1083,12 @@ class GlSpecParser(object):
 
     ##############################################
 
-    def __init__(self, xml_file_path, relax_ng_file_path=None):
+    def __init__(self, xml_file_path, schema_file_path=None):
 
         self._tree = etree.parse(xml_file_path)
 
-        if relax_ng_file_path is not None:
-            self._validate(relax_ng_file_path)
+        if schema_file_path is not None:
+            self._validate(schema_file_path)
 
         self.types = Types()
         self.groups = Groups()

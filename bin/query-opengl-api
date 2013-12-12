@@ -1,0 +1,164 @@
+#! /usr/bin/env python
+# -*- Python -*-
+
+####################################################################################################
+#
+# PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
+# Copyright (C) 2013 Salvaire Fabrice
+#
+####################################################################################################
+
+####################################################################################################
+
+import logging    
+
+####################################################################################################
+#
+# Logging
+#
+
+# logging.basicConfig(
+#     format='\033[1;32m%(asctime)s\033[0m - \033[1;34m%(name)s.%(funcName)s\033[0m - \033[1;31m%(levelname)s\033[0m - %(message)s',
+#     level=logging.INFO,
+#     )
+
+####################################################################################################
+
+from PyOpenGLng.GlApi import GlSpecParser, default_api_path
+from PyOpenGLng.GlApi.ApiNumber import ApiNumber
+import PyOpenGLng.Wrapper as GlWrapper
+
+####################################################################################################
+
+import argparse
+
+####################################################################################################
+#
+# Options
+#
+
+argument_parser = argparse.ArgumentParser(
+    description='A tool to query the OpenGL API',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+
+argument_parser.add_argument('--api',
+                             required=True,
+                             choices=('gl', 'gles'),
+                             help='API')
+
+argument_parser.add_argument('--api-number',
+                             required=True,
+                             help='API number')
+
+argument_parser.add_argument('--profile',
+                             default='core',
+                             choices=('core', 'compatibility'),
+                             help='API profile')
+
+for action, help_message in (
+    ('validate', 'validate xml file'),
+    ('translate-type', 'translate gl to c type'),
+    ('build-wrapper', 'Build wraper'),
+    ('summary', 'summary'),
+    ('list-enums', 'list enums'),
+    ('list-commands', 'list commands'),
+    ('list-multi-backref-commands', 'list commands having size parameter with more than one back reference'),
+    ('list-computed-size-commands', 'list commands having a computed size parameter'),
+    ):
+    argument_parser.add_argument('--' + action, default=False, action='store_true', help=help_message)
+
+argument_parser.add_argument('--enum',
+                             default=None,
+                             help='Show enum property')
+
+argument_parser.add_argument('--command',
+                             default=None,
+                             help='Show enum property')
+
+args = argument_parser.parse_args()
+
+####################################################################################################
+
+if args.validate:
+    # libxml don't support Relax NG for validation
+    # trang -I rnc -O rng registry.rnc registry-rng.xml
+    schema_file_path = default_api_path('registry-rng')
+else:
+    schema_file_path = None
+
+gl_spec = GlSpecParser(default_api_path('gl'), schema_file_path)
+
+api_enums, api_commands = gl_spec.generate_api(args.api, ApiNumber(args.api_number), args.profile)
+
+if args.build_wrapper:
+    # Fixme: perform generate_api twice
+    GL = GlWrapper.init(api_number=args.api_number, profile=args.profile, check_api_number=False)
+else:
+    GL = None
+
+####################################################################################################
+
+if args.summary:
+    print """
+OpenGL API %s %s profile: %s
+  - Number of Enums:    %5u
+  - Number of Commands: %5u
+""" % (args.api, args.api_number, args.profile,
+       len(api_enums), len(api_commands))
+
+if args.list_enums:
+    for enum in api_enums.iter_sorted():
+        print repr(enum)
+
+if args.list_commands:
+    for command in api_commands.iter_sorted():
+        print command.name
+
+if args.enum is not None:
+    enum = api_enums[args.enum]
+    print enum.long_repr()
+
+####################################################################################################
+
+def show_command(command):
+    if GL is not None:
+        command_wrapper = getattr(GL, str(command))
+        command_wrapper.help()
+    if args.translate_type:
+        print command.prototype()
+    else:
+        print repr(command)
+    # print tuple(command.argument_types()), '->', command.return_type.c_type
+
+if args.command is not None:
+    command = api_commands[args.command]
+    show_command(command)
+
+####################################################################################################
+
+def show_filtered_commands(filter_function):
+    for command in api_commands.iter_sorted():
+        for parameter in command.parameters:
+            if filter_function(parameter):
+                show = True
+                break
+        else:
+            show = False
+        if show:
+            show_command(command)
+
+if args.list_multi_backref_commands:
+    show_filtered_commands(lambda parameter: len(parameter.back_ref) > 1)
+
+if args.list_multi_backref_commands:
+    show_filtered_commands(lambda parameter: len(parameter.back_ref) > 1)
+
+if args.list_computed_size_commands:
+    show_filtered_commands(lambda parameter: parameter.computed_size)
+
+####################################################################################################
+# 
+# End
+# 
+####################################################################################################
