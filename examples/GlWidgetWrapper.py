@@ -136,8 +136,6 @@ class GlWidget(GlWidgetBase):
         # GL.glShaderSource.manual()
         # GL.glShaderSource.manual(local=True)
 
-        # void glGetActiveAttrib(GLuint program,  GLuint index,  GLsizei bufSize,  GLsizei *length,  GLint *size,  GLenum *type,  GLchar *name);
-
         sys.exit(0)
         # QtGui.QApplication.instance().exit()
 

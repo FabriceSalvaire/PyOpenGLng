@@ -39,7 +39,7 @@ Prototypes which are only made of fundamental types, for example::
 
   void glBindBuffer (GLenum target, GLuint buffer)
   ->
-  glBindBuffer (unsigned int target ParameterWrapper, unsigned int buffer ParameterWrapper)
+  glBindBuffer (ParameterWrapper<unsigned int> target, ParameterWrapper<unsigned int> buffer)
 
 are translated to :class:`ParameterWrapper` and passed by copy. These parameters constitutes the
 input of the function.
@@ -47,40 +47,48 @@ input of the function.
 Input parameters passed as pointer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-These parameters are qualified as const and are managed by an *InputArrayWrapper* when the size is
-not tagged as computed. The pointer parameter takes the place of the size parameter and its
-parameter slot is removed of the prototype in Python. The size filled by the wrapper. For example::
+Input parameters passed as pointer are nesseceraly qualified as const.
+
+They are managed by an *InputArrayWrapper* when the size is not tagged as computed in the
+schema. For these cases, the pointer parameter takes the place of the size parameter and its
+parameter slot is removed of the prototype in Python. The size is filled by the wrapper. For
+example::
 
   void glBufferData (GLenum target, GLsizeiptr size, const void * [size] data, GLenum usage)
   ->
-  glBufferData (unsigned int target ParameterWrapper,
-                const void * [size] data InputArrayWrapper,
-                unsigned int usage ParameterWrapper)
+  glBufferData (ParameterWrapper<unsigned int> target,
+                InputArrayWrapper<const void * [size]> data,
+                ParameterWrapper<unsigned int> usage)
 
 The array can be passed as an iterable or a numpy array. An information leak in the actual schema is
 due to the fact the size can represents the number of elements or a number of byte. Usually a
-generic pointer indicates a size specified in byte. CHECK
+generic pointer indicates a size specified in byte. <CHECK>
 
 Some functions have double pointer parameters. The function *glShaderSource* is an interresting case
 since it features a double pointer and the size parameter is used for two parameters:
 
   void glShaderSource (GLuint shader, GLsizei count, const GLchar ** [count] string, const GLint * [count] length)
-  glShaderSource (unsigned int shader ParameterWrapper,
-                  const char ** [count] string InputArrayWrapper)
+  ->
+  glShaderSource (ParameterWrapper<unsigned int> shader,
+                  InputArrayWrapper<const char ** [count]> string)
 
 According to the specification, the *string* parameter is an array of (optionally) null-terminated
 strings and the *length* pointer must be set to NULL in this case.
 
-For example::
+When the size is tagged as computed, parameters are managed by a *Pointerwrapper* and all the
+parameters involved in the the size determination must be passed as input parameter. For example::
 
   void glTexImage1D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border,
                      GLenum format, GLenum type, const void * [COMPSIZE(format,type,width)] pixels)
   ->
-  glTexImage1D (unsigned int target ParameterWrapper, int level ParameterWrapper,
-                int internalformat ParameterWrapper, int width ParameterWrapper,
-                int border ParameterWrapper, unsigned int format ParameterWrapper,
-                unsigned int type ParameterWrapper,
-                const void * [COMPSIZE(format,type,width)] pixels PointerWrapper)
+  glTexImage1D (ParameterWrapper<unsigned int> target, ParameterWrapper<int> level,
+                ParameterWrapper<int> internalformat, ParameterWrapper<int> width,
+                ParameterWrapper<int> border, ParameterWrapper<unsigned int> format,
+                ParameterWrapper<unsigned int> type,
+                PointerWrapper<const void * [COMPSIZE(format,type,width)]> pixels)
+
+This previous example is interesting, since the *width* parameter can be deduced from the shape of
+an Numpy array.
 
 output parameters passed as pointer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -91,21 +99,27 @@ parameter slot is removed of the prototype in Python. The size filled by the wra
 
   void glGenBuffers (GLsizei n, GLuint * [n] buffers)
   ->
-  glGenBuffers (unsigned int * [n] buffers OutputArrayWrapper)  
+  glGenBuffers (OutputArrayWrapper<unsigned int * [n]> buffers)  
 
   void glGetBufferSubData (GLenum target, GLintptr offset, GLsizeiptr size, void * [size] data)
   ->
-  glGetBufferSubData (unsigned int target ParameterWrapper, ptrdiff_t offset ParameterWrapper,
-                      void * [size] data OutputArrayWrapper)
+  glGetBufferSubData (ParameterWrapper<unsigned int> target, ParameterWrapper<ptrdiff_t> offset,
+                      OutputArrayWrapper<void * [size]> data)
 
   void glGetShaderSource (GLuint shader, GLsizei bufSize, GLsizei * [1] length, GLchar * [bufSize] source)
   ->
-  glGetShaderSource (unsigned int shader ParameterWrapper, char * [bufSize] source OutputArrayWrapper)
+  glGetShaderSource (ParameterWrapper<unsigned int> shader, OutputArrayWrapper<char * [bufSize]> source)
 
   void glGetIntegerv (GLenum pname, GLint * [COMPSIZE(pname)] data)
   ->
-  glGetIntegerv (unsigned int pname ParameterWrapper, int * [COMPSIZE(pname)] data PointerWrapper)
+  glGetIntegerv (ParameterWrapper<unsigned int> pname, PointerWrapper<int * [COMPSIZE(pname)]> data)
 
+ void glGetActiveUniform (unsigned int program, unsigned int index,
+                          int bufSize, int * [1] length, int * [1] size, unsigned int * [1] type,
+                          char * [bufSize] name)
+ ->
+ ['ParameterWrapper', 'ParameterWrapper', 'OutputArrayWrapper']
+ 
 Return parameter passed as pointer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -113,7 +127,7 @@ For example::
 
   const GLubyte * glGetString (GLenum name)
   ->
-  glGetString (unsigned int name ParameterWrapper)
+  glGetString (ParameterWrapper<unsigned int> name)
 
 """
 
@@ -130,11 +144,11 @@ import numpy as np
 
 ####################################################################################################
 
-_module_logger = logging.getLogger(__name__)
+import PyOpenGLng.Config as Config
 
 ####################################################################################################
 
-__manual_path__ = os.path.join(os.path.dirname(__file__), 'man')
+_module_logger = logging.getLogger(__name__)
 
 ####################################################################################################
 
@@ -202,7 +216,26 @@ class GlEnums(object):
 
 ####################################################################################################
 
-class ParameterWrapper(object):
+class ParameterWrapperBase(object):
+
+    ##############################################
+
+    def repr_string(self, parameter):
+
+        return self.__class__.__name__ + '<' + parameter.format_gl_type() + '> ' + parameter.name
+
+    ##############################################
+
+    def __repr__(self):
+
+        return self.repr_string(self._parameter)
+
+####################################################################################################
+
+class ParameterWrapper(ParameterWrapperBase):
+
+
+    """ Translate a fundamental type. """
 
     ##############################################
 
@@ -211,12 +244,6 @@ class ParameterWrapper(object):
         self._parameter = parameter
         self._location = parameter.location
         self._type = gl_to_ctypes_type(parameter)
-
-    ##############################################
-
-    def __repr__(self):
-
-        return self._parameter.prototype() + ' ' + self.__class__.__name__
 
     ##############################################
 
@@ -228,7 +255,20 @@ class ParameterWrapper(object):
 
 ####################################################################################################
 
-class PointerWrapper(object):
+class PointerWrapper(ParameterWrapperBase):
+
+    """ Translate a pointer.
+
+    This wrapper handle all the case which are not managed by a :class:`ReferenceWrapper`, an
+    :class:`InputArrayWrapper` or an :class:`OutputArrayWrapper`.
+
+    These parameters are identified in the prototype as a pointer that don't have a size parameter
+    or have a computed size.
+
+    If the pointer type is *char* then user must provide a string or a Python object with a
+    :meth:`__str__` method. Else a Numpy array must be provided and the data type is only checked if
+    the pointer is not generic.
+    """
 
     ##############################################
 
@@ -237,37 +277,37 @@ class PointerWrapper(object):
         self._parameter = parameter
         self._location = parameter.location
         self._type = gl_to_ctypes_type(parameter)
-
-    ##############################################
-
-    def __repr__(self):
-
-        return self._parameter.prototype() + ' ' + self.__class__.__name__
 
     ##############################################
 
     def from_python(self, parameter, c_parameters):
 
-        if self._type == ctypes.c_char and self._parameter.const:
-            # const char *
+        if self._type == ctypes.c_char and self._parameter.const: # const char *
             ctypes_parameter = ctypes.c_char_p(str(parameter))
-            c_parameters[self._location] = ctypes_parameter
         elif isinstance(parameter, np.ndarray):
-            array = parameter
             if self._type != ctypes.c_void_p:
-                check_numpy_type(array, self._type)
-            ctypes_parameter = array.ctypes.data_as(ctypes.POINTER(self._type))
-            c_parameters[self._location] = ctypes_parameter
+                check_numpy_type(parameter, self._type)
+            ctypes_parameter = parameter.ctypes.data_as(ctypes.POINTER(self._type))
         elif parameter is None:
-            c_parameters[self._location] = None # already done
+            ctypes_parameter = None # already done
         else:
             raise NotImplementedError
+        c_parameters[self._location] = ctypes_parameter
 
         return None
 
 ####################################################################################################
 
-class ReferenceWrapper(object):
+class ReferenceWrapper(ParameterWrapperBase):
+
+    """ Translate a parameter passed by reference.
+
+    A parameter passed by reference is identified in the prototype as a non const pointer of a fixed
+    size of 1.
+
+    A reference parameter is removed in the Python prototype and the value set by the call is pushed
+    out in the return.
+    """
 
     ##############################################
 
@@ -276,12 +316,6 @@ class ReferenceWrapper(object):
         self._parameter = parameter
         self._location = parameter.location
         self._type = gl_to_ctypes_type(parameter)
-
-    ##############################################
-
-    def __repr__(self):
-
-        return self._parameter.prototype() + ' ' + self.__class__.__name__
 
     ##############################################
 
@@ -295,7 +329,7 @@ class ReferenceWrapper(object):
 
 ####################################################################################################
 
-class ArrayWrapper(object):
+class ArrayWrapper(ParameterWrapperBase):
 
     ##############################################
 
@@ -319,11 +353,13 @@ class ArrayWrapper(object):
 
     def __repr__(self):
 
-        return self._pointer_parameter.prototype() + ' ' + self.__class__.__name__
+        return self.repr_string(self._pointer_parameter)
 
 ####################################################################################################
 
 class OutputArrayWrapper(ArrayWrapper):
+
+    _logger = _module_logger.getChild('OutputArrayWrapper')
 
     size_parameter_threshold = 20
 
@@ -334,14 +370,16 @@ class OutputArrayWrapper(ArrayWrapper):
         # print self._pointer_parameter.long_repr(), self._pointer_type, type(parameter)
 
         if self._pointer_type == ctypes.c_void_p:
+            self._logger.debug('void *')
             # Generic pointer: thus the array data type is not specified by the API
             # The output array is provided by user
             array = parameter
-            c_parameters[self._size_location] = self._size_type(array.size)
+            c_parameters[self._size_location] = self._size_type(array.nbytes)
             ctypes_parameter = array.ctypes.data_as(ctypes.c_void_p)
             c_parameters[self._pointer_location] = ctypes_parameter
             return None
         if self._pointer_type == ctypes.c_char:
+            self._logger.debug('char *')
             # The array size is provided by user
             size_parameter = parameter
             c_parameters[self._size_location] = self._size_type(size_parameter)
@@ -350,6 +388,7 @@ class OutputArrayWrapper(ArrayWrapper):
             to_python_converter = ValueConverter(ctypes_parameter)
             return to_python_converter
         elif isinstance(parameter, np.ndarray):
+            self._logger.debug('ndarray')
             # Typed pointer
             # The output array is provided by user
             array = parameter
@@ -359,6 +398,7 @@ class OutputArrayWrapper(ArrayWrapper):
             c_parameters[self._pointer_location] = ctypes_parameter
             return None
         else:
+            self._logger.debug('else')
             # Typed pointer
             # The array size is provided by user
             size_parameter = parameter
@@ -478,12 +518,13 @@ class GlCommandWrapper(object):
                 pass # skip and will be set to None
             elif parameter.pointer:
                 if parameter.size_parameter is None and parameter.array_size == 1:
+                    # not const, array_size = 1 must be sufficient
                     parameter_wrapper = ReferenceWrapper(parameter)
                 elif parameter.size_parameter is None or parameter.computed_size:
                     parameter_wrapper = PointerWrapper(parameter)
                 else:
                     pass # skip and will be set bia back_ref
-            elif parameter.back_ref:
+            elif parameter.back_ref: # size parameter
                 if parameter.back_ref[0].const:
                     # Only theses functions have len(back_ref) > 1
                     #   glAreTexturesResident
@@ -527,16 +568,23 @@ class GlCommandWrapper(object):
 
     def __call__(self, *args, **kwargs):
 
-        # Set the input parameters and append python converters for output
+        if len(self._parameter_wrappers) != len(args):
+            self._logger.warning("%s requires %u arguments, but %u was given\n  %s\n  %s",
+                                 str(self._command), len(self._parameter_wrappers), len(args),
+                                 self._command.prototype(),
+                                 str([parameter_wrapper.__class__.__name__
+                                      for parameter_wrapper in self._parameter_wrappers]))
+
+        # Initialise the input/output parameter array
         c_parameters = [None]*self._number_of_parameters
         to_python_converters = []
-        if len(self._parameter_wrappers) != len(args):
-            self._logger.warning("Call %s: Number of arguments [%u] and parameter wrappers [%u] are not equal",
-                                 str(self._command), len(args), len(self._parameter_wrappers))
+        # Set the input parameters and append python converters for output
+        # first process the given parameters
         for parameter_wrapper, parameter in zip(self._parameter_wrappers, args):
             to_python_converter = parameter_wrapper.from_python(parameter, c_parameters)
             if to_python_converter is not None:
                 to_python_converters.append(to_python_converter)
+        # second process the parameters by reference
         for parameter_wrapper in self._reference_parameter_wrappers:
             to_python_converter = parameter_wrapper.from_python(c_parameters)
             if to_python_converter is not None:
@@ -610,7 +658,8 @@ class GlCommandWrapper(object):
     ##############################################
 
     def xml_manual_path(self):
-        return os.path.join(__manual_path__, self._xml_manual_name())
+
+        return os.path.join(Config.Path.manual_path(self._wrapper.api_number), self._xml_manual_name())
 
     ##############################################
 
@@ -627,10 +676,10 @@ class GlCommandWrapper(object):
 
         if sys.platform.startswith('linux'):
             url = self.xml_manual_url(local)
-            # browser = 'xdg-open'
-            # subprocess.Popen([browser, url])
-            import webbrowser
-            webbrowser.open(url)
+            browser = 'xdg-open'
+            subprocess.Popen([browser, url])
+            # import webbrowser
+            # webbrowser.open(url)
         else:
             raise NotImplementedError
 
@@ -664,6 +713,7 @@ class CtypeWrapper(object):
     def __init__(self, gl_spec, api, api_number, profile=None, manuals=None):
 
         self._gl_spec = gl_spec
+        self.api_number = api_number
         self._manuals = manuals
 
         api_enums, api_commands = self._gl_spec.generate_api(api, api_number, profile)

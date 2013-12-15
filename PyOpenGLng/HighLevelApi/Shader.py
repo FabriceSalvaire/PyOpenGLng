@@ -734,7 +734,9 @@ class GlShaderProgram(object):
 
         GL.glLinkProgram(self.program_id)
 
-        log, length = GL.glGetProgramInfoLog(self.program_id, 1000)
+        length = np.zeros(1, dtype=np.int32)
+        GL.glGetProgramiv(self.program_id, GL.GL_INFO_LOG_LENGTH, length)
+        log, length = GL.glGetProgramInfoLog(self.program_id, int(length[0]))
         message = """
 Link program '%s'
 Log:

@@ -65,6 +65,7 @@ for action, help_message in (
     ('list-commands', 'list commands'),
     ('list-multi-backref-commands', 'list commands having size parameter with more than one back reference'),
     ('list-computed-size-commands', 'list commands having a computed size parameter'),
+    ('list-multi-pointer-commands', 'list commands having a multi-pointer parameter '),
     ):
     argument_parser.add_argument('--' + action, default=False, action='store_true', help=help_message)
 
@@ -74,7 +75,11 @@ argument_parser.add_argument('--enum',
 
 argument_parser.add_argument('--command',
                              default=None,
-                             help='Show enum property')
+                             help='Show command prototype')
+
+argument_parser.add_argument('--man',
+                             default=None,
+                             help='Show man page')
 
 args = argument_parser.parse_args()
 
@@ -125,6 +130,7 @@ def show_command(command):
     if GL is not None:
         command_wrapper = getattr(GL, str(command))
         command_wrapper.help()
+    print
     if args.translate_type:
         print command.prototype()
     else:
@@ -156,6 +162,13 @@ if args.list_multi_backref_commands:
 
 if args.list_computed_size_commands:
     show_filtered_commands(lambda parameter: parameter.computed_size)
+
+if args.list_multi_pointer_commands:
+    show_filtered_commands(lambda parameter: parameter.pointer > 1)
+
+if args.man:
+    command_wrapper = getattr(GL, args.man)
+    command_wrapper.manual(local=True)
 
 ####################################################################################################
 # 
