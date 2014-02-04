@@ -55,10 +55,14 @@ parameter slot is removed of the prototype in Python. The size is filled by the 
 example::
 
   void glBufferData (GLenum target, GLsizeiptr size, const void * [size] data, GLenum usage)
-  ->
+
   glBufferData (ParameterWrapper<unsigned int> target,
                 InputArrayWrapper<const void * [size]> data,
                 ParameterWrapper<unsigned int> usage)
+
+  void glUniform3fv (GLint location, GLsizei count, const GLfloat * [count] value)
+
+  glUniform3fv (ParameterWrapper<int> location, InputArrayWrapper<const float * [count]> value)
 
 The array can be passed as an iterable or a numpy array. An information leak in the actual schema is
 due to the fact the size can represents the number of elements or a number of byte. Usually a
@@ -68,60 +72,98 @@ Some functions have double pointer parameters. The function *glShaderSource* is 
 since it features a double pointer and the size parameter is used for two parameters:
 
   void glShaderSource (GLuint shader, GLsizei count, const GLchar ** [count] string, const GLint * [count] length)
-  ->
+
   glShaderSource (ParameterWrapper<unsigned int> shader,
                   InputArrayWrapper<const char ** [count]> string)
 
 According to the specification, the *string* parameter is an array of (optionally) null-terminated
 strings and the *length* pointer must be set to NULL in this case.
 
+Output parameters passed as pointer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These parameters are not qualified as const and are managed by an *OutputArrayWrapper* when the size
+is not tagged as computed.
+
+The pointer parameter takes the place of the size parameter and its parameter slot is removed of
+the prototype in Python. The size filled by the wrapper.
+
+If the pointer is generic, then the array is passed as an Numpy array and the size is specified in
+byte. For example::
+
+  void glGetBufferSubData (GLenum target, GLintptr offset, GLsizeiptr size, void * [size] data)
+
+  glGetBufferSubData (ParameterWrapper<unsigned int> target, ParameterWrapper<ptrdiff_t> offset,
+                      OutputArrayWrapper<void * [size]> data)
+  -> None
+
+If the pointer is of *char *type, then the size is passed by the user and a string is returned. For
+example::
+
+  void glGetShaderSource (GLuint shader, GLsizei bufSize, GLsizei * [1] length, GLchar * [bufSize] source)
+
+  glGetShaderSource (ParameterWrapper<unsigned int> shader, OutputArrayWrapper<char * [bufSize]> source)
+  -> source
+
+If the user passes an Numpy array, then the data type is checked and the size is set by the wrapper.
+If the user passes a size, then a Numpy (or a list) array is created and returned.
+
+  void glGenBuffers (GLsizei n, GLuint * [n] buffers)
+
+  glGenBuffers (OutputArrayWrapper<unsigned int * [n]> buffers)  
+
+Parameter passed by reference
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A parameter passed by reference is identified in the prototype as a non const pointer with a fixed
+size of 1. A reference parameter is removed in the Python prototype and the value set by the call is
+returned. For example, this function features 3 parameters passed by reference:
+
+  void glGetActiveUniform (unsigned int program, unsigned int index, int bufSize,
+                           int * [1] length, int * [1] size, unsigned int * [1] type,
+                           char * [bufSize] name)
+  
+  glGetActiveUniform (ParameterWrapper<unsigned int> program, ParameterWrapper<unsigned int> index,
+                      OutputArrayWrapper<char * [bufSize]> name)
+  -> name, length, size, type
+
+Parameter passed as pointer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 When the size is tagged as computed, parameters are managed by a *Pointerwrapper* and all the
-parameters involved in the the size determination must be passed as input parameter. For example::
+parameters involved in the the size determination must be passed as input parameter.
+
+<<Fixme null-terminated>>
+  void glBindAttribLocation (GLuint program, GLuint index, const GLchar * name)
+
+  glBindAttribLocation (ParameterWrapper<unsigned int> program, ParameterWrapper<unsigned int> index,
+                        PointerWrapper<const char *> name)
+
+For example this function features a generic pointer *pixels* which must be passed as an Numpy
+array::
 
   void glTexImage1D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border,
                      GLenum format, GLenum type, const void * [COMPSIZE(format,type,width)] pixels)
-  ->
+
   glTexImage1D (ParameterWrapper<unsigned int> target, ParameterWrapper<int> level,
                 ParameterWrapper<int> internalformat, ParameterWrapper<int> width,
                 ParameterWrapper<int> border, ParameterWrapper<unsigned int> format,
                 ParameterWrapper<unsigned int> type,
                 PointerWrapper<const void * [COMPSIZE(format,type,width)]> pixels)
+  -> None
 
-This previous example is interesting, since the *width* parameter can be deduced from the shape of
-an Numpy array.
+This example is interesting, since the *width* parameter can be deduced from the shape of the Numpy
+array.
 
-output parameters passed as pointer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-These parameters are not qualified as const and are managed by an *InputArrayWrapper* when the size
-is not tagged as computed. The pointer parameter takes the place of the size parameter and its
-parameter slot is removed of the prototype in Python. The size filled by the wrapper. For example::
-
-  void glGenBuffers (GLsizei n, GLuint * [n] buffers)
-  ->
-  glGenBuffers (OutputArrayWrapper<unsigned int * [n]> buffers)  
-
-  void glGetBufferSubData (GLenum target, GLintptr offset, GLsizeiptr size, void * [size] data)
-  ->
-  glGetBufferSubData (ParameterWrapper<unsigned int> target, ParameterWrapper<ptrdiff_t> offset,
-                      OutputArrayWrapper<void * [size]> data)
-
-  void glGetShaderSource (GLuint shader, GLsizei bufSize, GLsizei * [1] length, GLchar * [bufSize] source)
-  ->
-  glGetShaderSource (ParameterWrapper<unsigned int> shader, OutputArrayWrapper<char * [bufSize]> source)
+This function features a typed pointer::
 
   void glGetIntegerv (GLenum pname, GLint * [COMPSIZE(pname)] data)
-  ->
-  glGetIntegerv (ParameterWrapper<unsigned int> pname, PointerWrapper<int * [COMPSIZE(pname)]> data)
 
- void glGetActiveUniform (unsigned int program, unsigned int index,
-                          int bufSize, int * [1] length, int * [1] size, unsigned int * [1] type,
-                          char * [bufSize] name)
- ->
- ['ParameterWrapper', 'ParameterWrapper', 'OutputArrayWrapper']
- 
+  glGetIntegerv (ParameterWrapper<unsigned int> pname, PointerWrapper<int * [COMPSIZE(pname)]> data)
+  -> None
+
 Return parameter passed as pointer
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For example::
 
@@ -234,7 +276,6 @@ class ParameterWrapperBase(object):
 
 class ParameterWrapper(ParameterWrapperBase):
 
-
     """ Translate a fundamental type. """
 
     ##############################################
@@ -270,6 +311,8 @@ class PointerWrapper(ParameterWrapperBase):
     the pointer is not generic.
     """
 
+    _logger = _module_logger.getChild('PointerWrapper')
+
     ##############################################
 
     def __init__(self, parameter):
@@ -283,12 +326,15 @@ class PointerWrapper(ParameterWrapperBase):
     def from_python(self, parameter, c_parameters):
 
         if self._type == ctypes.c_char and self._parameter.const: # const char *
+            self._logger.debug('const char *')
             ctypes_parameter = ctypes.c_char_p(str(parameter))
         elif isinstance(parameter, np.ndarray):
+            self._logger.debug('ndarray')
             if self._type != ctypes.c_void_p:
                 check_numpy_type(parameter, self._type)
             ctypes_parameter = parameter.ctypes.data_as(ctypes.POINTER(self._type))
         elif parameter is None:
+            self._logger.debug('None')
             ctypes_parameter = None # already done
         else:
             raise NotImplementedError
@@ -331,6 +377,8 @@ class ReferenceWrapper(ParameterWrapperBase):
 
 class ArrayWrapper(ParameterWrapperBase):
 
+    """ Base class for Array Wrapper. """
+
     ##############################################
 
     def __init__(self, size_parameter):
@@ -359,6 +407,20 @@ class ArrayWrapper(ParameterWrapperBase):
 
 class OutputArrayWrapper(ArrayWrapper):
 
+    """ Translate an output array parameter.
+    
+    If the pointer is generic, then the array is passed as an Numpy array and the size is specified
+    in byte. <<CHECK>>
+
+    If the pointer is of *char *type, then the size is passed by the user and a string is returned.
+
+    If the user passes an Numpy array, then the data type is checked and the size is set by the
+    wrapper.
+
+    If the user passes a size, then a Numpy (or a list) array is created and returned.
+
+    """
+
     _logger = _module_logger.getChild('OutputArrayWrapper')
 
     size_parameter_threshold = 20
@@ -372,13 +434,16 @@ class OutputArrayWrapper(ArrayWrapper):
         if self._pointer_type == ctypes.c_void_p:
             self._logger.debug('void *')
             # Generic pointer: thus the array data type is not specified by the API
-            # The output array is provided by user
-            array = parameter
-            c_parameters[self._size_location] = self._size_type(array.nbytes)
-            ctypes_parameter = array.ctypes.data_as(ctypes.c_void_p)
-            c_parameters[self._pointer_location] = ctypes_parameter
-            return None
-        if self._pointer_type == ctypes.c_char:
+            if isinstance(parameter, np.ndarray):
+                # The output array is provided by user and the size is specified in byte
+                array = parameter
+                c_parameters[self._size_location] = self._size_type(array.nbytes)
+                ctypes_parameter = array.ctypes.data_as(ctypes.c_void_p)
+                c_parameters[self._pointer_location] = ctypes_parameter
+                return None
+            else:
+                raise NotImplementedError
+        elif self._pointer_type == ctypes.c_char:
             self._logger.debug('char *')
             # The array size is provided by user
             size_parameter = parameter
@@ -418,6 +483,8 @@ class OutputArrayWrapper(ArrayWrapper):
 
 class InputArrayWrapper(ArrayWrapper):
 
+    _logger = _module_logger.getChild('InputArrayWrapper')
+
     ##############################################
 
     def from_python(self, array, c_parameters):
@@ -429,10 +496,12 @@ class InputArrayWrapper(ArrayWrapper):
         if self._pointer_parameter.pointer == 2:
             if self._pointer_type == ctypes.c_char: # Fixme: should be c_char_p
                 if isinstance(array, str):
+                    self._logger.debug('string -> const char **')
                     size_parameter = 1
                     string_array_type = ctypes.c_char_p * 1
                     string_array = string_array_type(ctypes.c_char_p(array))
                 else:
+                    self._logger.debug('string array -> const char **')
                     size_parameter = len(array)
                     string_array_type = ctypes.c_char_p * size_parameter
                     string_array = string_array_type(*[ctypes.c_char_p(x) for x in array])
@@ -440,17 +509,20 @@ class InputArrayWrapper(ArrayWrapper):
             else:
                 raise NotImplementedError
         elif isinstance(array, np.ndarray):
+            self._logger.debug('ndarray')
             if self._pointer_type == ctypes.c_void_p:
-                size_parameter = array.size
-            if self._pointer_type == ctypes.c_float: # fixme
-                size_parameter = 1 # array.shape[0]
-            else:
                 size_parameter = array.nbytes
-            ctypes_parameter = array.ctypes.data_as(ctypes.c_void_p)
-        elif isinstance(array, collections.Iterable):
-            size_parameter = len(array)
-            array_type = self._pointer_type * size_parameter
-            ctypes_parameter = array_type(array)
+            elif self._pointer_type == ctypes.c_float: # fixme
+                size_parameter = 1 # array.shape[0]
+            # else:
+            #     size_parameter = array.nbytes
+            # ctypes_parameter = array.ctypes.data_as(ctypes.c_void_p)
+            ctypes_parameter = array.ctypes.data_as(ctypes.POINTER(self._pointer_type))
+        # elif isinstance(array, collections.Iterable):
+        #     self._logger.debug('Iterable') # unused
+        #     size_parameter = len(array)
+        #     array_type = self._pointer_type * size_parameter
+        #     ctypes_parameter = array_type(array)
         else:
             raise ValueError(str(array))
 
