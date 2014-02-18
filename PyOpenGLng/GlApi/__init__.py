@@ -5,6 +5,10 @@
 #
 ####################################################################################################
 
+""" This module implements an Oriented Object counterpart of the OpenGL Registry XML file which
+describe the API and its official extensions.
+"""
+
 ####################################################################################################
 
 import os
@@ -94,7 +98,6 @@ class Type(object):
     Each <type> tag contains legal C code, with attributes or embedded tags denoting the type name.
     
     Attributes of <type> tags
-    -------------------------
     
         requires
             another type name this type requires to complete its definition.
@@ -111,7 +114,6 @@ class Type(object):
             arbitrary string (unused).
     
      Contents of <type> tags
-     ------------------------
     
     <type> contains text which is legal C code for a type declaration. It may also contain embedded
     tags:
@@ -203,12 +205,10 @@ class Groups(NameDict):
     for return and parameter types.
     
     Attributes of <groups> tags
-    ---------------------------
     
     None
     
     Contents of <groups> tags
-    -------------------------
     
     Each <groups> block contains zero or more <group> tags, in arbitrary order (although they are
     typically ordered by group name, to improve human readability).
@@ -224,20 +224,17 @@ class Group(object):
     Each <group> tag defines a single group annotation.
     
     Attributes of <group> tags
-    --------------------------
     
     name
         group name, an arbitrary string for grouping a set of enums together within a broader
         namespace.
     
     Contents of <group> tags
-    ------------------------
     
     <group> tags may contain zero or more <enum> tags. Each <enum> tag may contain only a name
     attribute, which should correspond to a <enum> definition in an <enums> block.
     
     Meaning of <group> tags
-    -----------------------
     
     If a <proto> or <param> tag of a <command> has a group attribute defined, and that attribute
     matches a <group> name, then the return type or parameter type is considered to be constrained
@@ -268,7 +265,6 @@ class Enums(object):
     used in the API.
 
     Attributes of <enums> tags
-    --------------------------
 
     namespace
         a string for grouping many different enums together, currently unused but typically
@@ -296,7 +292,6 @@ class Enums(object):
         group name, an arbitrary string.    
 
     Contents of <enums> tags
-    ------------------------
 
     Each <enums> block contains zero or more <enum> and <unused> tags, in arbitrary order (although
     they are typically ordered by sorting on enumerant values, to improve human readability).
@@ -395,7 +390,6 @@ class Enum(object):
     Each <enum> tag defines a single GL (or other API) token.
 
     Attributes of <enum> tags
-    -------------------------
     
     value
         enumerant value, a legal C constant (usually a hexadecimal integer).
@@ -425,7 +419,6 @@ class Enum(object):
         arbitrary string (unused).
 
     Contents of <enum> tags
-    -----------------------
 
     <enum> tags have no allowed contents. All information is contained in the attributes.
     """
@@ -479,14 +472,12 @@ class Commands(NameDict):
     The <commands> tag contains definitions of each of the functions (commands) used in the API.
     
     Attributes of <commands> tags
-    -----------------------------
     
     namespace
         a string defining the namespace in which commands live, currently unused but typically
         something like GL.
     
     Contents of <commands> tags
-    ---------------------------
     
     Each <commands> block contains zero or more <command> tags, in arbitrary order (although they
     are typically ordered by sorting on the command name, to improve human readability).
@@ -508,13 +499,11 @@ class Command(object):
     The <command> tag contains a structured definition of a single API command (function).
     
     Attributes of <command> tags
-    ----------------------------
     
     comment
        arbitrary string (unused).
     
     Contents of <command> tags
-    --------------------------
     
     * <proto> must be the first element, and is a tag defining the C function prototype of a command
         as described below, up to the function name but not including function parameters.
@@ -539,12 +528,10 @@ class Command(object):
         don't have GLX protocol defined, and other APIs such as EGL and WGL don't use GLX at all.
     
     Command prototype (<proto> tags)
-    --------------------------------
     
     The <proto> tag defines the return type and name of a command.
     
     Attributes of <proto> tags
-    --------------------------
     
     group
         group name, an arbitrary string.
@@ -552,7 +539,6 @@ class Command(object):
     If the group name is defined, it may be interpreted as described in <ref>.
     
     Contents of <proto> tags
-    ------------------------
     
     The text elements of a <proto> tag, with all other tags removed, is legal C code describing the
     return type and name of a command. In addition it may contain two semantic tags:
@@ -630,12 +616,10 @@ class Parameter(object):
 
     """
     Command parameter (<param> tags)
-    --------------------------------
     
     The <param> tag defines the type and name of a parameter.
     
     Attributes of <param> tags
-    --------------------------
     
     group
         group name, an arbitrary string.
@@ -649,7 +633,6 @@ class Parameter(object):
     If the group name is defined, it may be interpreted as described in <ref>.
     
     Contents of <param> tags
-    ------------------------
     
     The text elements of a <param> tag, with all other tags removed, is legal C code describing the
     type and name of a function parameter. In addition it may contain two semantic tags:
@@ -787,7 +770,6 @@ class Feature(object):
     ES 3.0, and includes all API profiles of that version.
     
     Attributes of <feature> tags
-    ----------------------------
     
     api
         API name this feature is for (see <ref>), such as gl or gles2.
@@ -809,7 +791,6 @@ class Feature(object):
         arbitrary string (unused)
     
     Contents of <feature> tags
-    --------------------------
     
     Zero or more <require> and <remove> tags (see <ref>), in arbitrary order.  Each tag describes a
     set of interfaces that is respectively required for, or removed from, this feature, as described
@@ -856,19 +837,16 @@ class Extension(object):
     API.
     
     Attributes of <extensions> tags
-    -------------------------------
     
     None.
     
     Contents of <extensions> tags
-    -----------------------------
     
     Each <extensions> block contains zero or more <extension> tags, each describing an API
     extension, in arbitrary order (although they are typically ordered by sorting on the extension
     name, to improve human readability).
     
     API Extensions (<extension> tag)
-    --------------------------------
     
     API extensions are described in individual <extension> tags. An extension is the set of
     interfaces defined by a particular API extension specification, such as
@@ -877,7 +855,6 @@ class Extension(object):
     extension can potentially be implemented against.
     
     Attributes of <extension> tags
-    ------------------------------
     
     supported
         a regular expression, with an implicit ^ and $ bracketing it, which should match the api tag
@@ -892,7 +869,6 @@ class Extension(object):
         arbitrary string (unused)
     
     Contents of <extension> tags
-    ----------------------------
     
     Zero or more <require> and <remove> tags (see <ref>), in arbitrary order.  Each tag describes a
     set of interfaces that is respectively required for, or removed from, this extension, as
@@ -933,7 +909,6 @@ class RequiredInterface(object):
     for the tag name and behavior, the contents of <require> and <remove> tags are identical.
     
     Attributes of <require> and <remove> tags
-    -----------------------------------------
     
     profile
         string name of an API profile. Interfaces in the tag are only re- quired (or removed) if the
@@ -950,7 +925,6 @@ class RequiredInterface(object):
         already define a specific API.
     
     Contents of <require> and <remove> tags
-    ---------------------------------------
     
     Zero or more of the following tags, in any order:
     
@@ -1077,6 +1051,8 @@ class RemovedItem(RequiredItem):
 
 class GlSpecParser(object):
 
+    """ This class implements the XML file parser. """
+
     # Fixme: class name
 
     _logger = _module_logger.getChild('GlSpecParser')
@@ -1103,20 +1079,10 @@ class GlSpecParser(object):
 
     def _validate(self, relax_ng_file_path):
 
+        """ Validate the API XML file using the given RelaxNG schema. """
+        
         relax_ng = etree.RelaxNG(file=relax_ng_file_path)
         relax_ng.validate(self._tree)
-
-    ##############################################
-
-    @staticmethod
-    def _to_int(value):
-
-        if value.startswith('0x'):
-            base = 16
-        else:
-            base = 10
-
-        return int(value, base)
 
     ##############################################
 
@@ -1145,7 +1111,7 @@ class GlSpecParser(object):
         attributes = GlSpecParser._copy_dict(node.attrib, renaming)
         for key in int_attributes:
             if key in attributes:
-                attributes[key] = GlSpecParser._to_int(attributes[key])
+                attributes[key] = int(attributes[key], base=0)
 
         return attributes
 
@@ -1324,7 +1290,7 @@ class GlSpecParser(object):
     ##############################################
 
     def _parse_extension(self, extension_node):
-
+        
         kwargs = dict(extension_node.attrib)
         extension = Extension(**kwargs)
         self.extension_list.append(extension)
