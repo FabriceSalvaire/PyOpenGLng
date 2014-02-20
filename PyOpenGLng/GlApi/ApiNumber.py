@@ -29,7 +29,11 @@ class ApiNumber(object):
 
         """ The argument *number* must be of the form "x.y". """
 
-        self.major, self.minor = [int(x) for x in number.split('.')]
+        try:
+            self.major, self.minor = [int(x) for x in number.split('.')]
+        except ValueError:
+            # self.major, self.minor = int(number), 0
+            raise NameError("Version number must be of the form x.y")
 
     ##############################################
 

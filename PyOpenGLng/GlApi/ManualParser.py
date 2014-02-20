@@ -5,6 +5,8 @@
 #
 ####################################################################################################
 
+""" This modules provides an index of the OpenGL XML manual pages. """
+
 ####################################################################################################
 
 import cPickle as pickle
@@ -17,10 +19,24 @@ from lxml import etree
 
 class Manual(dict):
 
+    """ This class represents the root of an OpenGL API manual.
+
+    The dictionnary is index by function name.
+
+    Public Attributes:
+
+        :attr:`name`
+            API name
+    """
+
     ##############################################
 
     @classmethod
-    def load (cls):
+    def load(cls):
+
+        """ Load the pickled files in the module path and return a dictionnary indexed by manual
+        name.
+        """
 
         manuals = {}
         for pickle_file in glob.glob(os.path.join(os.path.dirname(__file__), 'man*.pickle')):
@@ -40,6 +56,20 @@ class Manual(dict):
 
 class Page(object):
 
+    """ This class represents the manual page of an OpenGL command.
+
+    Public Attributes:
+
+        :attr:`function`
+            function name
+        
+        :attr:`page_name`
+            manual page name, a page can describe a group of functions.
+        
+        :attr:`purpose`
+            function purpose
+    """
+
     ##############################################
 
     def __init__(self, function, page_name, purpose):
@@ -52,6 +82,13 @@ class Page(object):
 
 class ManualParser(object):
 
+    """ This class provides a manual indexer that parse the OpenGL XML manual pages.
+
+    Public Attributes:
+
+        :attr:`manual`
+    """
+
     ##############################################
 
     def __init__(self, manual_path):
@@ -63,12 +100,16 @@ class ManualParser(object):
 
     def _parse_pages(self, manual_path):
 
+        """ Parse the XML manual pages in the given directory. """
+
         for page in glob.glob(os.path.join(manual_path, 'gl*.xml')):
             self._parse_page(page)
 
     ##############################################
 
     def _parse_page(self, page_path):
+
+        """ Parse an XML manual page and build the :class:`Page`. """
 
         page_name = os.path.basename(page_path)
         page_name = page_name.replace('.xml', '')
@@ -90,6 +131,12 @@ class ManualParser(object):
         purpose = root.find('refnamediv/refpurpose').text
         for function in functions:
             self.manual[function] = Page(function, page_name, purpose)
+
+####################################################################################################
+
+def make_manual(manual_path):
+    """ Build a :class:`Manual` instance. """
+    return ManualParser(manual_path).manual
 
 ####################################################################################################
 # 

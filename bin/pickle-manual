@@ -8,7 +8,7 @@
 #
 ####################################################################################################
 
-""" Gather data from the xml files of the manual and generate a pickle file.
+""" Gather data from the xml files of the OpenGL API manual and generate a pickle file.
 """
 
 ####################################################################################################
@@ -18,7 +18,7 @@ import cPickle as pickle
 
 ####################################################################################################
 
-from PyOpenGLng.GlApi.ManualParser import ManualParser
+from PyOpenGLng.GlApi.ManualParser import make_manual
 
 ####################################################################################################
 #
@@ -26,25 +26,25 @@ from PyOpenGLng.GlApi.ManualParser import ManualParser
 #
 
 argument_parser = argparse.ArgumentParser(
-    description='Pickle Manual',
+    description='Gather data from the xml files of the OpenGL API manual and generate a pickle file',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
 argument_parser.add_argument('manual_path',
                              metavar='ManualPath',
-                             help='Manual path')
+                             help='manual path')
 
 argument_parser.add_argument('pickle_file',
                              metavar='FILE.pickle',
-                             help='Output pickle file')
+                             help='output pickle file')
 
 args = argument_parser.parse_args()
 
 ####################################################################################################
 
-manual_parser = ManualParser(args.manual_path)
+manual = make_manual(args.manual_path)
 with open(args.pickle_file, 'w') as f:
-    pickle.dump(manual_parser.manual, f, -1)
+    pickle.dump(manual, f, pickle.HIGHEST_PROTOCOL)
 
 ####################################################################################################
 # 
