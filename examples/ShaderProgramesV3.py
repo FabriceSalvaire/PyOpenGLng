@@ -41,7 +41,6 @@ if shader_manager.has_visual():
     
     for shader_name in (
         'fixed_colour_vertex_shader',
-        'fixed_colour_vertex_shader_in',
         'simple_fragment_shader',
         'texture_fragment_shader',
         'texture_vertex_shader',
