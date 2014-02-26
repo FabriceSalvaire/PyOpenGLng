@@ -235,11 +235,14 @@ class Type(object):
 
     def __init__(self,
                  name,
-                 c_code=None, requires=None, api=None, comment=None, api_entry=False,
+                 c_declaration_head=None, c_declaration_tail='',
+                 requires=None, api=None, comment=None, api_entry=False,
                  ):
 
         self.name = name
-        self.c_code = c_code # Fixme: -> c_declaration and concat name? /!\ function pointer
+        # Fixme: -> concat name? /!\ function pointer
+        self.c_declaration_head = c_declaration_head
+        self.c_declaration_tail = c_declaration_tail
         self.api_entry = api_entry
         self.requires = requires
         self.api = api
@@ -249,11 +252,11 @@ class Type(object):
         self.unsigned = False
         self.pointer = False
         self.c_type = None
-        if (self.c_code is not None
-            and self.c_code.count('\n') == 0
-            and self.c_code.startswith('typedef')
-            and not self.c_code.endswith('(')):
-            for token in self.c_code.split()[1:]:
+        if (self.c_declaration_head is not None
+            and self.c_declaration_head.count('\n') == 0
+            and self.c_declaration_head.startswith('typedef')
+            and not self.c_declaration_head.endswith('(')):
+            for token in self.c_declaration_head.split()[1:]:
                 if token.startswith('khronos_'):
                     token = token[len('khronos_'):]
                 if token == 'unsigned':
@@ -265,7 +268,12 @@ class Type(object):
                 elif token in self._C_TYPES:
                     self.c_type = token
         else:
-            pass
+            if self.c_declaration_head is not None:
+                c_declaration = self.c_declaration_head
+            else:
+                c_declaration = ''
+            c_declaration += self.name + self.c_declaration_tail
+            _module_logger.warn("Unsupported type declaration for %s", c_declaration)
             # Fixme:
             # raise NameError("Unsupported type declaration for %s" % (name))
 
@@ -768,7 +776,7 @@ class Command(object):
         for parameter in parameters:
             # size parameter can be after pointer
             if parameter.size_parameter is not None and not parameter.computed_size:
-                self.parameter_dict[parameter.size_parameter].back_ref.append(parameter)
+                self.parameter_dict[parameter.size_parameter].pointer_parameters.append(parameter)
 
     ##############################################
 
@@ -815,7 +823,7 @@ class Parameter(object):
         :attr:`array_size`
             array size or :obj:`None`
 
-        :attr:`back_ref`
+        :attr:`pointer_parameters`
             array of pointer parameters where this parameter acts as a size parameter
 
         :attr:`c_type`
@@ -901,8 +909,7 @@ class Parameter(object):
         self.c_type = gl_types.translate_gl_type(self.type)
 
         self.size_parameter = None
-        # Fixme: -> pointer_parameter ?
-        self.back_ref = [] # back ref for size parameter
+        self.pointer_parameters = [] # back ref for size parameter
         self.array_size = None # array size is known
         self.computed_size = False # array size is computed by OpenGL
         self.size_multiplier = 1
@@ -988,17 +995,17 @@ class Parameter(object):
     def long_repr(self):
 
         template = """Parameter %(name)s
-  location         %(location_)s
-  type             %(type)s
-  group            %(group)s
-  const            %(const)s
-  pointer          %(pointer)s
-  c type           %(c_type)s
-  size parameter   %(size_parameter)s
-  back ref         %(back_ref)s
-  computed size    %(computed_size)s
-  size_multiplier  %(size_multiplier)u
-  array_size       %(array_size_)s
+  location           %(location_)s
+  type               %(type)s
+  group              %(group)s
+  const              %(const)s
+  pointer            %(pointer)s
+  c type             %(c_type)s
+  size parameter     %(size_parameter)s
+  pointer parameters %(pointer_parameters)s
+  computed size      %(computed_size)s
+  size_multiplier    %(size_multiplier)u
+  array_size         %(array_size_)s
 """
 
         # Fixme:
@@ -1007,6 +1014,14 @@ class Parameter(object):
         d['location_'] = str(self.location)
 
         return template % d
+
+    ##############################################
+
+    def is_generic_pointer(self):
+
+        """ Test if parameter is ``void *``. """
+
+        return self.pointer and self.c_type == 'void'
 
 ####################################################################################################
 
@@ -1503,8 +1518,12 @@ class GlSpecParser(object):
         """ Parse ``<type>`` tags. """
 
         kwargs = dict(type_node.attrib)
-        if type_node.text is not None:
-            kwargs['c_code'] = type_node.text.strip()
+        if type_node.text:
+            kwargs['c_declaration_head'] = type_node.text.strip()
+        if type_node.tail:
+            # Fixme:
+            #   <type>typedef void (<apientry/> *<name>GLDEBUGPROC</name>)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const void *userParam);</type>
+            kwargs['c_declaration_tail'] = type_node.tail.strip()
         for node in type_node:
             if node.tag == 'apientry':
                 kwargs['api_entry'] = True
@@ -1684,6 +1703,9 @@ class GlSpecParser(object):
 
         Return the list of enumerants and commands.
         """
+
+        if api not in ('gl', 'gles'):
+            raise ValueError("api must be 'gl' or 'gles'")
 
         self._logger.info("Generate API %s %s profile:%s" % (api, api_number, profile))
 

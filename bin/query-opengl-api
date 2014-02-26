@@ -19,10 +19,10 @@ import logging
 # Logging
 #
 
-# logging.basicConfig(
-#     format='\033[1;32m%(asctime)s\033[0m - \033[1;34m%(name)s.%(funcName)s\033[0m - \033[1;31m%(levelname)s\033[0m - %(message)s',
-#     level=logging.INFO,
-#     )
+logging.basicConfig(
+    format='\033[1;32m%(asctime)s\033[0m - \033[1;34m%(name)s.%(funcName)s\033[0m - \033[1;31m%(levelname)s\033[0m - %(message)s',
+    level=logging.INFO,
+    )
 
 ####################################################################################################
 
@@ -65,7 +65,7 @@ for action, help_message in (
     ('summary', 'summary'),
     ('list-enums', 'list enums'),
     ('list-commands', 'list commands'),
-    ('list-multi-backref-commands', 'list commands having size parameter with more than one back reference'),
+    ('list-multi-referenced-pointer-commands', 'list commands having size parameter used by more than one pointer parameter'),
     ('list-computed-size-commands', 'list commands having a computed size parameter'),
     ('list-multi-pointer-commands', 'list commands having a multi-pointer parameter '),
     ):
@@ -156,11 +156,8 @@ def show_filtered_commands(filter_function):
         if show:
             show_command(command)
 
-if args.list_multi_backref_commands:
-    show_filtered_commands(lambda parameter: len(parameter.back_ref) > 1)
-
-if args.list_multi_backref_commands:
-    show_filtered_commands(lambda parameter: len(parameter.back_ref) > 1)
+if args.list_multi_referenced_pointer_commands:
+    show_filtered_commands(lambda parameter: len(parameter.pointer_parameters) > 1)
 
 if args.list_computed_size_commands:
     show_filtered_commands(lambda parameter: parameter.computed_size)
