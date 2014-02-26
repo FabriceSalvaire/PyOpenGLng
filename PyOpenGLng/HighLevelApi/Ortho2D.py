@@ -65,6 +65,11 @@ class ViewportArea(object):
     """ This class defines a viewport area.
  
     It implements an interval arithmetic using the class :class:`GVLab.Tools.Interval.Interval2D`.
+
+    Public Attributes:
+
+      :attr:`ref_point`
+
     """
 
     _logger = logging.getLogger(__name__)
@@ -220,7 +225,13 @@ class ViewportArea(object):
 
 class ZoomManagerAbc(object):
 
-    """ This class implements a basic zoom manager. """
+    """ This class implements a basic zoom manager.
+
+    Public Attributes:
+
+      :attr:`zoom_factor`
+
+    """
 
     _logger = logging.getLogger(__name__)
 
@@ -247,6 +258,23 @@ class ZoomManagerAbc(object):
 class Ortho2D(object):
 
     """ This class implements an Orthonormal 2D Viewport.
+
+    Public Attributes:
+
+      :attr:`display_scale`
+
+      :attr:`gl_to_window_parity`
+
+      :attr:`inverse_parity_display_scale`
+
+      :attr:`parity_display_scale`
+
+      :attr:`viewport_area`
+
+      :attr:`window`
+
+      :attr:`zoom_manager`
+
     """
 
     _logger = logging.getLogger(__name__)

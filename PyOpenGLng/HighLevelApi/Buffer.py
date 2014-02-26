@@ -39,6 +39,10 @@ from . import GL
 
 ####################################################################################################
 
+_module_logger = logging.getLogger(__name__)
+
+####################################################################################################
+
 class GlBuffer(object):
 
     """ This class wraps an OpenGL Buffer.
@@ -53,7 +57,7 @@ class GlBuffer(object):
 
     # size and type attributes are used by VertexAttribPointer like functions.
 
-    _logger = logging.getLogger(__name__)
+    _logger = _module_logger.getChild(__name__)
 
     #: Define the target in subclass
     _target = None
@@ -103,27 +107,39 @@ class GlBuffer(object):
 
     ##############################################
     
-    def set(self, data):
-
-        raise NotImplementedError
-
-    ##############################################
-    
-    def _set_float(self, data, usage=GL.GL_STATIC_DRAW):
+    def _set(self, data, usage):
         
-        """ Set the data of the buffer.
-        
-        Data type must be float 32-bit.
-        """
+        """ Set the data of the buffer. """
 
         if data.dtype == np.float32:
             self.type = GL.GL_FLOAT
+        elif data.dtype == np.float64:
+            self.type = GL.GL_DOUBLE
+        elif data.dtype == np.int32:
+            self.type = GL.GL_INT
+        elif data.dtype == np.uint32:
+            self.type = GL.GL_UNSIGNED_INT
         else:
             raise ValueError()
+
+        # Fixme: shape?
+        shape = data.shape
+        if len(shape) == 2:
+            self.size = data.shape[1] # xyzw
+        else:
+            self.size = 1
 
         self.bind()
         GL.glBufferData(self._target, data, usage)
         self.unbind()
+
+    ##############################################
+    
+    def set(self, data, usage):
+
+        """ Set the data of the buffer. """
+
+        raise NotImplementedError
 
 ####################################################################################################
 
@@ -133,19 +149,12 @@ class GlUniformBuffer(GlBuffer):
 
     _target = GL.GL_UNIFORM_BUFFER
 
-    _logger = logging.getLogger(__name__)
+    _logger = _module_logger.getChild(__name__)
 
     ##############################################
     
     def set(self, data, usage=GL.GL_DYNAMIC_DRAW):
-        
-        """ Set the data of the buffer.
-        
-        Data type must be float 32-bit.
-        """
-
-        self.size = data.shape # ?
-        self._set_float(data, usage)
+        self._set(data, usage)
 
 ####################################################################################################
 
@@ -155,19 +164,12 @@ class GlArrayBuffer(GlBuffer):
 
     _target = GL.GL_ARRAY_BUFFER
 
-    _logger = logging.getLogger(__name__)
+    _logger = _module_logger.getChild(__name__)
 
     ##############################################
     
     def set(self, data, usage=GL.GL_STATIC_DRAW):
-        
-        """ Set the data of the buffer.
-        
-        Data type must be float 32-bit.
-        """
-
-        self.size = data.shape[1] # xyzw
-        self._set_float(data, usage)
+        self._set(data, usage)
 
     ##############################################
     

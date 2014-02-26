@@ -28,6 +28,7 @@
 
 import logging
 import os
+import re
 
 import numpy as np
 
@@ -170,6 +171,7 @@ class GlShader(object):
 
         """ Preprocess the source code. """
 
+        # Fixme: remove commented lines!
         include_start_pattern = '#include('
         include_stop_pattern = ')'
         current_position = 0
@@ -180,12 +182,13 @@ class GlShader(object):
                 if include_stop_position:
                     include_file_name = source_code[include_start_position + len(include_start_pattern):include_stop_position]
                     self._logger.debug("Include GLSL file %s" % (include_file_name))
+                    # Fixme: implement -I like search path
                     include_source_code = self._load_from_file(os.path.join(path, include_file_name))
                     current_position = include_stop_position +1
                     source_code = source_code[:include_start_position] \
                         + '/* Begin include ' + include_file_name + ' */\n' \
                         + include_source_code \
-                        + '/* End include ' + include_file_name + '* /\n' \
+                        + '/* End include ' + include_file_name + ' */\n' \
                         + source_code[current_position:]
                 else:
                     line_count = source_code.count('\n', end=include_start_position)
@@ -244,8 +247,26 @@ Log:
         self._logger.debug(message % (self._source, log))
 
         # Fixme: high level function
+        # Fixme: shader doesn't have name
         if not GL_Ext.glGetShaderiv(self._shader_id, GL.GL_COMPILE_STATUS):
-            raise ValueError(log)
+            source_lines = self._source.splitlines()
+            last_line = len(source_lines) -1
+            # Fixme: count digit of last_line
+            source_lines = ['%3u| ' % (location) + source_lines[location]
+                            for location in xrange(last_line +1)]
+            self._logger.info('Source:\n' + '\n'.join(source_lines))
+            self._logger.error(log)
+            for line in log.splitlines():
+                match = re.match(r'\d\((\d+)\) : error', line)
+                # intel: # 0:18(10): error: no precision specified this scope for type `vec4'
+                if match is not None:
+                    location = int(match.group(1))
+                    context_size = 1
+                    lower_location = max(0, location-context_size)
+                    upper_location = min(location+context_size, last_line)
+                    context_source_lines = source_lines[lower_location:upper_location +1]
+                    self._logger.error('\n' + line + '\n\n' + '\n'.join(context_source_lines))
+            raise ValueError('GLSL Compilation Error')
 
         self._compiled = True
 
@@ -897,7 +918,7 @@ class GlShaderManager(object):
         """
 
         if shader_name in self:
-            raise NameError("Shader %s is already defined", shader_name)
+            raise NameError("Shader %s is already defined" % (shader_name))
 
         shader = GlShader(file_name=shader_file_name)
         shader.compile()
@@ -918,7 +939,7 @@ class GlShaderManager(object):
         """
 
         if program_name in self:
-            raise NameError("Program %s is already defined", program_name)
+            raise NameError("Program %s is already defined" % (program_name))
 
         shader_program = shader_program_class(program_name, *shader_program_args)
         for shader_name in shader_list:
