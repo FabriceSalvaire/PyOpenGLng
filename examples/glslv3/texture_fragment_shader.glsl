@@ -11,18 +11,18 @@ uniform usampler2D texture0;
 /* *********************************************************************************************** */
 
 // #version 150 required for using interface blocks
-in vec2 vertex_uv;
+in highp vec2 vertex_uv;
 
 /* *********************************************************************************************** */
 
-out vec4 fragment_colour;
+out highp vec4 fragment_colour;
 
 /* *********************************************************************************************** */
 
 void main()
 {
   uvec4 texel = texture(texture0, vertex_uv);
-  vec4 normalised_texel = vec4(texel) / 65535.0;
+  highp vec4 normalised_texel = vec4(texel) / 65535.0;
   fragment_colour = normalised_texel;
 }
 

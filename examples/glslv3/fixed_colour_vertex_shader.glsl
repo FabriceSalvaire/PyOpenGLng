@@ -18,7 +18,7 @@ uniform vec3 colour; // = vec3(1, 1, 1);
 
 // #version 150 required for using interface blocks.
 // GLSL ES 3.0 does not support interface blocks for shader inputs or outputs.
-out vec4 vertex_colour;
+out highp vec4 vertex_colour;
 
 /* *********************************************************************************************** */
 
