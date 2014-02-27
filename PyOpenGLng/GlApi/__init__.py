@@ -1704,6 +1704,10 @@ class GlSpecParser(object):
         Return the list of enumerants and commands.
         """
 
+        # Fixme: how to load an extension?
+        #  explicitely, but check it is available
+        #  check additional functions in libGL
+
         if api not in ('gl', 'gles'):
             raise ValueError("api must be 'gl' or 'gles'")
 

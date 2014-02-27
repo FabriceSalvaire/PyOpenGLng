@@ -43,7 +43,9 @@ class GlRandomTexture(object):
     
     def __del__(self):
 
-        GL.glDeleteTextures([self._gl_textures_id])
+        #Fixme:
+        # GL.glDeleteTextures([self._gl_textures_id])
+        pass
 
     ##############################################
     

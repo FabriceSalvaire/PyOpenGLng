@@ -581,6 +581,11 @@ class ValueConverter(ToPythonConverter):
 
 ####################################################################################################
 
+class CommandNotAvailable(Exception):
+    pass
+
+####################################################################################################
+
 class GlCommandWrapper(object):
 
     _logger = _module_logger.getChild('GlCommandWrapper')
@@ -596,7 +601,7 @@ class GlCommandWrapper(object):
         try:
             self._function = getattr(self._wrapper.libGL, str(command))
         except AttributeError:
-            raise NameError("OpenGL function %s was no found in libGL" % (str(command)))
+            raise CommandNotAvailable("OpenGL function %s was no found in libGL" % (str(command)))
 
         # Only for simple prototype
         # argument_types = [to_ctypes_type(parameter) for parameter in command.parameters]
@@ -608,6 +613,8 @@ class GlCommandWrapper(object):
         self._parameter_wrappers = []
         self._reference_parameter_wrappers = []
         for parameter in command.parameters:
+            if parameter.type in ('GLsync', 'GLDEBUGPROC'):
+                raise NotImplementedError
             parameter_wrapper = None
             if command_directive and parameter.name in command_directive:
                 # Fixme: currently used for unspecified parameters (value set to 0)
@@ -642,7 +649,9 @@ class GlCommandWrapper(object):
                 parameter_list.append(parameter_wrapper)
                 
         return_type = command.return_type
-        if return_type.type != 'void': # Fixme: .type or .c_type?
+        if return_type.type == 'GLsync':
+            raise NotImplementedError
+        elif return_type.type != 'void': # Fixme: .type or .c_type?
             # Fixme: -> to func?
             ctypes_type = to_ctypes_type(return_type)
             if return_type.pointer:
@@ -713,7 +722,7 @@ class GlCommandWrapper(object):
                 # Fixme: to func?, gives some cases to explain
                 if len(output_parameters) == 1:
                     output_parameter = output_parameters[0]
-                    if len(output_parameter) == 1: # uniq output parameter is [a,]
+                    if isinstance(output_parameter, list) and len(output_parameter) == 1: # uniq output parameter is [a,]
                         # Fixme: could be worst than simpler, if we really expect a list
                         return output_parameter[0]
                     else:
@@ -797,7 +806,8 @@ class GlCommandWrapper(object):
 class CtypeWrapper(object):
 
     libGL = None
-    
+
+    _logger = _module_logger.getChild('CtypeWrapper')
 
     ##############################################
 
@@ -844,7 +854,13 @@ class CtypeWrapper(object):
     def _init_commands(self, api_commands):
 
         for command in api_commands.itervalues():
-            setattr(self, str(command), GlCommandWrapper(self, command))
+            try:
+                command_wrapper = GlCommandWrapper(self, command)
+                setattr(self, str(command), command_wrapper)
+            except NotImplementedError:
+                self._logger.warn("Command %s is not supported by the wrapper", str(command))
+            except CommandNotAvailable:
+                self._logger.warn("Command %s is not implemented", str(command))
 
     ##############################################
 

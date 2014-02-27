@@ -22,7 +22,9 @@ _module_logger = logging.getLogger(__name__)
 # GL = None
 
 _module_logger.info("Initialise OpenGL Wrapper")
-GL = GlWrapper.init(api_number='3.1', profile='core', check_api_number=False)
+# GL = GlWrapper.init(api_number='3.1', profile='core', check_api_number=False)
+# GL = GlWrapper.init(api_number='4.4', profile='core', check_api_number=False)
+GL = GlWrapper.init(api_number='4.4', profile='compat', check_api_number=False)
 
 ####################################################################################################
 # 

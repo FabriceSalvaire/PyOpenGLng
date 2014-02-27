@@ -73,12 +73,18 @@ Correspondence of command suffix type descriptors to GL argument types:
 
 ####################################################################################################
 
+import logging
+
 import numpy as np
 
 ####################################################################################################
 
 from . import GL
 from ..Tools.EnumFactory import EnumFactory
+
+####################################################################################################
+
+_module_logger = logging.getLogger(__name__)
 
 ####################################################################################################
 
@@ -116,6 +122,7 @@ def get_gl_attr(name):
     try:
         return getattr(GL, name)
     except AttributeError:
+        _module_logger.warn("Command %s is not available in the wrapper", name)
         return None
 
 ####################################################################################################
@@ -171,7 +178,9 @@ class GlType(object):
         self.token_name = get_gl_attr('GL_' + token_name)
         self.uniform_get_v = get_gl_attr('glGetUniform' + uniform_get + 'v')
         self.uniform_set_v = get_gl_attr('glUniform' + uniform_set + 'v')
-        self.program_uniform_set_v = get_gl_attr('glProgramUniform' + uniform_set + 'v')
+        # Fixme: 'EXT' is not in the wrapper ???
+        # cf. GL_EXT_direct_state_access extension
+        self.program_uniform_set_v = get_gl_attr('glProgramUniform' + uniform_set + 'v') # 'vEXT'
         if isinstance(self, (GlVariableType, GlVectorType)):
             self.uniform_set = get_gl_attr('glUniform' + uniform_set)
         else:

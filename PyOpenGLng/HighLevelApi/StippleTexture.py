@@ -95,7 +95,7 @@ class GlStippleTexture(object):
 
         level = 0
         border = 0
-        internal_format = GL.GL_LUMINANCE
+        internal_format = GL.GL_LUMINANCE #compat#
         data_format = GL.GL_LUMINANCE
         data_type = GL.GL_UNSIGNED_BYTE
         GL.glTexImage1D(GL.GL_TEXTURE_1D,

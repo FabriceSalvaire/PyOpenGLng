@@ -13,22 +13,28 @@ from PyQt4 import QtCore
 
 import numpy as np
 
-import OpenGL.GL as GL
-import OpenGL.GLU as GLU
-try:
-    import OpenGL.GL.NV.path_rendering as nvpath
-except ImportError:
-    nvpath = None
+####################################################################################################
+
+# import OpenGL.GLU as GLU
+# try:
+#     import OpenGL.GL.NV.path_rendering as nvpath
+# except ImportError:
+#     nvpath = None
+nvpath = None
 
 ####################################################################################################
 
-from PyOpenGLng.HighLevelApi.GlWidgetBase import GlWidgetBase
-
 #!# from PyOpenGLng.HighLevelApi.GlOrtho2D import ZoomManagerAbc
+
+from PyOpenGLng.HighLevelApi import GL
 from PyOpenGLng.HighLevelApi.Buffer import GlUniformBuffer
 from PyOpenGLng.HighLevelApi.Geometry import Point, Offset, Segment, Rectangle
+from PyOpenGLng.HighLevelApi.GlWidgetBase import GlWidgetBase
+from PyOpenGLng.HighLevelApi.ImageTexture import ImageTexture
 from PyOpenGLng.HighLevelApi.PrimitiveVertexArray import GlSegmentVertexArray, GlRectangleVertexArray
 from PyOpenGLng.HighLevelApi.StippleTexture import GlStippleTexture
+from PyOpenGLng.HighLevelApi.TextVertexArray import TextVertexArray
+from PyOpenGLng.HighLevelApi.TextureFont import TextureFont
 from PyOpenGLng.HighLevelApi.TextureVertexArray import GlTextureVertexArray
 from PyOpenGLng.Tools.Interval import IntervalInt2D
 import PyOpenGLng.HighLevelApi.FixedPipeline as GlFixedPipeline
@@ -73,8 +79,8 @@ class GlWidget(GlWidgetBase):
 
         super(GlWidget, self).initializeGL()
 
-        GL.glEnable(GL.GL_POINT_SMOOTH)
-        GL.glEnable(GL.GL_LINE_SMOOTH)
+        GL.glEnable(GL.GL_POINT_SMOOTH) #compat# 
+        GL.glEnable(GL.GL_LINE_SMOOTH) #compat# 
         
         self.qglClearColor(QtCore.Qt.black)
         # GL.glPointSize(5.)
@@ -105,10 +111,11 @@ class GlWidget(GlWidgetBase):
         self.logger.debug('Update Model View Projection Matrix'
                          '\n' + str(self.glortho2d))
 
+        # To test NVPath API
         # See also DSA http://www.opengl.org/registry/specs/EXT/direct_state_access.txt
-        GL.glMatrixMode(GL.GL_PROJECTION)
-        GL.glLoadIdentity()
-        GLU.gluOrtho2D(* self.glortho2d.ortho2d_bounding_box())
+        #compat# GL.glMatrixMode(GL.GL_PROJECTION)
+        #compat# GL.glLoadIdentity()
+        #GLU# GLU.gluOrtho2D(* self.glortho2d.ortho2d_bounding_box())
 
         viewport_uniform_buffer_data = self.glortho2d.viewport_uniform_buffer_data(self.size())
         self.logger.debug('Viewport Uniform Buffer Data '
@@ -124,6 +131,7 @@ class GlWidget(GlWidgetBase):
             self.create_path()
         self.create_lines()
         self.create_textures()
+        self.create_text()
 
     ##############################################
 
@@ -272,6 +280,32 @@ class GlWidget(GlWidgetBase):
 
     ##############################################
 
+    def create_text(self):
+
+        self.font = TextureFont('./Vera.ttf')
+        self.font_size = self.font[25]
+        self.font_size.load_all_glyphs()
+        self.font.atlas.save('atlas.png')
+        self.font_atlas_texture = ImageTexture(self.font.atlas.data)
+
+        self.text_vertex_array = TextVertexArray(self.font_atlas_texture)
+        self.text_vertex_array.add(text="| A Quick Brown Fox Jumps Over The Lazy Dog fi ffl Va",
+                                   font_size=self.font_size,
+                                   colour=(1.0, 1.0, .0, 1.0),
+                                   x=0, y=0,
+                                   anchor_x='left', anchor_y='baseline',
+                                   )
+        self.text_vertex_array.add(text="| Foo Bar",
+                                   font_size=self.font_size,
+                                   colour=(.0, 1.0, .0, 1.0),
+                                   x=200, y=100,
+                                   anchor_x='left', anchor_y='baseline',
+                                   )
+        self.text_vertex_array.upload()
+        self.text_vertex_array.bind_to_shader(self.shader_manager.text_shader_program.interface.attributes)
+
+    ##############################################
+
     def paint(self):
 
         self.paint_grid()
@@ -279,6 +313,7 @@ class GlWidget(GlWidgetBase):
             self.paint_path()
         self.paint_textures()
         self.paint_lines()
+        self.paint_text()
 
     ##############################################
 
@@ -401,6 +436,16 @@ class GlWidget(GlWidgetBase):
         shader_program.bind()
         self.texture_vertex_array3.draw()
         shader_program.unbind()
+
+    ##############################################
+
+    def paint_text(self):
+
+        shader_program = self.shader_manager.text_shader_program
+        # shader_program.bind()
+        # shader_program.uniforms. ...
+        self.text_vertex_array.draw(shader_program)
+        # shader_program.unbind()
 
 ####################################################################################################
 #

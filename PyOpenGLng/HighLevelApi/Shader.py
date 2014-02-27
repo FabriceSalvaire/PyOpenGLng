@@ -42,6 +42,10 @@ import Type as GlType
 
 ####################################################################################################
 
+_module_logger = logging.getLogger(__name__)
+
+####################################################################################################
+
 class GlShader(object):
 
     """ This class defines a shader source code.
@@ -64,14 +68,14 @@ class GlShader(object):
     the path is relative to the parent source file.
     """
 
-    _logger = logging.getLogger(__name__)
+    _logger = _module_logger.getChild('GlShader')
 
     # Fixme: use enumerate class?
     FRAGMENT_SHADER = GL.GL_FRAGMENT_SHADER
     if hasattr(GL, 'GL_GEOMETRY_SHADER'):
         GEOMETRY_SHADER = GL.GL_GEOMETRY_SHADER
     else:
-        GEOMETRY_SHADER = None
+        GEOMETRY_SHADER = None # Fixme: from wrapper TypeError: an integer is required
     VERTEX_SHADER = GL.GL_VERTEX_SHADER
     # TESSELATION_CONTROL_SHADER = GL.GL_TESS_CONTROL_SHADER
     # TESSELATION_EVALUATION_SHADER = GL.GL_TESS_EVALUATION_SHADER
@@ -346,7 +350,7 @@ class GlUniform(GlVariable):
         """ Set the uniform value(s). """
 
         value = np.asarray([value], dtype=self._gl_type.dtype)
-        self._gl_type.program_uniform_set_v(self._shader_program.program_id, self._location, 1, value)
+        self._gl_type.program_uniform_set_v(self._shader_program.program_id, self._location, value)
         # self._gl_type.uniform_set(self._location, value) # require binding
 
 ####################################################################################################
@@ -713,7 +717,7 @@ class GlShaderProgram(object):
 
     """
 
-    _logger = logging.getLogger(__name__)
+    _logger = _module_logger.getChild('GlShaderProgram')
 
     ##############################################
     
