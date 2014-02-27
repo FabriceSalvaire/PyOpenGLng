@@ -47,7 +47,7 @@ XAXIS, YAXIS = range(2)
 
 def interval2d_from_center_and_size(center, size):
 
-    """ Return an :class:`GVLab.Tools.Interval.Interval2D` instance.  The parameter *center* is a
+    """ Return an :class:`Tools.Interval.Interval2D` instance.  The parameter *center* is a
     2-tuple that defines the center of the interval and the parameter *size* the 2-tuple (width,
     height).
     """
@@ -64,7 +64,7 @@ class ViewportArea(object):
 
     """ This class defines a viewport area.
  
-    It implements an interval arithmetic using the class :class:`GVLab.Tools.Interval.Interval2D`.
+    It implements an interval arithmetic using the class :class:`Tools.Interval.Interval2D`.
 
     Public Attributes:
 
@@ -78,7 +78,7 @@ class ViewportArea(object):
     
     def __init__(self, max_area):
 
-        """ The parameter *max_area* must be an :class:`GVLab.Tools.Interval.Interval2D` instance
+        """ The parameter *max_area* must be an :class:`Tools.Interval.Interval2D` instance
         that defines the maximum area allowed for the viewport.
         """
 
@@ -285,7 +285,7 @@ class Ortho2D(object):
     
     def __init__(self, max_area, zoom_manager, window):
 
-        """ The parameter *max_area* must be an :class:`GVLab.Tools.Interval.Interval2D` instance
+        """ The parameter *max_area* must be an :class:`Tools.Interval.Interval2D` instance
         that defines the maximum area allowed for the viewport.
 
         The parameter *zoom_manager* must be an :class:`ZoomManager` instance.
@@ -384,7 +384,7 @@ class Ortho2D(object):
     def _compute_zoom_to_fit_interval(self, interval):
        
         """ Compute the zoom to fit an interval.  The parameter *interval* must be an
-        :class:`GVLab.Tools.Interval.Interval2D` instance.
+        :class:`Tools.Interval.Interval2D` instance.
         """
 
         axis_scale = self.window.size() / np.array(interval.size(), dtype=np.float)
@@ -434,7 +434,7 @@ class Ortho2D(object):
     def zoom_interval(self, interval):
 
         """ Zoom to an interval.  The parameter *interval* must be an
-        :class:`GVLab.Tools.Interval.Interval2D` instance.
+        :class:`Tools.Interval.Interval2D` instance.
         """
 
         # Fixme: name ?
