@@ -7,12 +7,16 @@
 
 /* *********************************************************************************************** */
 
-#include(model_view_projection_matrix.glsl)
+#include(../include/model_view_projection_matrix.glsl)
+
+/* *********************************************************************************************** */
+
+uniform float line_width = .1;
 
 /* *********************************************************************************************** */
 
 layout(lines) in;
-layout(line_strip, max_vertices=5) out;
+layout(triangle_strip, max_vertices=4) out;
 
 /* *********************************************************************************************** */
 
@@ -31,16 +35,9 @@ out VertexAttributes
 
 /* *********************************************************************************************** */
 
-void emit_vertex()
+void emit_vertex(vec2 position)
 {
-  gl_Position = model_view_projection_matrix * vec4(vertexIn[0].position, 0, 1);
-  EmitVertex();
-}
-
-void emit_vertex_add(vec2 offset)
-{
-  vec2 position = vertexIn[0].position + offset;
-  gl_Position = model_view_projection_matrix * vec4(position, 0, 1);
+  gl_Position =  model_view_projection_matrix * vec4(position, 0, 1);
   EmitVertex();
 }
 
@@ -50,12 +47,17 @@ void main()
 {
   vertex.colour = vertexIn[0].colour;
 
+  vec2 pos0 = vertexIn[0].position;
   vec2 pos1 = vertexIn[1].position;
-  emit_vertex();
-  emit_vertex_add(vec2(pos1.x, 0));
-  emit_vertex_add(pos1);
-  emit_vertex_add(vec2(0, pos1.y));
-  emit_vertex();
+
+  vec2 dir = normalize(pos1 - pos0);
+  vec2 normal = vec2(-dir.y, dir.x);
+  vec2 offset = normal * line_width * viewport_scale;
+
+  emit_vertex(pos0 + offset);
+  emit_vertex(pos1 + offset);
+  emit_vertex(pos0 - offset);
+  emit_vertex(pos1 - offset);
   EndPrimitive();
 }
 

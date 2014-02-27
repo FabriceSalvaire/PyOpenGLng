@@ -6,26 +6,22 @@
 
 /* *********************************************************************************************** */
 
-#include(model_view_projection_matrix.glsl)
-#include(position_shader_program_interface.glsl)
-
-/* *********************************************************************************************** */
-
-in vec3 colour;
+#include(../include/model_view_projection_matrix.glsl)
+#include(../include/texture_shader_program_interface.glsl)
 
 /* *********************************************************************************************** */
 
 out VertexAttributes
 {
-  vec4 colour;
+  vec2 uv;
 } vertex;
 
 /* *********************************************************************************************** */
 
-void main()
+void main(void)
 {
   gl_Position = model_view_projection_matrix * vec4(position, 0, 1);
-  vertex.colour = colour;
+  vertex.uv = position_uv.st;
 }
 
 /* *********************************************************************************************** *
