@@ -315,6 +315,13 @@ class GlWidget(GlWidgetBase):
         self.paint_lines()
         self.paint_text()
 
+        print '\n', '='*100
+        for command in GL.called_commands():
+            print '\n', '-'*50
+            # print str(command)
+            print command._command.prototype()
+            print command.help()
+
     ##############################################
 
     def paint_grid(self):

@@ -37,7 +37,6 @@ import numpy as np
 from . import GL
 from ..Tools.AttributeDictionaryInterface import (AttributeDictionaryInterface, AttributeDictionaryInterfaceDescriptor)
 from ..Tools.Singleton import SingletonMetaClass
-import OpenGlExt as GL_Ext
 import Type as GlType
 
 ####################################################################################################
@@ -252,7 +251,7 @@ Log:
 
         # Fixme: high level function
         # Fixme: shader doesn't have name
-        if not GL_Ext.glGetShaderiv(self._shader_id, GL.GL_COMPILE_STATUS):
+        if not GL.glGetShaderiv(self._shader_id, GL.GL_COMPILE_STATUS):
             source_lines = self._source.splitlines()
             last_line = len(source_lines) -1
             # Fixme: count digit of last_line
@@ -448,7 +447,7 @@ class GlShaderProgramUniforms(AttributeDictionaryInterfaceDescriptor):
         super(GlShaderProgramUniforms, self).__init__()
 
         program_id = shader_program.program_id
-        number_of_active_uniforms = GL_Ext.glGetProgramiv(program_id, GL.GL_ACTIVE_UNIFORMS)
+        number_of_active_uniforms = GL.glGetProgramiv(program_id, GL.GL_ACTIVE_UNIFORMS)
         for i in xrange(number_of_active_uniforms):
 
             name, length, size, gl_type_id = GL.glGetActiveUniform(program_id, i, 1000)
@@ -530,10 +529,11 @@ class GlShaderProgramUniformBlocks(AttributeDictionaryInterface):
 
         program_id = shader_program.program_id
 
-        number_of_active_uniform_blocks = GL_Ext.glGetProgramiv(program_id, GL.GL_ACTIVE_UNIFORM_BLOCKS)
+        number_of_active_uniform_blocks = GL.glGetProgramiv(program_id, GL.GL_ACTIVE_UNIFORM_BLOCKS)
         for uniform_block_location in xrange(number_of_active_uniform_blocks):
-            uniform_block_name = GL_Ext.glGetActiveUniformBlockName(program_id, uniform_block_location)
-            indices = GL_Ext.glGetActiveUniformBlockiv(program_id, uniform_block_location, GL.GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES)
+            uniform_block_name = GL.glGetActiveUniformBlockName(program_id, uniform_block_location)
+            indices = GL.glGetActiveUniformBlockiv(program_id, uniform_block_location,
+                                                   GL.GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES)
             # Fixme:
             if isinstance(indices, np.int32):
                 indices = (int(indices),)
@@ -544,7 +544,7 @@ class GlShaderProgramUniformBlocks(AttributeDictionaryInterface):
                     continue
 
                 name, length, size, gl_type_id = GL.glGetActiveUniform(program_id, i, 1000)
-                offset = GL_Ext.glGetActiveUniformsiv(program_id, i, GL.GL_UNIFORM_OFFSET)
+                offset = GL.glGetActiveUniformsiv(program_id, i, GL.GL_UNIFORM_OFFSET)
                 gl_type = GlType.gl_types[gl_type_id]
 
                 if size > 1:
@@ -596,7 +596,7 @@ class GlShaderProgramAttributes(AttributeDictionaryInterface):
 
         program_id = shader_program.program_id
         
-        number_of_active_attributes = GL_Ext.glGetProgramiv(program_id, GL.GL_ACTIVE_ATTRIBUTES)
+        number_of_active_attributes = GL.glGetProgramiv(program_id, GL.GL_ACTIVE_ATTRIBUTES)
         for i in xrange(number_of_active_attributes):
             name, length, size, gl_type_id =  GL.glGetActiveAttrib(program_id, i, 1000)
             location = GL.glGetAttribLocation(program_id, name)
@@ -759,9 +759,8 @@ class GlShaderProgram(object):
 
         GL.glLinkProgram(self.program_id)
 
-        length = np.zeros(1, dtype=np.int32)
-        GL.glGetProgramiv(self.program_id, GL.GL_INFO_LOG_LENGTH, length)
-        log, length = GL.glGetProgramInfoLog(self.program_id, int(length[0]))
+        length = GL.glGetProgramiv(self.program_id, GL.GL_INFO_LOG_LENGTH)
+        log, length = GL.glGetProgramInfoLog(self.program_id, length)
         message = """
 Link program '%s'
 Log:
@@ -770,7 +769,7 @@ Log:
   -----------------------------------------------------------------------------
 """
         self._logger.debug(message % (self._name, log))
-        if not GL_Ext.glGetProgramiv(self.program_id, GL.GL_LINK_STATUS):
+        if not GL.glGetProgramiv(self.program_id, GL.GL_LINK_STATUS):
             raise ValueError(log)
 
         self._linked = True

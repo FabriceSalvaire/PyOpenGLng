@@ -185,11 +185,13 @@ import logging
 import os
 import subprocess
 import sys
+import types
 
 import numpy as np
 
 ####################################################################################################
 
+from PythonicWrapper import PythonicWrapper
 import PyOpenGLng.Config as Config
 
 ####################################################################################################
@@ -262,7 +264,30 @@ def check_numpy_type(array, ctypes_type):
 ####################################################################################################
 
 class GlEnums(object):
-    pass
+
+    ##############################################
+
+    def __iter__(self):
+
+        for attribute in sorted(self.__dict__.iterkeys()):
+            if attribute.startswith('GL_'):
+                yield attribute
+
+####################################################################################################
+
+class GlCommands(object):
+
+    ##############################################
+
+    def __iter__(self):
+
+        # for attribute, value in self.__dict__.iteritems():
+        #     if attribute.startswith('gl'):
+        #         yield value
+
+        for attribute in sorted(self.__dict__.iterkeys()):
+            if attribute.startswith('gl'):
+                yield getattr(self, attribute)
 
 ####################################################################################################
 
@@ -597,6 +622,7 @@ class GlCommandWrapper(object):
         self._wrapper = wrapper
         self._command = command
         self._number_of_parameters = command.number_of_parameters
+        self._call_counter = 0
 
         try:
             self._function = getattr(self._wrapper.libGL, str(command))
@@ -676,6 +702,8 @@ class GlCommandWrapper(object):
     ##############################################
 
     def __call__(self, *args, **kwargs):
+
+        self._call_counter += 1
 
         if len(self._parameter_wrappers) != len(args):
             self._logger.warning("%s requires %u arguments, but %u was given\n  %s\n  %s",
@@ -801,6 +829,17 @@ class GlCommandWrapper(object):
         # Fixme: help(instance)
         print self.__doc__
 
+    ##############################################
+
+    @property
+    def call_counter(self):
+        return self._call_counter
+
+    ##############################################
+
+    def reset_call_counter(self):
+        self._call_counter = 0
+
 ####################################################################################################
 
 class CtypeWrapper(object):
@@ -833,7 +872,7 @@ class CtypeWrapper(object):
         self._init_enums(api_enums)
         self._init_commands(api_commands)
 
-        self._pythonic_wrapper = PythonicWrapper(self)
+        #!# self._pythonic_wrapper = PythonicWrapper(self)
 
     ##############################################
 
@@ -853,14 +892,25 @@ class CtypeWrapper(object):
 
     def _init_commands(self, api_commands):
 
+        gl_commands = GlCommands()
         for command in api_commands.itervalues():
             try:
+                command_name = str(command)
                 command_wrapper = GlCommandWrapper(self, command)
-                setattr(self, str(command), command_wrapper)
+                # store enumerants and commands at the same level
+                if hasattr(PythonicWrapper, command_name):
+                    method = getattr(PythonicWrapper, command_name)
+                    rebinded_method = types.MethodType(method.im_func, self, self.__class__)
+                    setattr(self, command_name, rebinded_method)
+                else:
+                    setattr(self, command_name, command_wrapper)
+                # store commands in a dedicated place
+                setattr(gl_commands, command_name, command_wrapper)
             except NotImplementedError:
                 self._logger.warn("Command %s is not supported by the wrapper", str(command))
             except CommandNotAvailable:
                 self._logger.warn("Command %s is not implemented", str(command))
+        self.commands = gl_commands
 
     ##############################################
 
@@ -902,6 +952,19 @@ class CtypeWrapper(object):
 
         return ErrorContextManager(self)
 
+    ##############################################
+
+    def called_commands(self):
+        
+        return [command for command in self.commands if command.call_counter]
+
+    ##############################################
+
+    def reset_call_counter(self):
+        
+        for command in self.commands:
+            command.reset_call_counter()
+
 ####################################################################################################
 
 class ErrorContextManager(object):
@@ -922,16 +985,6 @@ class ErrorContextManager(object):
     def __exit__(self, type_, value, traceback):
 
         self._wrapper.check_error()
-
-####################################################################################################
-
-class PythonicWrapper(object):
-
-    ##############################################
-
-    def __init__(self, wrapper):
-
-        self._wrapper = wrapper
 
 ####################################################################################################
 #
