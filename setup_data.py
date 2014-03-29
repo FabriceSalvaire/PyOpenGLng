@@ -62,7 +62,6 @@ setup_dict = dict(
     install_requires=[
         'pyqt>=4.9',
         'numpy>=1.4',
-        'PyOpenGL>=3.0.2',
         ],
     )
 
