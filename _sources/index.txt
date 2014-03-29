@@ -2,10 +2,30 @@
  Overview
 ==========
 
+PyOpenGLng, proudly blessed as is, is an experimental OpenGL wrapper for Python which generate the
+requested OpenGL API from the `OpenGL XML Registry
+<https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api>`_ and use an automatic
+translator to map the C API to Python. Actually the wrapper use ctypes.
+
+By design this wrapper supports all the OpenGL version, but it focus towards the programmable
+pipeline and the most recent API. On Linux desktop Mesa release 10 supports OpenGL 3.3.
+
+The Python package provides three components:
+
+* an Oriented Object API to the OpenGL XML registry,
+* a ctypes wrapper,
+* and an experimental high level API.
+
+===================
+ Table of Contents
+===================
+
 .. toctree::
   :maxdepth: 2
   :numbered:
 
+  install.rst
+  tools.rst
   api/PyOpenGLng.rst
 
 =========

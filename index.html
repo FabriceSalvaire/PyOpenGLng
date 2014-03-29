@@ -26,7 +26,7 @@
     <script type="text/javascript" src="static/underscore.js"></script>
     <script type="text/javascript" src="static/doctools.js"></script>
     <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="#" />
-    <link rel="next" title="1. PyOpenGLng" href="api/PyOpenGLng.html" /> 
+    <link rel="next" title="1. How To Install PyOpenGLng" href="install.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,7 +39,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api/PyOpenGLng.html" title="1. PyOpenGLng"
+          <a href="install.html" title="1. How To Install PyOpenGLng"
              accesskey="N">next</a> |</li>
         <li><a href="#">PyOpenGLng 0.1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -52,14 +52,35 @@
             
   <div class="section" id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<p>PyOpenGLng, proudly blessed as is, is an experimental OpenGL wrapper for Python which generate the
+requested OpenGL API from the <a class="reference external" href="https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api">OpenGL XML Registry</a> and use an automatic
+translator to map the C API to Python. Actually the wrapper use ctypes.</p>
+<p>By design this wrapper supports all the OpenGL version, but it focus towards the programmable
+pipeline and the most recent API. On Linux desktop Mesa release 10 supports OpenGL 3.3.</p>
+<p>The Python package provides three components:</p>
+<ul class="simple">
+<li>an Oriented Object API to the OpenGL XML registry,</li>
+<li>a ctypes wrapper,</li>
+<li>and an experimental high level API.</li>
+</ul>
+</div>
+<div class="section" id="table-of-contents">
+<h1>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="api/PyOpenGLng.html">1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/Config.html">1.1. <tt class="docutils literal"><span class="pre">Config</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/GlApi.html">1.2. <tt class="docutils literal"><span class="pre">GlApi</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/HighLevelApi.html">1.3. <tt class="docutils literal"><span class="pre">HighLevelApi</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/Tools.html">1.4. <tt class="docutils literal"><span class="pre">Tools</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/Wrapper.html">1.5. <tt class="docutils literal"><span class="pre">Wrapper</span></tt></a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">1. How To Install PyOpenGLng</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#requirements">1.1. Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#testing">1.2. Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#building-installing">1.3. Building &amp; Installing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">2. Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/PyOpenGLng.html">3. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/Config.html">3.1. <tt class="docutils literal"><span class="pre">Config</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/GlApi.html">3.2. <tt class="docutils literal"><span class="pre">GlApi</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/HighLevelApi.html">3.3. <tt class="docutils literal"><span class="pre">HighLevelApi</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/Tools.html">3.4. <tt class="docutils literal"><span class="pre">Tools</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/Wrapper.html">3.5. <tt class="docutils literal"><span class="pre">Wrapper</span></tt></a></li>
 </ul>
 </li>
 </ul>
@@ -84,15 +105,16 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Overview</a><ul>
+<li><a class="reference internal" href="#">Overview</a></li>
+<li><a class="reference internal" href="#table-of-contents">Table of Contents</a><ul>
 </ul>
 </li>
 <li><a class="reference internal" href="#indexes">Indexes</a></li>
 </ul>
 
   <h4>Next topic</h4>
-  <p class="topless"><a href="api/PyOpenGLng.html"
-                        title="next chapter">1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a></p>
+  <p class="topless"><a href="install.html"
+                        title="next chapter">1. How To Install PyOpenGLng</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/index.txt"
@@ -125,7 +147,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api/PyOpenGLng.html" title="1. PyOpenGLng"
+          <a href="install.html" title="1. How To Install PyOpenGLng"
              >next</a> |</li>
         <li><a href="#">PyOpenGLng 0.1.0 documentation</a> &raquo;</li> 
       </ul>
