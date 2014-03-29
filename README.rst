@@ -43,7 +43,7 @@ To test PyOpenGLng, run the following commands in a terminal::
   python test-high-level-api.py --opengl=v3 # designed to run on Mesa
   python test-high-level-api.py --opengl=v4 # require a proprietary driver
 
-The command :command:`query-opengl-api` in :file:`bin` directory is a tool to query the OpenGL API.
+The command *query-opengl-api* in *bin* directory is a tool to query the OpenGL API.
 
 ..
    Building & Installing
