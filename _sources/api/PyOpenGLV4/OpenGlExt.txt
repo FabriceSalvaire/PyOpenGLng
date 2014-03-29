@@ -1,9 +1,0 @@
-******************
- :mod:`OpenGlExt`
-******************
-
-.. automodule:: PyOpenGLV4.OpenGlExt
-   :members:
-   :show-inheritance:
-
-.. End

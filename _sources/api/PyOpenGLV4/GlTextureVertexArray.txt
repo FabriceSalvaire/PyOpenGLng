@@ -1,9 +1,0 @@
-*****************************
- :mod:`GlTextureVertexArray`
-*****************************
-
-.. automodule:: PyOpenGLV4.GlTextureVertexArray
-   :members:
-   :show-inheritance:
-
-.. End

@@ -1,9 +1,0 @@
-*******************************
- :mod:`GlPrimitiveVertexArray`
-*******************************
-
-.. automodule:: PyOpenGLV4.GlPrimitiveVertexArray
-   :members:
-   :show-inheritance:
-
-.. End

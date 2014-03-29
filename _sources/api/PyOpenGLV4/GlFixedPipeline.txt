@@ -1,9 +1,0 @@
-************************
- :mod:`GlFixedPipeline`
-************************
-
-.. automodule:: PyOpenGLV4.GlFixedPipeline
-   :members:
-   :show-inheritance:
-
-.. End

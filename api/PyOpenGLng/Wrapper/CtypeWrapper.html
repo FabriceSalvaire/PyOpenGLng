@@ -1,0 +1,582 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1.5.2. CtypeWrapper &mdash; PyOpenGLng 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../static/PyOpenGLng.css" type="text/css" />
+    <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="1.5. Wrapper" href="../Wrapper.html" />
+    <link rel="next" title="1.5.3. PythonicWrapper" href="PythonicWrapper.html" />
+    <link rel="prev" title="1.5.1. CffiWrapper" href="CffiWrapper.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="PythonicWrapper.html" title="1.5.3. PythonicWrapper"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="CffiWrapper.html" title="1.5.1. CffiWrapper"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../PyOpenGLng.html" >1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li>
+          <li><a href="../Wrapper.html" accesskey="U">1.5. <tt class="docutils literal"><span class="pre">Wrapper</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-PyOpenGLng.Wrapper.CtypeWrapper">
+<span id="ctypewrapper"></span><h1>1.5.2. <tt class="xref py py-mod docutils literal"><span class="pre">CtypeWrapper</span></tt><a class="headerlink" href="#module-PyOpenGLng.Wrapper.CtypeWrapper" title="Permalink to this headline">¶</a></h1>
+<p>This module implements a ctypes wrapper for OpenGL based on information provided by the Oriented
+Object OpenGL API <a class="reference internal" href="../GlApi.html#module-PyOpenGLng.GlApi" title="PyOpenGLng.GlApi"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.GlApi</span></tt></a>.</p>
+<div class="section" id="prototype-translation">
+<h2>1.5.2.1. Prototype Translation<a class="headerlink" href="#prototype-translation" title="Permalink to this headline">¶</a></h2>
+<p>The C language defines strictly for a function by a prototype how to use the parameters and its
+output. &lt;&lt;ENGLISH&gt;&gt;</p>
+<p>The OpenGL API only use fundamental types, pointer and array for parameters and return. The API do
+not use structures or unions which are compound types. Example of fundamental types are integer,
+float and char. Pointer or array are used to pass or return a multiple of a fundamental types. Also
+the API use pointer parameters to return more than one items, as usual in C since a function can
+only return one item at once. Pointers are also used to write data at a given place, which act as a
+kind of input-output parameter &lt;&lt;???&gt;&gt;. We know if a pointer parameter is an input by the presence
+of the <em>const</em> qualifier.</p>
+<p>C Arrays do not embed their sizes, thus this information must be provided either implicitly, either
+explicitly or using a sentinel, as for null-terminated string. The XML schema that defines the
+OpenGL API provides partially this information. We can know exactly the size of an array, if the
+array size is fixed or passed by a second parameter. However it the size depends of the context, for
+example a query enum, the size is tagged as a computation from one or more parameters. But for these
+cases the schema do not provide a formulae described by a meta-language.</p>
+<p>The main concept of this wrapper is to use the XML data to generate a Python API with a natural
+behaviour.</p>
+<div class="section" id="fundamental-types">
+<h3>1.5.2.1.1. Fundamental types<a class="headerlink" href="#fundamental-types" title="Permalink to this headline">¶</a></h3>
+<p>Prototypes which are only made of fundamental types, for example:</p>
+<div class="highlight-python"><pre>void glBindBuffer (GLenum target, GLuint buffer)
+-&gt;
+glBindBuffer (ParameterWrapper&lt;unsigned int&gt; target, ParameterWrapper&lt;unsigned int&gt; buffer)</pre>
+</div>
+<p>are translated to <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapper" title="PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapper"><tt class="xref py py-class docutils literal"><span class="pre">ParameterWrapper</span></tt></a> and passed by copy. These parameters are the input of
+the function.</p>
+</div>
+<div class="section" id="input-parameters-passed-as-pointer">
+<h3>1.5.2.1.2. Input parameters passed as pointer<a class="headerlink" href="#input-parameters-passed-as-pointer" title="Permalink to this headline">¶</a></h3>
+<p>Input parameters passed as pointer are necessarily qualified as const.</p>
+<p>They are managed by an <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.InputArrayWrapper" title="PyOpenGLng.Wrapper.CtypeWrapper.InputArrayWrapper"><tt class="xref py py-class docutils literal"><span class="pre">InputArrayWrapper</span></tt></a> when the size is not tagged as computed in the XML
+registry. For these cases, the pointer parameter takes the place of the size parameter and its
+parameter slot is removed of the prototype in Python. The size is automatically filled by the
+wrapper. For example:</p>
+<div class="highlight-python"><pre>void glBufferData (GLenum target, GLsizeiptr size, const void * [size] data, GLenum usage)
+-&gt;
+glBufferData (ParameterWrapper&lt;unsigned int&gt; target,
+              InputArrayWrapper&lt;const void * [size]&gt; data,
+              ParameterWrapper&lt;unsigned int&gt; usage)
+
+void glUniform3fv (GLint location, GLsizei count, const GLfloat * [count] value)
+-&gt;
+glUniform3fv (ParameterWrapper&lt;int&gt; location, InputArrayWrapper&lt;const float * [count]&gt; value)</pre>
+</div>
+<p>&lt;&lt;INVERSE Pointer &lt;-&gt; Size&gt;&gt; &lt;&lt;case with more than one pointer&gt;&gt;</p>
+<p>The array can be passed as an iterable or a numpy array. A missing information in the actual schema
+is due to the fact the size can represents the number of elements or a number of byte. Usually a
+generic pointer indicates a size specified in byte. &lt;&lt;TO BE CHECKED&gt;&gt;</p>
+<p>Some functions have <tt class="docutils literal"><span class="pre">**</span></tt> pointer parameters. The function <em>glShaderSource</em> is an interesting case
+since it features this kind of pointer and the size parameter is used for two parameters:</p>
+<div class="highlight-python"><pre>void glShaderSource (GLuint shader, GLsizei count, const GLchar ** [count] string, const GLint * [count] length)
+-&gt;
+glShaderSource (ParameterWrapper&lt;unsigned int&gt; shader,
+                InputArrayWrapper&lt;const char ** [count]&gt; string)</pre>
+</div>
+<p>According to the specification, the <em>string</em> parameter is an array of (optionally) null-terminated
+strings and the <em>length</em> pointer must be set to NULL in this case.</p>
+</div>
+<div class="section" id="output-parameters-passed-as-pointer">
+<h3>1.5.2.1.3. Output parameters passed as pointer<a class="headerlink" href="#output-parameters-passed-as-pointer" title="Permalink to this headline">¶</a></h3>
+<p>These parameters are not qualified as const and are managed by an <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper" title="PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper"><tt class="xref py py-class docutils literal"><span class="pre">OutputArrayWrapper</span></tt></a> when
+the size is not tagged as computed.</p>
+<p>The pointer parameter takes the place of the size parameter and its parameter slot is removed of
+the prototype in Python. The size is automatically filled by the wrapper.</p>
+<p>If the pointer is generic, then the array is passed as an Numpy array and the size is specified in
+byte. For example:</p>
+<div class="highlight-python"><pre>void glGetBufferSubData (GLenum target, GLintptr offset, GLsizeiptr size, void * [size] data)
+-&gt;
+glGetBufferSubData (ParameterWrapper&lt;unsigned int&gt; target, ParameterWrapper&lt;ptrdiff_t&gt; offset,
+                    OutputArrayWrapper&lt;void * [size]&gt; data)
+-&gt; None</pre>
+</div>
+<p>If the pointer is of <a href="#id1"><span class="problematic" id="id2">*</span></a>char <a href="#id3"><span class="problematic" id="id4">*</span></a>type, then the size is passed by the user and a string is returned. For
+example:</p>
+<div class="highlight-python"><pre>void glGetShaderSource (GLuint shader, GLsizei bufSize, GLsizei * [1] length, GLchar * [bufSize] source)
+-&gt;
+glGetShaderSource (ParameterWrapper&lt;unsigned int&gt; shader, OutputArrayWrapper&lt;char * [bufSize]&gt; source)
+-&gt; source</pre>
+</div>
+<p>If the user passes an Numpy array, then the data type is checked and the size is set by the wrapper.
+If the user passes a size, then a Numpy array (or a list) is created and then returned:</p>
+<div class="highlight-python"><pre>void glGenBuffers (GLsizei n, GLuint * [n] buffers)
+-&gt;
+glGenBuffers (OutputArrayWrapper&lt;unsigned int * [n]&gt; buffers)  </pre>
+</div>
+</div>
+<div class="section" id="parameter-passed-by-reference">
+<h3>1.5.2.1.4. Parameter passed by reference<a class="headerlink" href="#parameter-passed-by-reference" title="Permalink to this headline">¶</a></h3>
+<p>A parameter passed by reference is identified in the prototype as a non const pointer with a fixed
+size of 1. Reference parameter are removed in the Python prototype and their values set by the
+command are returned in their prototype order. For example, this function features 3 parameters
+passed by reference:</p>
+<div class="highlight-python"><pre>void glGetActiveUniform (unsigned int program, unsigned int index, int bufSize,
+                         int * [1] length, int * [1] size, unsigned int * [1] type,
+                         char * [bufSize] name)
+-&gt;
+glGetActiveUniform (ParameterWrapper&lt;unsigned int&gt; program, ParameterWrapper&lt;unsigned int&gt; index,
+                    OutputArrayWrapper&lt;char * [bufSize]&gt; name)
+-&gt; name, length, size, type</pre>
+</div>
+</div>
+<div class="section" id="parameter-passed-as-pointer">
+<h3>1.5.2.1.5. Parameter passed as pointer<a class="headerlink" href="#parameter-passed-as-pointer" title="Permalink to this headline">¶</a></h3>
+<p>When the size is tagged as computed, parameters are managed by a <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.PointerWrapper" title="PyOpenGLng.Wrapper.CtypeWrapper.PointerWrapper"><tt class="xref py py-class docutils literal"><span class="pre">PointerWrapper</span></tt></a> and all the
+parameters involved in the the size determination must be passed as input parameter:</p>
+<div class="highlight-python"><pre>void glBindAttribLocation (GLuint program, GLuint index, const GLchar * name)
+-&gt;
+glBindAttribLocation (ParameterWrapper&lt;unsigned int&gt; program, ParameterWrapper&lt;unsigned int&gt; index,
+                      PointerWrapper&lt;const char *&gt; name)</pre>
+</div>
+<p>&lt;&lt;Fixme null-terminated&gt;&gt;</p>
+<p>For example this function features a generic pointer <em>pixels</em> which must be passed as an Numpy
+array:</p>
+<div class="highlight-python"><pre>void glTexImage1D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border,
+                   GLenum format, GLenum type, const void * [COMPSIZE(format,type,width)] pixels)
+-&gt;
+glTexImage1D (ParameterWrapper&lt;unsigned int&gt; target, ParameterWrapper&lt;int&gt; level,
+              ParameterWrapper&lt;int&gt; internalformat, ParameterWrapper&lt;int&gt; width,
+              ParameterWrapper&lt;int&gt; border, ParameterWrapper&lt;unsigned int&gt; format,
+              ParameterWrapper&lt;unsigned int&gt; type,
+              PointerWrapper&lt;const void * [COMPSIZE(format,type,width)]&gt; pixels)
+-&gt; None</pre>
+</div>
+<p>This example is interesting, since the <em>width</em> parameter can be deduced from the shape of the Numpy
+array.</p>
+<p>This function features a typed pointer:</p>
+<div class="highlight-python"><pre>void glGetIntegerv (GLenum pname, GLint * [COMPSIZE(pname)] data)
+-&gt;
+glGetIntegerv (ParameterWrapper&lt;unsigned int&gt; pname, PointerWrapper&lt;int * [COMPSIZE(pname)]&gt; data)
+-&gt; None</pre>
+</div>
+</div>
+<div class="section" id="return-parameter-passed-as-pointer">
+<h3>1.5.2.1.6. Return parameter passed as pointer<a class="headerlink" href="#return-parameter-passed-as-pointer" title="Permalink to this headline">¶</a></h3>
+<p>The wrapper only supports null-terminated string, for example:</p>
+<div class="highlight-python"><pre>const GLubyte * glGetString (GLenum name)
+-&gt;
+glGetString (ParameterWrapper&lt;unsigned int&gt; name)</pre>
+</div>
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.ArrayWrapper">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">ArrayWrapper</tt><big>(</big><em>size_parameter</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#ArrayWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.ArrayWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase" title="PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase</span></tt></a></p>
+<p>Base class for Array Wrapper.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.CommandNotAvailable">
+<em class="property">exception </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">CommandNotAvailable</tt><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#CommandNotAvailable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.CommandNotAvailable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">CtypeWrapper</tt><big>(</big><em>gl_spec</em>, <em>api</em>, <em>api_number</em>, <em>profile=None</em>, <em>manuals=None</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#CtypeWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper._error_code_message">
+<tt class="descname">_error_code_message</tt><big>(</big><em>error_code</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#CtypeWrapper._error_code_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper._error_code_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper._init_commands">
+<tt class="descname">_init_commands</tt><big>(</big><em>api_commands</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#CtypeWrapper._init_commands"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper._init_commands" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper._init_enums">
+<tt class="descname">_init_enums</tt><big>(</big><em>api_enums</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#CtypeWrapper._init_enums"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper._init_enums" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x3bfd450&gt;</em><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.called_commands">
+<tt class="descname">called_commands</tt><big>(</big><big>)</big><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.called_commands" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.check_error">
+<tt class="descname">check_error</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#CtypeWrapper.check_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.check_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.error_checker">
+<tt class="descname">error_checker</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#CtypeWrapper.error_checker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.error_checker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.libGL">
+<tt class="descname">libGL</tt><em class="property"> = &lt;CDLL 'libGL.so', handle 31dbaf0 at 33dea90&gt;</em><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.libGL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.load_library">
+<em class="property">classmethod </em><tt class="descname">load_library</tt><big>(</big><em>libGL_name</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#CtypeWrapper.load_library"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.load_library" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.reset_call_counter">
+<tt class="descname">reset_call_counter</tt><big>(</big><big>)</big><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.reset_call_counter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.ErrorContextManager">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">ErrorContextManager</tt><big>(</big><em>wrapper</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#ErrorContextManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.ErrorContextManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">GlCommandWrapper</tt><big>(</big><em>wrapper</em>, <em>command</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#GlCommandWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="attribute">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x3bfd410&gt;</em><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper._manual_page">
+<tt class="descname">_manual_page</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#GlCommandWrapper._manual_page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper._manual_page" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper._xml_manual_name">
+<tt class="descname">_xml_manual_name</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#GlCommandWrapper._xml_manual_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper._xml_manual_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.call_counter">
+<tt class="descname">call_counter</tt><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.call_counter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.help">
+<tt class="descname">help</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#GlCommandWrapper.help"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.help" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.manual">
+<tt class="descname">manual</tt><big>(</big><em>local=False</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#GlCommandWrapper.manual"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.manual" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.reset_call_counter">
+<tt class="descname">reset_call_counter</tt><big>(</big><big>)</big><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.reset_call_counter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.xml_manual_path">
+<tt class="descname">xml_manual_path</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#GlCommandWrapper.xml_manual_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.xml_manual_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.xml_manual_url">
+<tt class="descname">xml_manual_url</tt><big>(</big><em>local=False</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#GlCommandWrapper.xml_manual_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.xml_manual_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.GlCommands">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">GlCommands</tt><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.GlCommands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.GlEnums">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">GlEnums</tt><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#GlEnums"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.GlEnums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.IdentityConverter">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">IdentityConverter</tt><big>(</big><em>c_object</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#IdentityConverter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.IdentityConverter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.ToPythonConverter" title="PyOpenGLng.Wrapper.CtypeWrapper.ToPythonConverter"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.Wrapper.CtypeWrapper.ToPythonConverter</span></tt></a></p>
+<p>Identity converter.</p>
+<p>The parameter <em>c_object</em> is a ctype object.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.InputArrayWrapper">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">InputArrayWrapper</tt><big>(</big><em>size_parameter</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#InputArrayWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.InputArrayWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.ArrayWrapper" title="PyOpenGLng.Wrapper.CtypeWrapper.ArrayWrapper"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.Wrapper.CtypeWrapper.ArrayWrapper</span></tt></a></p>
+<dl class="attribute">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.InputArrayWrapper._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x3bfd3d0&gt;</em><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.InputArrayWrapper._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.InputArrayWrapper.from_python">
+<tt class="descname">from_python</tt><big>(</big><em>array</em>, <em>c_parameters</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#InputArrayWrapper.from_python"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.InputArrayWrapper.from_python" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.ListConverter">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">ListConverter</tt><big>(</big><em>c_object</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#ListConverter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.ListConverter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.ToPythonConverter" title="PyOpenGLng.Wrapper.CtypeWrapper.ToPythonConverter"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.Wrapper.CtypeWrapper.ToPythonConverter</span></tt></a></p>
+<p>Convert the C object to a Python list.</p>
+<p>The parameter <em>c_object</em> is a ctype object.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">OutputArrayWrapper</tt><big>(</big><em>size_parameter</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#OutputArrayWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.ArrayWrapper" title="PyOpenGLng.Wrapper.CtypeWrapper.ArrayWrapper"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.Wrapper.CtypeWrapper.ArrayWrapper</span></tt></a></p>
+<p>Translate an output array parameter.</p>
+<p>If the pointer is generic, then the array is passed as an Numpy array and the size is specified
+in byte. &lt;&lt;CHECK&gt;&gt;</p>
+<p>If the pointer is of <a href="#id5"><span class="problematic" id="id6">*</span></a>char <a href="#id7"><span class="problematic" id="id8">*</span></a>type, then the size is passed by the user and a string is returned.</p>
+<p>If the user passes an Numpy array, then the data type is checked and the size is set by the
+wrapper.</p>
+<p>If the user passes a size, then a Numpy (or a list) array is created and returned.
+&lt;&lt;size_parameter_threshold&gt;&gt;</p>
+<dl class="attribute">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x3bfd390&gt;</em><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper.from_python">
+<tt class="descname">from_python</tt><big>(</big><em>parameter</em>, <em>c_parameters</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#OutputArrayWrapper.from_python"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper.from_python" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper.size_parameter_threshold">
+<tt class="descname">size_parameter_threshold</tt><em class="property"> = 20</em><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper.size_parameter_threshold" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapper">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">ParameterWrapper</tt><big>(</big><em>parameter</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#ParameterWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase" title="PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase</span></tt></a></p>
+<p>Translate a fundamental type.</p>
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapper.from_python">
+<tt class="descname">from_python</tt><big>(</big><em>parameter</em>, <em>c_parameters</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#ParameterWrapper.from_python"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapper.from_python" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">ParameterWrapperBase</tt><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#ParameterWrapperBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Base class for parameter wrapper.</p>
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase.repr_string">
+<tt class="descname">repr_string</tt><big>(</big><em>parameter</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#ParameterWrapperBase.repr_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase.repr_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.PointerWrapper">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">PointerWrapper</tt><big>(</big><em>parameter</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#PointerWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.PointerWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase" title="PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase</span></tt></a></p>
+<p>Translate a pointer.</p>
+<p>This wrapper handle all the case which are not managed by a <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.ReferenceWrapper" title="PyOpenGLng.Wrapper.CtypeWrapper.ReferenceWrapper"><tt class="xref py py-class docutils literal"><span class="pre">ReferenceWrapper</span></tt></a>, an
+<a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.InputArrayWrapper" title="PyOpenGLng.Wrapper.CtypeWrapper.InputArrayWrapper"><tt class="xref py py-class docutils literal"><span class="pre">InputArrayWrapper</span></tt></a> or an <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper" title="PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper"><tt class="xref py py-class docutils literal"><span class="pre">OutputArrayWrapper</span></tt></a>.</p>
+<p>These parameters are identified in the prototype as a pointer that doesn&#8217;t have a size parameter
+or a computed size.</p>
+<p>If the pointer type is <em>char</em> then user must provide a string or a Python object with a
+<tt class="xref py py-meth docutils literal"><span class="pre">__str__()</span></tt> method, else a Numpy array must be provided and the data type is only checked if
+the pointer is not generic.</p>
+<p>If the parameter value is <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>, the value is passed as is.</p>
+<dl class="attribute">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.PointerWrapper._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x3bfd350&gt;</em><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.PointerWrapper._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.PointerWrapper.from_python">
+<tt class="descname">from_python</tt><big>(</big><em>parameter</em>, <em>c_parameters</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#PointerWrapper.from_python"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.PointerWrapper.from_python" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.ReferenceWrapper">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">ReferenceWrapper</tt><big>(</big><em>parameter</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#ReferenceWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.ReferenceWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase" title="PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase</span></tt></a></p>
+<p>Translate a parameter passed by reference.</p>
+<p>A parameter passed by reference is identified in the prototype as a non const pointer of a fixed
+size of 1.</p>
+<p>A reference parameter is removed in the Python prototype and the value set by the command is
+pushed out in the return.</p>
+<dl class="method">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.ReferenceWrapper.from_python">
+<tt class="descname">from_python</tt><big>(</big><em>c_parameters</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#ReferenceWrapper.from_python"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.ReferenceWrapper.from_python" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.ToPythonConverter">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">ToPythonConverter</tt><big>(</big><em>c_object</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#ToPythonConverter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.ToPythonConverter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Base class for C to Python converter.</p>
+<p>The parameter <em>c_object</em> is a ctype object.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.ValueConverter">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">ValueConverter</tt><big>(</big><em>c_object</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#ValueConverter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.ValueConverter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.Wrapper.CtypeWrapper.ToPythonConverter" title="PyOpenGLng.Wrapper.CtypeWrapper.ToPythonConverter"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.Wrapper.CtypeWrapper.ToPythonConverter</span></tt></a></p>
+<p>Get the Python value of the ctype object.</p>
+<p>The parameter <em>c_object</em> is a ctype object.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.check_numpy_type">
+<tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">check_numpy_type</tt><big>(</big><em>array</em>, <em>ctypes_type</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#check_numpy_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.check_numpy_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the Numpy array data type is same as <em>ctypes_type</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.numpy_to_ctypes_type">
+<tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">numpy_to_ctypes_type</tt><big>(</big><em>array</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#numpy_to_ctypes_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.numpy_to_ctypes_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the ctypes type corresponding to a Numpy array data type.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="PyOpenGLng.Wrapper.CtypeWrapper.to_ctypes_type">
+<tt class="descclassname">PyOpenGLng.Wrapper.CtypeWrapper.</tt><tt class="descname">to_ctypes_type</tt><big>(</big><em>parameter</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Wrapper/CtypeWrapper.html#to_ctypes_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Wrapper.CtypeWrapper.to_ctypes_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the ctypes type corresponding to a parameter.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1.5.2. <tt class="docutils literal"><span class="pre">CtypeWrapper</span></tt></a><ul>
+<li><a class="reference internal" href="#prototype-translation">1.5.2.1. Prototype Translation</a><ul>
+<li><a class="reference internal" href="#fundamental-types">1.5.2.1.1. Fundamental types</a></li>
+<li><a class="reference internal" href="#input-parameters-passed-as-pointer">1.5.2.1.2. Input parameters passed as pointer</a></li>
+<li><a class="reference internal" href="#output-parameters-passed-as-pointer">1.5.2.1.3. Output parameters passed as pointer</a></li>
+<li><a class="reference internal" href="#parameter-passed-by-reference">1.5.2.1.4. Parameter passed by reference</a></li>
+<li><a class="reference internal" href="#parameter-passed-as-pointer">1.5.2.1.5. Parameter passed as pointer</a></li>
+<li><a class="reference internal" href="#return-parameter-passed-as-pointer">1.5.2.1.6. Return parameter passed as pointer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="CffiWrapper.html"
+                        title="previous chapter">1.5.1. <tt class="docutils literal"><span class="pre">CffiWrapper</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="PythonicWrapper.html"
+                        title="next chapter">1.5.3. <tt class="docutils literal"><span class="pre">PythonicWrapper</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/api/PyOpenGLng/Wrapper/CtypeWrapper.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="PythonicWrapper.html" title="1.5.3. PythonicWrapper"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="CffiWrapper.html" title="1.5.1. CffiWrapper"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../PyOpenGLng.html" >1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li>
+          <li><a href="../Wrapper.html" >1.5. <tt class="docutils literal"><span class="pre">Wrapper</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

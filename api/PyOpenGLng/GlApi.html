@@ -1,0 +1,1071 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1.2. GlApi &mdash; PyOpenGLng 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../static/PyOpenGLng.css" type="text/css" />
+    <link rel="stylesheet" href="../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="../../index.html" />
+    <link rel="up" title="1. PyOpenGLng" href="../PyOpenGLng.html" />
+    <link rel="next" title="1.2.1. ApiNumber" href="GlApi/ApiNumber.html" />
+    <link rel="prev" title="1.1. Config" href="Config.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="GlApi/ApiNumber.html" title="1.2.1. ApiNumber"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Config.html" title="1.1. Config"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../PyOpenGLng.html" accesskey="U">1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="glapi">
+<h1>1.2. <tt class="xref py py-mod docutils literal"><span class="pre">GlApi</span></tt><a class="headerlink" href="#glapi" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="GlApi/ApiNumber.html">1.2.1. <tt class="docutils literal"><span class="pre">ApiNumber</span></tt></a></li>
+<li class="toctree-l1"><a class="reference internal" href="GlApi/ManualParser.html">1.2.2. <tt class="docutils literal"><span class="pre">ManualParser</span></tt></a></li>
+</ul>
+</div>
+<span class="target" id="module-PyOpenGLng.GlApi"></span><p>This module implements an Oriented Object interface of the OpenGL Registry XML file which
+describe the OpenGL API and its official extensions.</p>
+<p>To generate the API of a particular OpenGL version uses, for example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">xml_file_path</span> <span class="o">=</span> <span class="n">default_api_path</span><span class="p">(</span><span class="s">&#39;gl&#39;</span><span class="p">)</span> <span class="c"># path to gl.xml</span>
+<span class="n">gl_spec</span> <span class="o">=</span> <span class="n">GlSpecParser</span><span class="p">(</span><span class="n">xml_file_path</span><span class="p">)</span>
+<span class="n">api_enums</span><span class="p">,</span> <span class="n">api_commands</span> <span class="o">=</span> <span class="n">gl_spec</span><span class="o">.</span><span class="n">generate_api</span><span class="p">(</span><span class="s">&#39;gles&#39;</span><span class="p">,</span> <span class="n">ApiNumber</span><span class="p">(</span><span class="s">&#39;2.0&#39;</span><span class="p">),</span> <span class="s">&#39;core&#39;</span><span class="p">)</span>
+<span class="n">api_enums</span><span class="p">,</span> <span class="n">api_commands</span> <span class="o">=</span> <span class="n">gl_spec</span><span class="o">.</span><span class="n">generate_api</span><span class="p">(</span><span class="s">&#39;gl&#39;</span><span class="p">,</span> <span class="n">ApiNumber</span><span class="p">(</span><span class="s">&#39;4.4&#39;</span><span class="p">),</span> <span class="s">&#39;core&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then you will get an instance of <a class="reference internal" href="#PyOpenGLng.GlApi.Enums" title="PyOpenGLng.GlApi.Enums"><tt class="xref py py-class docutils literal"><span class="pre">Enums</span></tt></a> and <a class="reference internal" href="#PyOpenGLng.GlApi.Commands" title="PyOpenGLng.GlApi.Commands"><tt class="xref py py-class docutils literal"><span class="pre">Commands</span></tt></a> corresponding to the requested
+API.</p>
+<p>The <strong class="command">query-opengl-api</strong> tool in the <tt class="file docutils literal"><span class="pre">bin</span></tt> directory provides some commands to query
+the OpenGL API. See its source code for example how to use this module.</p>
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.Command">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Command</tt><big>(</big><em>name</em>, <em>return_type</em>, <em>parameters=()</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines an OpenGL command.</p>
+<p>Public Attributes:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">input_parameter</span></tt></dt>
+<dd>number of input parameters</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">name</span></tt></dt>
+<dd>command name</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">output_parameter</span></tt></dt>
+<dd>number of output parameters</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">parameter_dict</span></tt></dt>
+<dd>dictionnary of parameters</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">parameters</span></tt></dt>
+<dd>list of parameters</dd>
+</dl>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">return_type</span></tt></p>
+</div></blockquote>
+<p>XML Registry Documentation:</p>
+<blockquote>
+<div><p>The <tt class="docutils literal"><span class="pre">&lt;command&gt;</span></tt> tag contains a structured definition of a single API command (function).</p>
+<p>Attributes of <tt class="docutils literal"><span class="pre">&lt;command&gt;</span></tt> tags:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>comment</dt>
+<dd>arbitrary string (unused).</dd>
+</dl>
+</div></blockquote>
+<p>Contents of <tt class="docutils literal"><span class="pre">&lt;command&gt;</span></tt> tags:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">&lt;proto&gt;</span></tt> must be the first element, and is a tag defining the C function prototype
+of a command as described below, up to the function name but not including function
+parameters.</li>
+<li><tt class="docutils literal"><span class="pre">&lt;param&gt;</span></tt> elements for each command parameter follow, defining its name and type, as
+described below. If a command takes no arguments, it has no <tt class="docutils literal"><span class="pre">&lt;param&gt;</span></tt> tags.</li>
+</ul>
+<p>Following these elements, the remaining elements in a <tt class="docutils literal"><span class="pre">&lt;command&gt;</span></tt> tag are optional and
+may be in any order:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">&lt;alias&gt;</span></tt> has no attributes and contains a string which is the name of another
+command this command is an alias of, used when promoting a function from extension to
+ARB or ARB to API status. A command alias describes the case where there are two
+function names which resolve to the same client library code, so (for example) the
+case where a command is promoted but is also given different GLX protocol would not be
+an alias in this sense.</li>
+<li><tt class="docutils literal"><span class="pre">&lt;vecequiv&gt;</span></tt> has no attributes and contains a string which is the name of another
+command which is the vector equivalent of this command. For example, the vector
+equivalent of glVertex3f is glVertex3fv.</li>
+<li><tt class="docutils literal"><span class="pre">&lt;glx&gt;</span></tt> defines GLX protocol information for this command, as described below.  Many
+GL commands don&#8217;t have GLX protocol defined, and other APIs such as EGL and WGL don&#8217;t
+use GLX at all.</li>
+</ul>
+</div></blockquote>
+<p>Command prototype (<tt class="docutils literal"><span class="pre">&lt;proto&gt;</span></tt> tags):</p>
+<p>The <tt class="docutils literal"><span class="pre">&lt;proto&gt;</span></tt> tag defines the return type and name of a command.</p>
+<p>Attributes of <tt class="docutils literal"><span class="pre">&lt;proto&gt;</span></tt> tags</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>group</dt>
+<dd>group name, an arbitrary string.</dd>
+</dl>
+</div></blockquote>
+<p>If the group name is defined, it may be interpreted as described in <tt class="docutils literal"><span class="pre">&lt;ref&gt;</span></tt>.</p>
+<p>Contents of <tt class="docutils literal"><span class="pre">&lt;proto&gt;</span></tt> tags:</p>
+<blockquote>
+<div><p>The text elements of a <tt class="docutils literal"><span class="pre">&lt;proto&gt;</span></tt> tag, with all other tags removed, is legal C code
+describing the return type and name of a command. In addition it may contain two
+semantic tags:</p>
+<ul class="simple">
+<li>The <tt class="docutils literal"><span class="pre">&lt;ptype&gt;</span></tt> tag is optional, and contains text which is a valid type name found in
+<tt class="docutils literal"><span class="pre">&lt;type&gt;</span></tt> tag, and indicates that this type must be previously defined for the
+definition of the command to succeed. Builtin C types, and any derived types which are
+expected to be found in other header files, should not be wrapped in <tt class="docutils literal"><span class="pre">&lt;ptype&gt;</span></tt> tags.</li>
+<li>The <tt class="docutils literal"><span class="pre">&lt;name&gt;</span></tt> tag is required, and contains the command name being described.</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Command.argument_types">
+<tt class="descname">argument_types</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Command.argument_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Command.argument_types" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.GlApi.Command.number_of_parameters">
+<tt class="descname">number_of_parameters</tt><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Command.number_of_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Command.number_of_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Command.prototype">
+<tt class="descname">prototype</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Command.prototype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Command.prototype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the C function prototype.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.Commands">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Commands</tt><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Commands"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Commands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.GlApi.NameDict" title="PyOpenGLng.GlApi.NameDict"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.GlApi.NameDict</span></tt></a></p>
+<p>This class stores the OpenGL commands.</p>
+<p>XML Registry Documentation:</p>
+<blockquote>
+<div><p>The <tt class="docutils literal"><span class="pre">&lt;commands&gt;</span></tt> tag contains definitions of each of the functions (commands) used in the
+API.</p>
+<p>Attributes of <tt class="docutils literal"><span class="pre">&lt;commands&gt;</span></tt> tags:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>namespace</dt>
+<dd>a string defining the namespace in which commands live, currently unused but
+typically something like GL.</dd>
+</dl>
+</div></blockquote>
+<p>Contents of <tt class="docutils literal"><span class="pre">&lt;commands&gt;</span></tt> tags:</p>
+<blockquote>
+<div>Each <tt class="docutils literal"><span class="pre">&lt;commands&gt;</span></tt> block contains zero or more <tt class="docutils literal"><span class="pre">&lt;command&gt;</span></tt> tags, in arbitrary order
+(although they are typically ordered by sorting on the command name, to improve human
+readability).</div></blockquote>
+</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.Enum">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Enum</tt><big>(</big><em>name</em>, <em>value</em>, <em>type_=None</em>, <em>alias=None</em>, <em>comment=None</em>, <em>api=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Enum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Enum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines an enumerant.</p>
+<p>The name of an enumerant can be retrieved using <tt class="docutils literal"><span class="pre">str(enumerant)</span></tt> and its value using
+<tt class="docutils literal"><span class="pre">int(enumerant)</span></tt>.</p>
+<p>Public Attributes:</p>
+<blockquote>
+<div><p><tt class="xref py py-attr docutils literal"><span class="pre">alias</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">api</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">comment</span></tt></p>
+<dl class="docutils">
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">enums</span></tt></dt>
+<dd>back reference to the <a class="reference internal" href="#PyOpenGLng.GlApi.Enums" title="PyOpenGLng.GlApi.Enums"><tt class="xref py py-class docutils literal"><span class="pre">Enums</span></tt></a> instance</dd>
+</dl>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">name</span></tt></p>
+<dl class="docutils">
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">type</span></tt></dt>
+<dd>cf. supra</dd>
+</dl>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt></p>
+</div></blockquote>
+<p>XML Registry Documentation:</p>
+<blockquote>
+<div><p>Each <tt class="docutils literal"><span class="pre">&lt;enum&gt;</span></tt> tag defines a single GL (or other API) token.</p>
+<p>Attributes of <tt class="docutils literal"><span class="pre">&lt;enum&gt;</span></tt> tags:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>value</dt>
+<dd>enumerant value, a legal C constant (usually a hexadecimal integer).</dd>
+<dt>name</dt>
+<dd>enumerant name, a legal C preprocessor token name.</dd>
+<dt>api</dt>
+<dd>an API name which specializes this definition of the named enum, so that different
+APIs may have different values for the same token (used to address a few accidental
+incompatibilities between GL and GL ES).</dd>
+<dt>type</dt>
+<dd>legal C suffix for the value to force it to a specific type. Currently only u and
+ull are used, for unsigned 32- and 64-bit integer values, respectively.  Separated
+from the value field since this eases parsing and sorting of values, and is rarely
+used.</dd>
+<dt>alias</dt>
+<dd>name of another enumerant this is an alias of, used where token names have been
+changed as a result of profile changes or for consistency purposes.  An enumerant
+alias is simply a different name for the exact same value. At present, enumerants
+which are promoted from extension to core API status are not tagged as aliases -
+just enumerants tagged as aliases in the Changed Tokens sections of appendices to
+the OpenGL Specification. This might change in the future.</dd>
+<dt>comment</dt>
+<dd>arbitrary string (unused).</dd>
+</dl>
+</div></blockquote>
+<p>Contents of <tt class="docutils literal"><span class="pre">&lt;enum&gt;</span></tt> tags:</p>
+<blockquote>
+<div><tt class="docutils literal"><span class="pre">&lt;enum&gt;</span></tt> tags have no allowed contents. All information is contained in the
+attributes.</div></blockquote>
+</div></blockquote>
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Enum.long_repr">
+<tt class="descname">long_repr</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Enum.long_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Enum.long_repr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.Enums">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Enums</tt><big>(</big><em>namespace</em>, <em>group=None</em>, <em>type_=None</em>, <em>start=None</em>, <em>end=None</em>, <em>vendor=None</em>, <em>comment=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Enums"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Enums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines a list of enumerants.</p>
+<p>Public Attributes:</p>
+<blockquote>
+<div><p><tt class="xref py py-attr docutils literal"><span class="pre">comment</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">end</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">group</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">namespace</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">start</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">type</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">vendor</span></tt></p>
+</div></blockquote>
+<p>XML Registry Documentation:</p>
+<blockquote>
+<div><p>The <tt class="docutils literal"><span class="pre">&lt;enums&gt;</span></tt> tags contain individual <tt class="docutils literal"><span class="pre">&lt;enum&gt;</span></tt> tags describing each of the token
+(enumerant) names used in the API.</p>
+<p>Attributes of <tt class="docutils literal"><span class="pre">&lt;enums&gt;</span></tt> tags:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>namespace</dt>
+<dd>a string for grouping many different enums together, currently unused but typically
+something like GL for all enums in the OpenGL / OpenGL ES shared namespace. Multiple
+<tt class="docutils literal"><span class="pre">&lt;enums&gt;</span></tt> tags can share the same namespace.</dd>
+<dt>type </dt>
+<dd>a string describing the data type of the values of this group of enums, currently
+unused. The only string used at present in the is bitmask.</dd>
+<dt>start, end</dt>
+<dd>integers defining the start and end of a reserved range of enumerants for a
+particular vendor or purpose. start must be &lt;= end. These fields define formal
+enumerant allocations within a namespace, and are made by the Khronos Registrar on
+request from implementers following the enum allocation policy.</dd>
+<dt>vendor</dt>
+<dd>string describing the vendor or purposes to whom a reserved range of enumerants is
+allocated.</dd>
+<dt>comment</dt>
+<dd>arbitrary string (unused)</dd>
+<dt>group</dt>
+<dd>group name, an arbitrary string.</dd>
+</dl>
+</div></blockquote>
+<p>Contents of <tt class="docutils literal"><span class="pre">&lt;enums&gt;</span></tt> tags:</p>
+<blockquote>
+<div>Each <tt class="docutils literal"><span class="pre">&lt;enums&gt;</span></tt> block contains zero or more <tt class="docutils literal"><span class="pre">&lt;enum&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;unused&gt;</span></tt> tags, in
+arbitrary order (although they are typically ordered by sorting on enumerant values, to
+improve human readability).</div></blockquote>
+</div></blockquote>
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Enums.iter_sorted">
+<tt class="descname">iter_sorted</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Enums.iter_sorted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Enums.iter_sorted" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Enums.merge">
+<tt class="descname">merge</tt><big>(</big><em>api</em>, <em>enums</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Enums.merge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Enums.merge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the enumerants from <em>enums</em> that match <em>api</em>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Enums.register">
+<tt class="descname">register</tt><big>(</big><em>enum</em>, <em>primary_registration=True</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Enums.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Enums.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register an enumerant. If the flag <em>primary_registration</em> is set then the enumerant back
+reference is set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Enums.unregister">
+<tt class="descname">unregister</tt><big>(</big><em>enum_name</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Enums.unregister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Enums.unregister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove an enumerant.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.Extension">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Extension</tt><big>(</big><em>name</em>, <em>supported</em>, <em>protect=None</em>, <em>comment=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines the features of an extension.</p>
+<p>Features are provided as a list of required or removed interfaces (commands, enumerants and
+types).</p>
+<p>Public Attributes:</p>
+<blockquote>
+<div><p><tt class="xref py py-attr docutils literal"><span class="pre">comment</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">name</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">protect</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">supported</span></tt></p>
+</div></blockquote>
+<p>XML Registry Documentation:</p>
+<blockquote>
+<div><p>The <tt class="docutils literal"><span class="pre">&lt;extensions&gt;</span></tt> tag contains definitions of each of the extenions which are defined for
+the API.</p>
+<p>Attributes of <tt class="docutils literal"><span class="pre">&lt;extensions&gt;</span></tt> tags: None</p>
+<p>Contents of <tt class="docutils literal"><span class="pre">&lt;extensions&gt;</span></tt> tags:</p>
+<blockquote>
+<div>Each <tt class="docutils literal"><span class="pre">&lt;extensions&gt;</span></tt> block contains zero or more <tt class="docutils literal"><span class="pre">&lt;extension&gt;</span></tt> tags, each describing
+an API extension, in arbitrary order (although they are typically ordered by sorting on
+the extension name, to improve human readability).</div></blockquote>
+<p>API Extensions (<tt class="docutils literal"><span class="pre">&lt;extension&gt;</span></tt> tag):</p>
+<p>API extensions are described in individual <tt class="docutils literal"><span class="pre">&lt;extension&gt;</span></tt> tags. An extension is the set of
+interfaces defined by a particular API extension specification, such as
+ARB_multitexture. <tt class="docutils literal"><span class="pre">&lt;extension&gt;</span></tt> is similar to <tt class="docutils literal"><span class="pre">&lt;feature&gt;</span></tt>, but instead of having version
+and profile attributes, instead has a supported attribute, which describes the set of API
+names which the extension can potentially be implemented against.</p>
+<p>Attributes of <tt class="docutils literal"><span class="pre">&lt;extension&gt;</span></tt> tags:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>supported</dt>
+<dd>a regular expression, with an implicit ^ and $ bracketing it, which should match the
+api tag of a set of <tt class="docutils literal"><span class="pre">&lt;feature&gt;</span></tt> tags.</dd>
+<dt>protect</dt>
+<dd>an additional preprocessor token used to protect an extension def- inition. Usually
+another feature or extension name. Rarely used, for odd cir- cumstances where the
+definition of an extension requires another to be defined first.</dd>
+<dt>comment</dt>
+<dd>arbitrary string (unused)</dd>
+</dl>
+</div></blockquote>
+<p>Contents of <tt class="docutils literal"><span class="pre">&lt;extension&gt;</span></tt> tags:</p>
+<blockquote>
+<div>Zero or more <tt class="docutils literal"><span class="pre">&lt;require&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;remove&gt;</span></tt> tags (see <tt class="docutils literal"><span class="pre">&lt;ref&gt;</span></tt>), in arbitrary order.
+Each tag describes a set of interfaces that is respectively required for, or removed
+from, this extension, as described below.</div></blockquote>
+</div></blockquote>
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Extension.append">
+<tt class="descname">append</tt><big>(</big><em>interface</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Extension.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Extension.append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.Feature">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Feature</tt><big>(</big><em>api</em>, <em>name</em>, <em>number</em>, <em>protect=None</em>, <em>comment=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Feature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Feature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines the features of an API.</p>
+<p>Features are provided as a list of required or removed interfaces (commands, enumerants and
+types).</p>
+<p>Public Attributes:</p>
+<blockquote>
+<div><p><tt class="xref py py-attr docutils literal"><span class="pre">api</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">api_number</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">comment</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">name</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">protect</span></tt></p>
+</div></blockquote>
+<p>XML Registry Documentation:</p>
+<blockquote>
+<div><p>API features are described in individual <tt class="docutils literal"><span class="pre">&lt;feature&gt;</span></tt> tags. A feature is the set of
+interfaces (enumerants and commands) defined by a particular API and version, such as OpenGL
+4.0 or OpenGL ES 3.0, and includes all API profiles of that version.</p>
+<p>Attributes of <tt class="docutils literal"><span class="pre">&lt;feature&gt;</span></tt> tags:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>api</dt>
+<dd>API name this feature is for (see <tt class="docutils literal"><span class="pre">&lt;ref&gt;</span></tt>), such as gl or gles2.</dd>
+<dt>name</dt>
+<dd>version name, used as the C preprocessor token under which the version&#8217;s interfaces
+are protected against multiple inclusion. Example: GL_VERSION_4_2.</dd>
+<dt>protect</dt>
+<dd>an additional preprocessor token used to protect a feature definition. Usually
+another feature or extension name. Rarely used, for odd circumstances where the
+definition of a feature or extension requires another to be defined first.</dd>
+<dt>number</dt>
+<dd>feature version number, usually a string interpreted as
+majorNumber.minorNumber. Example: 4.2.</dd>
+<dt>comment</dt>
+<dd>arbitrary string (unused)</dd>
+</dl>
+</div></blockquote>
+<p>Contents of <tt class="docutils literal"><span class="pre">&lt;feature&gt;</span></tt> tags:</p>
+<blockquote>
+<div>Zero or more <tt class="docutils literal"><span class="pre">&lt;require&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;remove&gt;</span></tt> tags (see <tt class="docutils literal"><span class="pre">&lt;ref&gt;</span></tt>), in arbitrary order.
+Each tag describes a set of interfaces that is respectively required for, or removed
+from, this feature, as described below.</div></blockquote>
+</div></blockquote>
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Feature.append">
+<tt class="descname">append</tt><big>(</big><em>interface</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Feature.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Feature.append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.GlSpecParser">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">GlSpecParser</tt><big>(</big><em>xml_file_path</em>, <em>schema_file_path=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class implements the OpenGL Registry XML file parser and the Oriented Object interface.</p>
+<p>Public Attributes:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">commands</span></tt></dt>
+<dd><a class="reference internal" href="#PyOpenGLng.GlApi.Commands" title="PyOpenGLng.GlApi.Commands"><tt class="xref py py-class docutils literal"><span class="pre">Commands</span></tt></a> instance</dd>
+</dl>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">enums_list</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">extension_list</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">feature_list</span></tt></p>
+<dl class="docutils">
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">groups</span></tt></dt>
+<dd><a class="reference internal" href="#PyOpenGLng.GlApi.Groups" title="PyOpenGLng.GlApi.Groups"><tt class="xref py py-class docutils literal"><span class="pre">Groups</span></tt></a> instance</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">types</span></tt></dt>
+<dd><a class="reference internal" href="#PyOpenGLng.GlApi.Types" title="PyOpenGLng.GlApi.Types"><tt class="xref py py-class docutils literal"><span class="pre">Types</span></tt></a> instance</dd>
+</dl>
+</div></blockquote>
+<dl class="staticmethod">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._convert_node_attributes">
+<em class="property">static </em><tt class="descname">_convert_node_attributes</tt><big>(</big><em>node</em>, <em>int_attributes=()</em>, <em>renaming=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._convert_node_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._convert_node_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert node attributes.</p>
+<p>The parameter <em>int_attributes</em> specifies a list of attributes that must be converted to
+integers.</p>
+<p>The parameter <em>renaming</em> can be specified to perform a key renaming during the copy. It must
+be a dictionary where the keys correspond to the source keys and the values to the
+destination keys.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._copy_dict">
+<em class="property">static </em><tt class="descname">_copy_dict</tt><big>(</big><em>source_dict</em>, <em>renaming=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._copy_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._copy_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy a dictionary.</p>
+<p>The parameter <em>renaming</em> can be specified to perform a key renaming during the copy. It must
+be a dictionary where the keys correspond to the source keys and the values to the
+destination keys.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._iter_on_node">
+<tt class="descname">_iter_on_node</tt><big>(</big><em>node</em>, <em>tag</em>, <em>callback</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._iter_on_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._iter_on_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iter on nodes and call the callback function if the tag match.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x2642250&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._parse">
+<tt class="descname">_parse</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the XML file and create the Oriented Object interface.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._parse_command">
+<tt class="descname">_parse_command</tt><big>(</big><em>command_node</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._parse_command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._parse_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse <tt class="docutils literal"><span class="pre">&lt;command&gt;</span></tt> tags.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._parse_ctype">
+<tt class="descname">_parse_ctype</tt><big>(</big><em>text</em>, <em>kwargs</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._parse_ctype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._parse_ctype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a C type and look for <tt class="docutils literal"><span class="pre">const</span></tt> and pointer multiplicity.</p>
+<p>Return the type without <tt class="docutils literal"><span class="pre">const</span></tt> and <tt class="docutils literal"><span class="pre">*</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._parse_enums">
+<tt class="descname">_parse_enums</tt><big>(</big><em>node</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._parse_enums"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._parse_enums" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse <tt class="docutils literal"><span class="pre">&lt;enums&gt;</span></tt> tags.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._parse_extension">
+<tt class="descname">_parse_extension</tt><big>(</big><em>extension_node</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._parse_extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._parse_extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse <tt class="docutils literal"><span class="pre">&lt;extension&gt;</span></tt> tags.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._parse_feature">
+<tt class="descname">_parse_feature</tt><big>(</big><em>feature_node</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._parse_feature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._parse_feature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse <tt class="docutils literal"><span class="pre">&lt;feature&gt;</span></tt> tags.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._parse_group">
+<tt class="descname">_parse_group</tt><big>(</big><em>group_node</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._parse_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._parse_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse <tt class="docutils literal"><span class="pre">&lt;group&gt;</span></tt> tags.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._parse_interface">
+<tt class="descname">_parse_interface</tt><big>(</big><em>interface_node</em>, <em>interface</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._parse_interface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._parse_interface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse nodes in a <tt class="docutils literal"><span class="pre">&lt;required&gt;</span></tt> or <tt class="docutils literal"><span class="pre">&lt;removed&gt;</span></tt> tag.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._parse_parameter">
+<tt class="descname">_parse_parameter</tt><big>(</big><em>node</em>, <em>parameter_location=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._parse_parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._parse_parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse <tt class="docutils literal"><span class="pre">&lt;param&gt;</span></tt> tags.</p>
+<p>The parameter <em>parameter_location</em> is not specified for return type.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._parse_type">
+<tt class="descname">_parse_type</tt><big>(</big><em>type_node</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._parse_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._parse_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse <tt class="docutils literal"><span class="pre">&lt;type&gt;</span></tt> tags.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.GlSpecParser._validate">
+<tt class="descname">_validate</tt><big>(</big><em>relax_ng_file_path</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser._validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate the XML file using the given RelaxNG schema.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.GlSpecParser.generate_api">
+<tt class="descname">generate_api</tt><big>(</big><em>api</em>, <em>api_number</em>, <em>profile=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser.generate_api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser.generate_api" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate the API for a given API type (GL, GLES), version and profile.</p>
+<p>Return the list of enumerants and commands.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.Group">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Group</tt><big>(</big><em>name</em>, <em>enum_name_list</em>, <em>comment=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines an Enumerant Group, e.g. <em>TextureMagFilter</em> regroups the relevant
+enumerant for texture magnification filter</p>
+<p>Public Attributes:</p>
+<blockquote>
+<div><p><tt class="xref py py-attr docutils literal"><span class="pre">comment</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">name</span></tt></p>
+</div></blockquote>
+<p>XML Registry Documentation:</p>
+<blockquote>
+<div><p>Each <tt class="docutils literal"><span class="pre">&lt;group&gt;</span></tt> tag defines a single group annotation.</p>
+<p>Attributes of <tt class="docutils literal"><span class="pre">&lt;group&gt;</span></tt> tags:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>name</dt>
+<dd>group name, an arbitrary string for grouping a set of enums together within a
+broader namespace.</dd>
+</dl>
+</div></blockquote>
+<p>Contents of <tt class="docutils literal"><span class="pre">&lt;group&gt;</span></tt> tags:</p>
+<blockquote>
+<div><tt class="docutils literal"><span class="pre">&lt;group&gt;</span></tt> tags may contain zero or more <tt class="docutils literal"><span class="pre">&lt;enum&gt;</span></tt> tags. Each <tt class="docutils literal"><span class="pre">&lt;enum&gt;</span></tt> tag may
+contain only a name attribute, which should correspond to a <tt class="docutils literal"><span class="pre">&lt;enum&gt;</span></tt> definition in an
+<tt class="docutils literal"><span class="pre">&lt;enums&gt;</span></tt> block.</div></blockquote>
+<p>Meaning of <tt class="docutils literal"><span class="pre">&lt;group&gt;</span></tt> tags:</p>
+<blockquote>
+<div>If a <tt class="docutils literal"><span class="pre">&lt;proto&gt;</span></tt> or <tt class="docutils literal"><span class="pre">&lt;param&gt;</span></tt> tag of a <tt class="docutils literal"><span class="pre">&lt;command&gt;</span></tt> has a group attribute defined,
+and that attribute matches a <tt class="docutils literal"><span class="pre">&lt;group&gt;</span></tt> name, then the return type or parameter type is
+considered to be constrained to values defined by the corresponding <tt class="docutils literal"><span class="pre">&lt;group&gt;</span></tt>. C
+language bindings do not attempt to enforce this constraint in any way, but other
+language bindings may try to do so.</div></blockquote>
+</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.Groups">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Groups</tt><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.GlApi.NameDict" title="PyOpenGLng.GlApi.NameDict"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.GlApi.NameDict</span></tt></a></p>
+<p>This class registers Enumerant Groups.</p>
+<p>XML Registry Documentation:</p>
+<blockquote>
+<div><p>The <tt class="docutils literal"><span class="pre">&lt;groups&gt;</span></tt> tags contain individual <tt class="docutils literal"><span class="pre">&lt;group&gt;</span></tt> tags describing some of the group
+annotations used for return and parameter types.</p>
+<p>Attributes of <tt class="docutils literal"><span class="pre">&lt;groups&gt;</span></tt> tags: None</p>
+<p>Contents of <tt class="docutils literal"><span class="pre">&lt;groups&gt;</span></tt> tags:</p>
+<blockquote>
+<div>Each <tt class="docutils literal"><span class="pre">&lt;groups&gt;</span></tt> block contains zero or more <tt class="docutils literal"><span class="pre">&lt;group&gt;</span></tt> tags, in arbitrary order
+(although they are typically ordered by group name, to improve human readability).</div></blockquote>
+</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.NameDict">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">NameDict</tt><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#NameDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.NameDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a></p>
+<p>This class extend the Python dictionnary class with two methods <a class="reference internal" href="#PyOpenGLng.GlApi.NameDict.register" title="PyOpenGLng.GlApi.NameDict.register"><tt class="xref py py-meth docutils literal"><span class="pre">register()</span></tt></a> and
+<a class="reference internal" href="#PyOpenGLng.GlApi.NameDict.unregister" title="PyOpenGLng.GlApi.NameDict.unregister"><tt class="xref py py-meth docutils literal"><span class="pre">unregister()</span></tt></a>.</p>
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.NameDict.iter_sorted">
+<tt class="descname">iter_sorted</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#NameDict.iter_sorted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.NameDict.iter_sorted" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.NameDict.register">
+<tt class="descname">register</tt><big>(</big><em>item</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#NameDict.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.NameDict.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the object to the dictionnary using its <em>name</em> attribute as a key.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.NameDict.unregister">
+<tt class="descname">unregister</tt><big>(</big><em>item_name</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#NameDict.unregister"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.NameDict.unregister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the given key.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.Parameter">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Parameter</tt><big>(</big><em>gl_types</em>, <em>location</em>, <em>name</em>, <em>ptype=None</em>, <em>group=None</em>, <em>length=None</em>, <em>const=False</em>, <em>pointer=0</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines a command parameter.</p>
+<p>Public Attributes:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">array_size</span></tt></dt>
+<dd>array size or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">pointer_parameters</span></tt></dt>
+<dd>array of pointer parameters where this parameter acts as a size parameter</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">c_type</span></tt></dt>
+<dd>corresponding <a class="reference internal" href="#PyOpenGLng.GlApi.Type" title="PyOpenGLng.GlApi.Type"><tt class="xref py py-class docutils literal"><span class="pre">Type</span></tt></a> instance or &#8220;void&#8221;</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">computed_size</span></tt></dt>
+<dd>Boolean</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">const</span></tt></dt>
+<dd>Boolean</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">group</span></tt></dt>
+<dd>group name</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">location</span></tt></dt>
+<dd>parameter position in the prototype</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">name</span></tt></dt>
+<dd>parameter name or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a> for return type</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">pointer</span></tt></dt>
+<dd>pointer level, i.e. 0 for a non-pointer parameter, 1 for <tt class="docutils literal"><span class="pre">*</span></tt>, 2 for <tt class="docutils literal"><span class="pre">**</span></tt></dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">size_multiplier</span></tt></dt>
+<dd>integer to be multiplied with the size parameter to get the size</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">size_parameter</span></tt></dt>
+<dd>name of the size parameter or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">type</span></tt></dt>
+<dd>parameter type without <tt class="docutils literal"><span class="pre">const</span> <span class="pre">and</span> <span class="pre">``*</span></tt></dd>
+</dl>
+</div></blockquote>
+<p>XML Registry Documentation:</p>
+<blockquote>
+<div><p>The <tt class="docutils literal"><span class="pre">&lt;param&gt;</span></tt> tag defines the type and name of a parameter.</p>
+<p>Attributes of <tt class="docutils literal"><span class="pre">&lt;param&gt;</span></tt> tags:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>group</dt>
+<dd>group name, an arbitrary string.</dd>
+<dt>len</dt>
+<dd>parameter length, either an integer specifying the number of elements of the
+parameter <tt class="docutils literal"><span class="pre">&lt;ptype&gt;</span></tt>, or a complex string expression with poorly defined syntax,
+usually representing a length that is computed as a combination of other command
+parameter values, and possibly current GL state as well.</dd>
+</dl>
+</div></blockquote>
+<p>If the group name is defined, it may be interpreted as described in <tt class="docutils literal"><span class="pre">&lt;ref&gt;</span></tt>.</p>
+<p>Contents of <tt class="docutils literal"><span class="pre">&lt;param&gt;</span></tt> tags:</p>
+<blockquote>
+<div><p>The text elements of a <tt class="docutils literal"><span class="pre">&lt;param&gt;</span></tt> tag, with all other tags removed, is legal C code
+describing the type and name of a function parameter. In addition it may contain two
+semantic tags:</p>
+<blockquote>
+<div><ul class="simple">
+<li>The <tt class="docutils literal"><span class="pre">&lt;ptype&gt;</span></tt> tag is optional, and contains text which is a valid type name
+found in <tt class="docutils literal"><span class="pre">&lt;type&gt;</span></tt> tag, and indicates that this type must be previously defined
+for the definition of the command to succeed. Builtin C types, and any derived
+types which are expected to be found in other header files, should not be wrapped
+in <tt class="docutils literal"><span class="pre">&lt;ptype&gt;</span></tt> tags.</li>
+<li>The <tt class="docutils literal"><span class="pre">&lt;name&gt;</span></tt> tag is required, and contains the command name being described.</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Parameter._format_type">
+<tt class="descname">_format_type</tt><big>(</big><em>type_string</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Parameter._format_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Parameter._format_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format a type, add <tt class="docutils literal"><span class="pre">const</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">[]</span></tt> if they are relevant.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Parameter.format_gl_type">
+<tt class="descname">format_gl_type</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Parameter.format_gl_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Parameter.format_gl_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>format the translated type parameter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Parameter.is_generic_pointer">
+<tt class="descname">is_generic_pointer</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Parameter.is_generic_pointer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Parameter.is_generic_pointer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if parameter is <tt class="docutils literal"><span class="pre">void</span> <span class="pre">*</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Parameter.long_repr">
+<tt class="descname">long_repr</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Parameter.long_repr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Parameter.long_repr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Parameter.prototype">
+<tt class="descname">prototype</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Parameter.prototype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Parameter.prototype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the C parameter declaration but with translated type.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.RemovedInterface">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">RemovedInterface</tt><big>(</big><em>profile=None</em>, <em>comment=None</em>, <em>api=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#RemovedInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.RemovedInterface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.GlApi.RequiredInterface" title="PyOpenGLng.GlApi.RequiredInterface"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.GlApi.RequiredInterface</span></tt></a></p>
+<p>This class defines a removed interface.</p>
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.RemovedInterface.append_new">
+<tt class="descname">append_new</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#RemovedInterface.append_new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.RemovedInterface.append_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and append a <a class="reference internal" href="#PyOpenGLng.GlApi.RemovedItem" title="PyOpenGLng.GlApi.RemovedItem"><tt class="xref py py-class docutils literal"><span class="pre">RemovedItem</span></tt></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.RemovedItem">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">RemovedItem</tt><big>(</big><em>type_</em>, <em>name</em>, <em>comment=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#RemovedItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.RemovedItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.GlApi.RequiredItem" title="PyOpenGLng.GlApi.RequiredItem"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.GlApi.RequiredItem</span></tt></a></p>
+<p>This class represents a removed command, enumerant or type from an interface.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.RequiredInterface">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">RequiredInterface</tt><big>(</big><em>profile=None</em>, <em>comment=None</em>, <em>api=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#RequiredInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredInterface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines a required interface.</p>
+<p>Public Attributes:</p>
+<blockquote>
+<div><p><tt class="xref py py-attr docutils literal"><span class="pre">api</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">comment</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">profile</span></tt></p>
+</div></blockquote>
+<p>XML Registry Documentation:</p>
+<blockquote>
+<div><p>A <tt class="docutils literal"><span class="pre">&lt;require&gt;</span></tt> block defines a set of interfaces (types, enumerants and commands) required
+by a <tt class="docutils literal"><span class="pre">&lt;feature&gt;</span></tt> or <tt class="docutils literal"><span class="pre">&lt;extension&gt;</span></tt>. A <tt class="docutils literal"><span class="pre">&lt;remove&gt;</span></tt> block defines a set of interfaces
+removed by a <tt class="docutils literal"><span class="pre">&lt;feature&gt;</span></tt> (this is primarily useful for the OpenGL core profile, which
+removed many interfaces - extensions should never remove interfaces, although this usage is
+allowed by the schema). Except for the tag name and behavior, the contents of <tt class="docutils literal"><span class="pre">&lt;require&gt;</span></tt>
+and <tt class="docutils literal"><span class="pre">&lt;remove&gt;</span></tt> tags are identical.</p>
+<p>Attributes of <tt class="docutils literal"><span class="pre">&lt;require&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;remove&gt;</span></tt> tags:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>profile</dt>
+<dd>string name of an API profile. Interfaces in the tag are only required (or removed)
+if the specified profile is being generated. If not specified, interfaces are
+required (or removed) for all API profiles.</dd>
+<dt>comment</dt>
+<dd>arbitrary string (unused)</dd>
+<dt>api</dt>
+<dd>an API name (see <tt class="docutils literal"><span class="pre">&lt;ref&gt;</span></tt>). Interfaces in the tag are only required (or removed) if
+the specified API is being generated. If not specified, interfaces are required (or
+removed) for all APIs. The api attribute is only supported inside <tt class="docutils literal"><span class="pre">&lt;extension&gt;</span></tt>
+tags, since <tt class="docutils literal"><span class="pre">&lt;feature&gt;</span></tt> tags already define a specific API.</dd>
+</dl>
+</div></blockquote>
+<p>Contents of <tt class="docutils literal"><span class="pre">&lt;require&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;remove&gt;</span></tt> tags:</p>
+<blockquote>
+<div><p>Zero or more of the following tags, in any order:</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;command&gt;</span></tt> specifies an required (or removed) command defined in a <tt class="docutils literal"><span class="pre">&lt;commands&gt;</span></tt>
+block. The tag has no content, but contains elements:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>name</dt>
+<dd><p class="first last">name of the command (required).</p>
+</dd>
+<dt>comment</dt>
+<dd><p class="first last">arbitrary string (optional and unused).</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;enum&gt;</span></tt> specifies an required (or removed) enumerant defined in a <tt class="docutils literal"><span class="pre">&lt;enums&gt;</span></tt>
+block. The tag has no content, but contains elements:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>name</dt>
+<dd><p class="first last">name of the enumerant (required).</p>
+</dd>
+<dt>comment</dt>
+<dd><p class="first last">arbitrary string (optional and unused).</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">&lt;type&gt;</span></tt> specifies a required (or removed) type defined in a <tt class="docutils literal"><span class="pre">&lt;types&gt;</span></tt> block.
+Most types are picked up implicitly by using the <tt class="docutils literal"><span class="pre">&lt;ptype&gt;</span></tt> tags of commands, but in
+a few cases, additional types need to be specified explicitly (it is unlikely that a
+type would ever be removed, although this usage is allowed by the schema). The tag has
+no content, but contains elements:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>name</dt>
+<dd><p class="first last">name of the type (required).</p>
+</dd>
+<dt>comment</dt>
+<dd><p class="first last">arbitrary string (optional and unused).</p>
+</dd>
+</dl>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<dl class="attribute">
+<dt id="PyOpenGLng.GlApi.RequiredInterface._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x26420d0&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredInterface._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.RequiredInterface.append">
+<tt class="descname">append</tt><big>(</big><em>item</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#RequiredInterface.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredInterface.append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.RequiredInterface.append_new">
+<tt class="descname">append_new</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#RequiredInterface.append_new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredInterface.append_new" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and append a <a class="reference internal" href="#PyOpenGLng.GlApi.RequiredItem" title="PyOpenGLng.GlApi.RequiredItem"><tt class="xref py py-class docutils literal"><span class="pre">RequiredItem</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.RequiredInterface.merge">
+<tt class="descname">merge</tt><big>(</big><em>interface</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#RequiredInterface.merge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredInterface.merge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge with an interface.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.RequiredItem">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">RequiredItem</tt><big>(</big><em>type_</em>, <em>name</em>, <em>comment=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#RequiredItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredItem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class represents a required command, enumerant or type for an interface.</p>
+<p>Public Attributes:</p>
+<blockquote>
+<div><p><tt class="xref py py-attr docutils literal"><span class="pre">comment</span></tt></p>
+<p><tt class="xref py py-attr docutils literal"><span class="pre">name</span></tt></p>
+<dl class="docutils">
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">type</span></tt></dt>
+<dd>can be &#8220;command&#8221;, &#8220;enumerant&#8221; or &#8220;type&#8221;</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.Type">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Type</tt><big>(</big><em>name</em>, <em>c_declaration_head=None</em>, <em>c_declaration_tail=''</em>, <em>requires=None</em>, <em>api=None</em>, <em>comment=None</em>, <em>api_entry=False</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class defines an OpenGL type.</p>
+<p>Public Attributes:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">api</span></tt></dt>
+<dd>API name</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">api_entry</span></tt></dt>
+<dd>Boolean, cf. supra</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">c_code</span></tt></dt>
+<dd>correponding C type declaration (without name), e.g. <tt class="docutils literal"><span class="pre">typedef</span> <span class="pre">unsigned</span> <span class="pre">int</span></tt></dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">c_type</span></tt></dt>
+<dd>correponding C type, e.g. <tt class="docutils literal"><span class="pre">int</span></tt></dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">comment</span></tt></dt>
+<dd>cf. supra</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">name</span></tt></dt>
+<dd>e.g. <tt class="docutils literal"><span class="pre">GLenum</span></tt></dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">pointer</span></tt></dt>
+<dd>Boolean</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">requires</span></tt></dt>
+<dd>cf. supra</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">unsigned</span></tt></dt>
+<dd>Boolean</dd>
+</dl>
+</div></blockquote>
+<p>XML Registry Documentation:</p>
+<blockquote>
+<div><p>Each <tt class="docutils literal"><span class="pre">&lt;type&gt;</span></tt> tag contains legal C code, with attributes or embedded tags denoting the
+type name.</p>
+<p>Attributes of <tt class="docutils literal"><span class="pre">&lt;type&gt;</span></tt> tags:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>requires</dt>
+<dd>another type name this type requires to complete its definition.</dd>
+<dt>name</dt>
+<dd>name of this type (if not defined in the tag body).</dd>
+<dt>api</dt>
+<dd>an API name (see <tt class="docutils literal"><span class="pre">&lt;feature&gt;</span></tt> below) which specializes this definition of the named
+type, so that the same API types may have different definitions for e.g. GL ES and
+GL.</dd>
+<dt>comment</dt>
+<dd>arbitrary string (unused).</dd>
+</dl>
+</div></blockquote>
+<p>Contents of <tt class="docutils literal"><span class="pre">&lt;group&gt;</span></tt> tags:</p>
+<blockquote>
+<div><p><tt class="docutils literal"><span class="pre">&lt;type&gt;</span></tt> contains text which is legal C code for a type declaration. It may also
+contain embedded tags:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">&lt;apientry/&gt;</span></tt></dt>
+<dd>insert a platform calling convention macro here during header generation, used
+mostly for function pointer types.</dd>
+<dt><tt class="docutils literal"><span class="pre">&lt;name&gt;</span></tt></dt>
+<dd>contains the name of this type (if not defined in the tag attributes).</dd>
+</dl>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<dl class="attribute">
+<dt id="PyOpenGLng.GlApi.Type._C_TYPES">
+<tt class="descname">_C_TYPES</tt><em class="property"> = ('char', 'int8_t', 'uint8_t', 'short', 'int32_t', 'int', 'int64_t', 'uint64_t', 'float', 'float_t', 'double', 'intptr_t', 'ptrdiff_t', 'ssize_t', 'void')</em><a class="headerlink" href="#PyOpenGLng.GlApi.Type._C_TYPES" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of C types</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.GlApi.Types">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Types</tt><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class registers the API types.</p>
+<p>Public Attributes:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">c_types</span></tt></dt>
+<dd>dictionnary of types indexed by their names</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">types</span></tt></dt>
+<dd>list of types</dd>
+</dl>
+</div></blockquote>
+<p>XML Registry Documentation:</p>
+<blockquote>
+<div>The <tt class="docutils literal"><span class="pre">&lt;types&gt;</span></tt> tag contains individual <tt class="docutils literal"><span class="pre">&lt;type&gt;</span></tt> tags describing each of the derived types
+used in the API.</div></blockquote>
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Types.register">
+<tt class="descname">register</tt><big>(</big><em>type_</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Types.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Types.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a type.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.Types.translate_gl_type">
+<tt class="descname">translate_gl_type</tt><big>(</big><em>gl_type</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Types.translate_gl_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Types.translate_gl_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="PyOpenGLng.GlApi.default_api_path">
+<tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">default_api_path</tt><big>(</big><em>file_name</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#default_api_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.default_api_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the path to the file stored in the module directory. The &#8221;.xml&#8221; extension is
+concatened to the file name.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Config.html"
+                        title="previous chapter">1.1. <tt class="docutils literal"><span class="pre">Config</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="GlApi/ApiNumber.html"
+                        title="next chapter">1.2.1. <tt class="docutils literal"><span class="pre">ApiNumber</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/api/PyOpenGLng/GlApi.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="GlApi/ApiNumber.html" title="1.2.1. ApiNumber"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Config.html" title="1.1. Config"
+             >previous</a> |</li>
+        <li><a href="../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../PyOpenGLng.html" >1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

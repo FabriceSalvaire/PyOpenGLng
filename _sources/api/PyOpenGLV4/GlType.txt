@@ -1,9 +1,0 @@
-***************
- :mod:`GlType`
-***************
-
-.. automodule:: PyOpenGLV4.GlType
-   :members:
-   :show-inheritance:
-
-.. End

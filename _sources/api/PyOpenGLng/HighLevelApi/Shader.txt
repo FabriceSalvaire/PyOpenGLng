@@ -1,0 +1,10 @@
+***************
+ :mod:`Shader`
+***************
+
+.. automodule:: PyOpenGLng.HighLevelApi.Shader
+   :members:
+   :show-inheritance:
+
+
+.. End

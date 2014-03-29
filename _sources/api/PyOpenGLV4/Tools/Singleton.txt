@@ -1,9 +1,0 @@
-******************
- :mod:`Singleton`
-******************
-
-.. automodule:: PyOpenGLV4.Tools.Singleton
-   :members:
-   :show-inheritance:
-
-.. End

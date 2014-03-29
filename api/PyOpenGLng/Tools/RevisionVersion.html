@@ -1,0 +1,172 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1.4.5. RevisionVersion &mdash; PyOpenGLng 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../static/PyOpenGLng.css" type="text/css" />
+    <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="1.4. Tools" href="../Tools.html" />
+    <link rel="next" title="1.4.6. Singleton" href="Singleton.html" />
+    <link rel="prev" title="1.4.4. Math" href="Math.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Singleton.html" title="1.4.6. Singleton"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Math.html" title="1.4.4. Math"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../PyOpenGLng.html" >1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li>
+          <li><a href="../Tools.html" accesskey="U">1.4. <tt class="docutils literal"><span class="pre">Tools</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-PyOpenGLng.Tools.RevisionVersion">
+<span id="revisionversion"></span><h1>1.4.5. <tt class="xref py py-mod docutils literal"><span class="pre">RevisionVersion</span></tt><a class="headerlink" href="#module-PyOpenGLng.Tools.RevisionVersion" title="Permalink to this headline">¶</a></h1>
+<p>This module provides tools for software versionning.</p>
+<dl class="class">
+<dt id="PyOpenGLng.Tools.RevisionVersion.RevisionVersion">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.Tools.RevisionVersion.</tt><tt class="descname">RevisionVersion</tt><big>(</big><em>version</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Tools/RevisionVersion.html#RevisionVersion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Tools.RevisionVersion.RevisionVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class implements a revision version of the form vx.y.z-suffix where x, y and z are the
+major, minor and revision number, respectively.</p>
+<p>The version numbers can be accessed via the attributes <tt class="xref py py-attr docutils literal"><span class="pre">major,</span></tt> <tt class="xref py py-attr docutils literal"><span class="pre">minor</span></tt>,
+<tt class="xref py py-attr docutils literal"><span class="pre">revision</span></tt>, <tt class="xref py py-attr docutils literal"><span class="pre">suffix</span></tt>.</p>
+<p>The version string can be formated using <tt class="xref py py-meth docutils literal"><span class="pre">str()</span></tt> function.</p>
+<p>Two instances can be compared using these operators: <tt class="docutils literal"><span class="pre">==</span></tt>, <tt class="docutils literal"><span class="pre">&lt;</span></tt>, <tt class="docutils literal"><span class="pre">&gt;</span></tt>, <tt class="docutils literal"><span class="pre">&lt;=</span></tt>, <tt class="docutils literal"><span class="pre">&gt;=</span></tt>.  To
+compare two versions, the version numbering (x, y, z) is converted to an integer in a
+pre-defined base using the following formulae: (x * base + y) * base + z. Thus x, y and z must
+be less than the <a class="reference internal" href="#PyOpenGLng.Tools.RevisionVersion.RevisionVersion.base" title="PyOpenGLng.Tools.RevisionVersion.RevisionVersion.base"><tt class="xref py py-attr docutils literal"><span class="pre">base</span></tt></a>.</p>
+<p>The parameter <em>version</em> could be a version string, an iterable or a dictionnary. The
+suffix is optional.</p>
+<p>Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">RevisionVersion</span><span class="p">(</span><span class="s">&#39;v0.1.2&#39;</span><span class="p">)</span>
+<span class="n">RevisionVersion</span><span class="p">(</span><span class="s">&#39;v0.1.2-r123&#39;</span><span class="p">)</span>
+<span class="n">RevisionVersion</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">RevisionVersion</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;r123&#39;</span><span class="p">))</span>
+<span class="n">RevisionVersion</span><span class="p">({</span><span class="s">&#39;major&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;minor&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;revision&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span><span class="s">&#39;r123&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="PyOpenGLng.Tools.RevisionVersion.RevisionVersion.base">
+<tt class="descname">base</tt><em class="property"> = 1000</em><a class="headerlink" href="#PyOpenGLng.Tools.RevisionVersion.RevisionVersion.base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Tools.RevisionVersion.RevisionVersion.clone">
+<tt class="descname">clone</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Tools/RevisionVersion.html#RevisionVersion.clone"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Tools.RevisionVersion.RevisionVersion.clone" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Tools.RevisionVersion.RevisionVersion.to_tuple">
+<tt class="descname">to_tuple</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Tools/RevisionVersion.html#RevisionVersion.to_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Tools.RevisionVersion.RevisionVersion.to_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the tuple (major, minor, revision, suffix)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.Tools.RevisionVersion.RevisionVersion.version_string">
+<tt class="descname">version_string</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/Tools/RevisionVersion.html#RevisionVersion.version_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.Tools.RevisionVersion.RevisionVersion.version_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format the version as vx.y.z</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Math.html"
+                        title="previous chapter">1.4.4. <tt class="docutils literal"><span class="pre">Math</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Singleton.html"
+                        title="next chapter">1.4.6. <tt class="docutils literal"><span class="pre">Singleton</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/api/PyOpenGLng/Tools/RevisionVersion.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Singleton.html" title="1.4.6. Singleton"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Math.html" title="1.4.4. Math"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../PyOpenGLng.html" >1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li>
+          <li><a href="../Tools.html" >1.4. <tt class="docutils literal"><span class="pre">Tools</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

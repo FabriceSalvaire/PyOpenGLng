@@ -1,9 +1,0 @@
-*************************
- :mod:`GlStippleTexture`
-*************************
-
-.. automodule:: PyOpenGLV4.GlStippleTexture
-   :members:
-   :show-inheritance:
-
-.. End

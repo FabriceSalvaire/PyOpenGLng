@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyOpenGLng.HighLevelApi.Buffer &mdash; PyOpenGLng 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../static/PyOpenGLng.css" type="text/css" />
+    <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for PyOpenGLng.HighLevelApi.Buffer</h1><div class="highlight"><pre>
+<span class="c">####################################################################################################</span>
+<span class="c">#</span>
+<span class="c"># PyOpenGLng - An OpenGL Python Wrapper with a High Level API.</span>
+<span class="c"># Copyright (C) 2013 Salvaire Fabrice</span>
+<span class="c">#</span>
+<span class="c">####################################################################################################</span>
+
+<span class="sd">&quot;&quot;&quot; This class provides tools to manage OpenGL Buffer Objects.</span>
+
+<span class="sd">========================= ==================================</span>
+<span class="sd">Target name               Purpose</span>
+<span class="sd">========================= ==================================</span>
+<span class="sd">ARRAY_BUFFER              Vertex attributes</span>
+<span class="sd">ATOMIC_COUNTER_BUFFER     Atomic counter storage</span>
+<span class="sd">COPY_READ_BUFFER          Buffer copy source</span>
+<span class="sd">COPY_WRITE_BUFFER         Buffer copy destination</span>
+<span class="sd">DISPATCH_INDIRECT_BUFFER  Indirect compute dispatch commands</span>
+<span class="sd">DRAW_INDIRECT_BUFFER      Indirect command arguments</span>
+<span class="sd">ELEMENT_ARRAY_BUFFER      Vertex array indices</span>
+<span class="sd">PIXEL_PACK_BUFFER         Pixel read target</span>
+<span class="sd">PIXEL_UNPACK_BUFFER       Texture data source</span>
+<span class="sd">SHADER_STORAGE_BUFFER     Read=write storage for shaders</span>
+<span class="sd">TEXTURE_BUFFER            Texture data buffer</span>
+<span class="sd">TRANSFORM_FEEDBACK_BUFFER Transform feedback buffer</span>
+<span class="sd">UNIFORM_BUFFER            Uniform block storage</span>
+<span class="sd">========================= ==================================</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">GL</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="n">_module_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="c">####################################################################################################</span>
+
+<div class="viewcode-block" id="GlBuffer"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Buffer.html#PyOpenGLng.HighLevelApi.Buffer.GlBuffer">[docs]</a><span class="k">class</span> <span class="nc">GlBuffer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class wraps an OpenGL Buffer.</span>
+
+<span class="sd">    Public attributes:</span>
+
+<span class="sd">      size</span>
+
+<span class="sd">      type</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># size and type attributes are used by VertexAttribPointer like functions.</span>
+
+    <span class="n">_logger</span> <span class="o">=</span> <span class="n">_module_logger</span><span class="o">.</span><span class="n">getChild</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+    <span class="c">#: Define the target in subclass</span>
+    <span class="n">_target</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer_object_id</span> <span class="o">=</span> <span class="n">GL</span><span class="o">.</span><span class="n">glGenBuffers</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Delete Object </span><span class="si">%u</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer_object_id</span><span class="p">))</span>
+        <span class="n">GL</span><span class="o">.</span><span class="n">glDeleteBuffers</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer_object_id</span><span class="p">])</span>
+
+    <span class="c">##############################################</span>
+    
+<div class="viewcode-block" id="GlBuffer.bind"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Buffer.html#PyOpenGLng.HighLevelApi.Buffer.GlBuffer.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Bind the buffer. &quot;&quot;&quot;</span>
+
+        <span class="n">GL</span><span class="o">.</span><span class="n">glBindBuffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer_object_id</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    </div>
+<div class="viewcode-block" id="GlBuffer.unbind"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Buffer.html#PyOpenGLng.HighLevelApi.Buffer.GlBuffer.unbind">[docs]</a>    <span class="k">def</span> <span class="nf">unbind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Unind the buffer. &quot;&quot;&quot;</span>
+
+        <span class="n">GL</span><span class="o">.</span><span class="n">glBindBuffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    </div>
+<div class="viewcode-block" id="GlBuffer.bind_buffer_base"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Buffer.html#PyOpenGLng.HighLevelApi.Buffer.GlBuffer.bind_buffer_base">[docs]</a>    <span class="k">def</span> <span class="nf">bind_buffer_base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binding_point</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Binds the buffer object buffer to the given binding point. &quot;&quot;&quot;</span>
+
+        <span class="n">GL</span><span class="o">.</span><span class="n">glBindBufferBase</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="n">binding_point</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer_object_id</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    </div>
+<div class="viewcode-block" id="GlBuffer._set"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Buffer.html#PyOpenGLng.HighLevelApi.Buffer.GlBuffer._set">[docs]</a>    <span class="k">def</span> <span class="nf">_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">usage</span><span class="p">):</span>
+        
+        <span class="sd">&quot;&quot;&quot; Set the data of the buffer. &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_FLOAT</span>
+        <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_DOUBLE</span>
+        <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_INT</span>
+        <span class="k">elif</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_UNSIGNED_INT</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+
+        <span class="c"># Fixme: shape?</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c"># xyzw</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="n">GL</span><span class="o">.</span><span class="n">glBufferData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">usage</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unbind</span><span class="p">()</span>
+
+    <span class="c">##############################################</span>
+    </div>
+<div class="viewcode-block" id="GlBuffer.set"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Buffer.html#PyOpenGLng.HighLevelApi.Buffer.GlBuffer.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">usage</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Set the data of the buffer. &quot;&quot;&quot;</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<span class="c">####################################################################################################</span>
+</div></div>
+<div class="viewcode-block" id="GlUniformBuffer"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Buffer.html#PyOpenGLng.HighLevelApi.Buffer.GlUniformBuffer">[docs]</a><span class="k">class</span> <span class="nc">GlUniformBuffer</span><span class="p">(</span><span class="n">GlBuffer</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class wraps an OpenGl Uniform Buffer. &quot;&quot;&quot;</span>
+
+    <span class="n">_target</span> <span class="o">=</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_UNIFORM_BUFFER</span>
+
+    <span class="n">_logger</span> <span class="o">=</span> <span class="n">_module_logger</span><span class="o">.</span><span class="n">getChild</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    
+<div class="viewcode-block" id="GlUniformBuffer.set"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Buffer.html#PyOpenGLng.HighLevelApi.Buffer.GlUniformBuffer.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">usage</span><span class="o">=</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_DYNAMIC_DRAW</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">usage</span><span class="p">)</span>
+
+<span class="c">####################################################################################################</span>
+</div></div>
+<div class="viewcode-block" id="GlArrayBuffer"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Buffer.html#PyOpenGLng.HighLevelApi.Buffer.GlArrayBuffer">[docs]</a><span class="k">class</span> <span class="nc">GlArrayBuffer</span><span class="p">(</span><span class="n">GlBuffer</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class wraps an OpenGl Array Buffer. &quot;&quot;&quot;</span>
+
+    <span class="n">_target</span> <span class="o">=</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_ARRAY_BUFFER</span>
+
+    <span class="n">_logger</span> <span class="o">=</span> <span class="n">_module_logger</span><span class="o">.</span><span class="n">getChild</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    
+<div class="viewcode-block" id="GlArrayBuffer.set"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Buffer.html#PyOpenGLng.HighLevelApi.Buffer.GlArrayBuffer.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">usage</span><span class="o">=</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_STATIC_DRAW</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">usage</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    </div>
+<div class="viewcode-block" id="GlArrayBuffer.bind_at_location"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Buffer.html#PyOpenGLng.HighLevelApi.Buffer.GlArrayBuffer.bind_at_location">[docs]</a>    <span class="k">def</span> <span class="nf">bind_at_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Bind and enable the Vertex Buffer Object at the given attribute location. &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Bind at location </span><span class="si">%u</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">location</span><span class="p">))</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="n">GL</span><span class="o">.</span><span class="n">glVertexAttribPointer</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_FALSE</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="n">GL</span><span class="o">.</span><span class="n">glEnableVertexAttribArray</span><span class="p">(</span><span class="n">location</span><span class="p">)</span> <span class="c"># cf. enable # required !</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unbind</span><span class="p">()</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c">#</span>
+<span class="c"># End</span>
+<span class="c">#</span>
+<span class="c">####################################################################################################</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

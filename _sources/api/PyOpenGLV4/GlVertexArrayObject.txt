@@ -1,9 +1,0 @@
-****************************
- :mod:`GlVertexArrayObject`
-****************************
-
-.. automodule:: PyOpenGLV4.GlVertexArrayObject
-   :members:
-   :show-inheritance:
-
-.. End

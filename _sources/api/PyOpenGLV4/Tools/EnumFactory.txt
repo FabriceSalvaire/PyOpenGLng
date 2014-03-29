@@ -1,9 +1,0 @@
-********************
- :mod:`EnumFactory`
-********************
-
-.. automodule:: PyOpenGLV4.Tools.EnumFactory
-   :members:
-   :show-inheritance:
-
-.. End

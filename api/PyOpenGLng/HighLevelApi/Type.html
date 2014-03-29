@@ -1,0 +1,409 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1.3.16. Type &mdash; PyOpenGLng 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../static/PyOpenGLng.css" type="text/css" />
+    <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="1.3. HighLevelApi" href="../HighLevelApi.html" />
+    <link rel="next" title="1.3.17. VertexArrayObject" href="VertexArrayObject.html" />
+    <link rel="prev" title="1.3.15. TextureVertexArray" href="TextureVertexArray.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="VertexArrayObject.html" title="1.3.17. VertexArrayObject"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="TextureVertexArray.html" title="1.3.15. TextureVertexArray"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../PyOpenGLng.html" >1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li>
+          <li><a href="../HighLevelApi.html" accesskey="U">1.3. <tt class="docutils literal"><span class="pre">HighLevelApi</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-PyOpenGLng.HighLevelApi.Type">
+<span id="type"></span><h1>1.3.16. <tt class="xref py py-mod docutils literal"><span class="pre">Type</span></tt><a class="headerlink" href="#module-PyOpenGLng.HighLevelApi.Type" title="Permalink to this headline">¶</a></h1>
+<p>This module provides classes to handle OpenGL Data Types.</p>
+<p>It gives access to the following functions to set and get uniform values:</p>
+<ul class="simple">
+<li>glGetUniform{f|i|ui|d}v</li>
+<li>glUniform{1|2|3|4}{f|i|ui}</li>
+<li>glUniform{1|2|3|4}{f|i|ui}v</li>
+<li>glUniformMatrix{2|3|4|2x3|3x2|2x4|4x2|3x4|4x3}fv</li>
+<li>glProgramUniform{1|2|3|4}{f|i|ui}</li>
+<li>glProgramUniform{1|2|3|4}{f|i|ui}v</li>
+<li>glProgramUniformMatrix{2|3|4|2x3|3x2|2x4|4x2|3x4|4x3}fv</li>
+</ul>
+<p>GL data types:</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="13%" />
+<col width="78%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">GL Type</th>
+<th class="head">Bit Width</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>boolean</td>
+<td>1 or more</td>
+<td>Boolean</td>
+</tr>
+<tr class="row-odd"><td>byte</td>
+<td>8</td>
+<td>Signed two’s complement binary integer</td>
+</tr>
+<tr class="row-even"><td>ubyte</td>
+<td>8</td>
+<td>Unsigned binary integer</td>
+</tr>
+<tr class="row-odd"><td>char</td>
+<td>8</td>
+<td>Characters making up strings</td>
+</tr>
+<tr class="row-even"><td>short</td>
+<td>16</td>
+<td>Signed two’s complement binary integer</td>
+</tr>
+<tr class="row-odd"><td>ushort</td>
+<td>16</td>
+<td>Unsigned binary integer</td>
+</tr>
+<tr class="row-even"><td>int</td>
+<td>32</td>
+<td>Signed two’s complement binary integer</td>
+</tr>
+<tr class="row-odd"><td>uint</td>
+<td>32</td>
+<td>Unsigned binary integer</td>
+</tr>
+<tr class="row-even"><td>fixed</td>
+<td>32</td>
+<td>Signed two’s complement 16.16 scaled integer</td>
+</tr>
+<tr class="row-odd"><td>int64</td>
+<td>64</td>
+<td>Signed two’s complement binary integer</td>
+</tr>
+<tr class="row-even"><td>uint64</td>
+<td>64</td>
+<td>Unsigned binary integer</td>
+</tr>
+<tr class="row-odd"><td>sizei</td>
+<td>32</td>
+<td>Non-negative binary integer size</td>
+</tr>
+<tr class="row-even"><td>enum</td>
+<td>32</td>
+<td>Enumerated binary integer value</td>
+</tr>
+<tr class="row-odd"><td>intptr</td>
+<td>ptrbits</td>
+<td>Signed twos complement binary integer</td>
+</tr>
+<tr class="row-even"><td>sizeiptr</td>
+<td>ptrbits</td>
+<td>Non-negative binary integer size</td>
+</tr>
+<tr class="row-odd"><td>sync</td>
+<td>ptrbits</td>
+<td>Sync object handle</td>
+</tr>
+<tr class="row-even"><td>bitfield</td>
+<td>32</td>
+<td>Bit field</td>
+</tr>
+<tr class="row-odd"><td>half</td>
+<td>16</td>
+<td>Half-precision floating-point value encoded in an unsigned scalar</td>
+</tr>
+<tr class="row-even"><td>float</td>
+<td>32</td>
+<td>Floating-point value</td>
+</tr>
+<tr class="row-odd"><td>clampf</td>
+<td>32</td>
+<td>Floating-point value clamped to [0, 1]</td>
+</tr>
+<tr class="row-even"><td>double</td>
+<td>64</td>
+<td>Floating-point value</td>
+</tr>
+<tr class="row-odd"><td>clampd</td>
+<td>64</td>
+<td>Floating-point value clamped to [0, 1]</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Correspondence of command suffix type descriptors to GL argument types:</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="42%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Type Descriptor</th>
+<th class="head">Corresponding GL Type</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>b</td>
+<td>byte</td>
+</tr>
+<tr class="row-odd"><td>s</td>
+<td>short</td>
+</tr>
+<tr class="row-even"><td>i</td>
+<td>int</td>
+</tr>
+<tr class="row-odd"><td>i64</td>
+<td>int64</td>
+</tr>
+<tr class="row-even"><td>f</td>
+<td>float</td>
+</tr>
+<tr class="row-odd"><td>d</td>
+<td>double</td>
+</tr>
+<tr class="row-even"><td>ub</td>
+<td>ubyte</td>
+</tr>
+<tr class="row-odd"><td>us</td>
+<td>ushort</td>
+</tr>
+<tr class="row-even"><td>ui</td>
+<td>uint</td>
+</tr>
+<tr class="row-odd"><td>ui64</td>
+<td>uint64</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<dl class="class">
+<dt id="PyOpenGLng.HighLevelApi.Type.GlMatrixType">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.Type.</tt><tt class="descname">GlMatrixType</tt><big>(</big><em>data_type</em>, <em>number_of_rows</em>, <em>number_of_columns</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Type.html#GlMatrixType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.GlMatrixType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.HighLevelApi.Type.GlType" title="PyOpenGLng.HighLevelApi.Type.GlType"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.HighLevelApi.Type.GlType</span></tt></a></p>
+<p>This class defines a matrix type.</p>
+<dl class="attribute">
+<dt id="PyOpenGLng.HighLevelApi.Type.GlMatrixType.number_of_dimensions">
+<tt class="descname">number_of_dimensions</tt><em class="property"> = 2</em><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.GlMatrixType.number_of_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.HighLevelApi.Type.GlSamplerType">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.Type.</tt><tt class="descname">GlSamplerType</tt><big>(</big><em>data_type</em>, <em>token_name</em>, <em>keyword</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Type.html#GlSamplerType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.GlSamplerType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.HighLevelApi.Type.GlType" title="PyOpenGLng.HighLevelApi.Type.GlType"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.HighLevelApi.Type.GlType</span></tt></a></p>
+<p>This class defines a sampler type.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.HighLevelApi.Type.GlType">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.Type.</tt><tt class="descname">GlType</tt><big>(</big><em>token_name</em>, <em>keyword</em>, <em>data_type</em>, <em>uniform_get</em>, <em>uniform_set</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Type.html#GlType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.GlType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This base class defines an OpenGL data type.</p>
+<p>Public attributes are:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">token_name</span></tt></dt>
+<dd>OpenGL type name token, for example <tt class="xref py py-attr docutils literal"><span class="pre">GL.GL_FLOAT_VEC4</span></tt></dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">keyword</span></tt></dt>
+<dd>GLSL type keyword, for example <tt class="docutils literal"><span class="pre">vec4</span></tt></dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">data_type</span></tt></dt>
+<dd>OpenGL data type enumerate, for example <tt class="xref py py-attr docutils literal"><span class="pre">gl_data_type.float</span></tt></dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">uniform_get_v</span></tt></dt>
+<dd>Function to get the uniform value, cf. glGetUniform&lt;type&gt;v functions.</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">uniform_set_v</span></tt></dt>
+<dd>Function to set the uniform from a pointer, cf. glUniform&lt;type&gt;v functions.</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">program_uniform_set_v</span></tt></dt>
+<dd>Function to set the uniform from a pointer for the given program, cf. glProgramUniform&lt;type&gt;v functions.</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">uniform_set</span></tt></dt>
+<dd>Function to set the uniform from arguments, cf. glUniform&lt;type&gt; functions.
+If it is irrelevant for the type, it is set to <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>.</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">dtype</span></tt></dt>
+<dd>corresponding Numpy data type</dd>
+</dl>
+</div></blockquote>
+<p>Subclasses public attributes are:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">number_of_dimensions</span></tt></dt>
+<dd>Number of dimensions of the type</dd>
+<dt><tt class="xref py py-attr docutils literal"><span class="pre">shape</span></tt></dt>
+<dd>Shape of the array for vector and matrix type</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="PyOpenGLng.HighLevelApi.Type.GlType.print_object">
+<tt class="descname">print_object</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Type.html#GlType.print_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.GlType.print_object" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.HighLevelApi.Type.GlTypes">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.Type.</tt><tt class="descname">GlTypes</tt><big>(</big><em>gl_types</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Type.html#GlTypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.GlTypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a></p>
+<p>This class stores the OpenGL types in a dictionary indexed by the token name.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.HighLevelApi.Type.GlVariableType">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.Type.</tt><tt class="descname">GlVariableType</tt><big>(</big><em>data_type</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Type.html#GlVariableType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.GlVariableType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.HighLevelApi.Type.GlType" title="PyOpenGLng.HighLevelApi.Type.GlType"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.HighLevelApi.Type.GlType</span></tt></a></p>
+<p>This class defines a variable type.</p>
+<dl class="attribute">
+<dt id="PyOpenGLng.HighLevelApi.Type.GlVariableType.number_of_dimensions">
+<tt class="descname">number_of_dimensions</tt><em class="property"> = 1</em><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.GlVariableType.number_of_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.HighLevelApi.Type.GlVariableType.shape">
+<tt class="descname">shape</tt><em class="property"> = (1,)</em><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.GlVariableType.shape" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.HighLevelApi.Type.GlVectorType">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.Type.</tt><tt class="descname">GlVectorType</tt><big>(</big><em>data_type</em>, <em>size</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Type.html#GlVectorType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.GlVectorType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#PyOpenGLng.HighLevelApi.Type.GlType" title="PyOpenGLng.HighLevelApi.Type.GlType"><tt class="xref py py-class docutils literal"><span class="pre">PyOpenGLng.HighLevelApi.Type.GlType</span></tt></a></p>
+<p>This class defines a vector type.</p>
+<dl class="attribute">
+<dt id="PyOpenGLng.HighLevelApi.Type.GlVectorType.number_of_dimensions">
+<tt class="descname">number_of_dimensions</tt><em class="property"> = 1</em><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.GlVectorType.number_of_dimensions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="PyOpenGLng.HighLevelApi.Type.get_gl_attr">
+<tt class="descclassname">PyOpenGLng.HighLevelApi.Type.</tt><tt class="descname">get_gl_attr</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Type.html#get_gl_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.get_gl_attr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve an attribute within the GL module.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.HighLevelApi.Type.gl_data_type">
+<tt class="descclassname">PyOpenGLng.HighLevelApi.Type.</tt><tt class="descname">gl_data_type</tt><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.gl_data_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>OpenGL data type, cf. OpenGL Specification Table 2.2: GL data types.</p>
+<p>alias of <tt class="xref py py-class docutils literal"><span class="pre">GlDataType</span></tt></p>
+</dd></dl>
+
+<dl class="data">
+<dt id="PyOpenGLng.HighLevelApi.Type.gl_to_numpy_data_type">
+<tt class="descclassname">PyOpenGLng.HighLevelApi.Type.</tt><tt class="descname">gl_to_numpy_data_type</tt><em class="property"> = {unsigned_int := 1: &lt;type 'numpy.uint32'&gt;, float := 3: &lt;type 'numpy.float32'&gt;, double := 4: &lt;type 'numpy.float64'&gt;, bool := 0: &lt;type 'numpy.uint32'&gt;, int := 2: &lt;type 'numpy.int32'&gt;}</em><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.gl_to_numpy_data_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>OpenGL to Numpy data type</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="PyOpenGLng.HighLevelApi.Type.gl_types">
+<tt class="descclassname">PyOpenGLng.HighLevelApi.Type.</tt><tt class="descname">gl_types</tt><em class="property"> = {5124: &lt;PyOpenGLng.HighLevelApi.Type.GlVariableType object at 0x821af10&gt;, 5125: &lt;PyOpenGLng.HighLevelApi.Type.GlVariableType object at 0x821af90&gt;, 5126: &lt;PyOpenGLng.HighLevelApi.Type.GlVariableType object at 0x821f050&gt;, 36310: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221250&gt;, 5130: &lt;PyOpenGLng.HighLevelApi.Type.GlVariableType object at 0x821f090&gt;, 36311: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221310&gt;, 36312: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221410&gt;, 36302: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221450&gt;, 36678: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821ff50&gt;, 36679: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fc10&gt;, 36680: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fe90&gt;, 36297: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x82214d0&gt;, 36298: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221550&gt;, 36288: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221790&gt;, 36289: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221810&gt;, 36290: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x821fb10&gt;, 36299: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221690&gt;, 36294: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f2d0&gt;, 36295: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f150&gt;, 36296: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f1d0&gt;, 36681: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821f990&gt;, 36682: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fa90&gt;, 36683: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fb50&gt;, 36684: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fc90&gt;, 36685: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fd50&gt;, 36686: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fdd0&gt;, 36303: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221590&gt;, 35664: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f610&gt;, 35665: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f690&gt;, 35666: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f710&gt;, 35667: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f290&gt;, 35668: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f510&gt;, 35669: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f590&gt;, 35670: &lt;PyOpenGLng.HighLevelApi.Type.GlVariableType object at 0x821ae50&gt;, 35671: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f110&gt;, 35672: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f190&gt;, 35673: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f210&gt;, 35674: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821f950&gt;, 35675: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fc50&gt;, 35676: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fed0&gt;, 35677: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221710&gt;, 35678: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x82217d0&gt;, 35679: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221890&gt;, 35680: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x82218d0&gt;, 36304: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x82216d0&gt;, 35683: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221850&gt;, 35685: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fa10&gt;, 35686: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fad0&gt;, 35687: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fb90&gt;, 35688: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fcd0&gt;, 35689: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fd90&gt;, 35690: &lt;PyOpenGLng.HighLevelApi.Type.GlMatrixType object at 0x821fe10&gt;, 36306: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221290&gt;, 36300: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221750&gt;, 36305: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x821f910&gt;, 36307: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221390&gt;, 36308: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221490&gt;, 36301: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221610&gt;, 36860: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f790&gt;, 36861: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f810&gt;, 36862: &lt;PyOpenGLng.HighLevelApi.Type.GlVectorType object at 0x821f890&gt;, 36309: &lt;PyOpenGLng.HighLevelApi.Type.GlSamplerType object at 0x8221350&gt;}</em><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Type.gl_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>singleton for the <a class="reference internal" href="#PyOpenGLng.HighLevelApi.Type.GlTypes" title="PyOpenGLng.HighLevelApi.Type.GlTypes"><tt class="xref py py-class docutils literal"><span class="pre">GlTypes</span></tt></a></p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="TextureVertexArray.html"
+                        title="previous chapter">1.3.15. <tt class="docutils literal"><span class="pre">TextureVertexArray</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="VertexArrayObject.html"
+                        title="next chapter">1.3.17. <tt class="docutils literal"><span class="pre">VertexArrayObject</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/api/PyOpenGLng/HighLevelApi/Type.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="VertexArrayObject.html" title="1.3.17. VertexArrayObject"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="TextureVertexArray.html" title="1.3.15. TextureVertexArray"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../PyOpenGLng.html" >1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li>
+          <li><a href="../HighLevelApi.html" >1.3. <tt class="docutils literal"><span class="pre">HighLevelApi</span></tt></a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

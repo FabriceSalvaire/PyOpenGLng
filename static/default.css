@@ -4,7 +4,7 @@
  *
  * Sphinx stylesheet -- default theme.
  *
- * :copyright: Copyright 2007-2013 by the Sphinx team, see AUTHORS.
+ * :copyright: Copyright 2007-2011 by the Sphinx team, see AUTHORS.
  * :license: BSD, see LICENSE for details.
  *
  */
@@ -68,7 +68,7 @@ div.sphinxsidebar {
 }
 
 div.sphinxsidebar h3 {
-    font-family: 'Trebuchet MS', sans-serif;
+    font-family: sans-serif;
     color: #ffffff;
     font-size: 1.4em;
     font-weight: normal;
@@ -81,7 +81,7 @@ div.sphinxsidebar h3 a {
 }
 
 div.sphinxsidebar h4 {
-    font-family: 'Trebuchet MS', sans-serif;
+    font-family: sans-serif;
     color: #ffffff;
     font-size: 1.3em;
     font-weight: normal;
@@ -141,7 +141,7 @@ div.body h3,
 div.body h4,
 div.body h5,
 div.body h6 {
-    font-family: 'Trebuchet MS', sans-serif;
+    font-family: sans-serif;
     background-color: #f2f2f2;
     font-weight: normal;
     color: #20435c;
