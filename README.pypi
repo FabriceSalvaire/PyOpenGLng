@@ -12,3 +12,5 @@ The Python package provides three components:
 * an Oriented Object API to the OpenGL XML registry,
 * a ctypes wrapper,
 * and an experimental high level API.
+
+The source code is hosted on https://github.com/FabriceSalvaire/PyOpenGLng.
