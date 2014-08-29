@@ -1,39 +1,44 @@
+.. include:: project-links.txt
+
+.. hack to move down the next note block
+.. raw:: html
+
+   <br/>
+
+Welcome to the PyOpenGLng documentation!
+
+.. note:: The official Home Page of PyOpenGLng is located at |PyOpenGLngUrl|
+
+    If you are at http://readthedocs.org then you are reading the so called *latest documentation*.
+
+    The *latest documentation* |PyOpenGLng@readthedocs-badge| is automatically built from the
+    git repository after each commit.
+
+    As opposite the |PyOpenGLngHomePage|_ is built manually and is thus less prone to errors.
+	     
+.. include:: introduction.txt
+
+==============
+ Installation
+==============
+
+The procedure to install PyOpenGLng is described in the :ref:`Installation Manual <installation-page>`.
+
+===============
+ Documentation
+===============
+
+ * :ref:`PyOpenGLng Reference Manual <reference-manual-page>`
+
 ==========
  Overview
 ==========
 
-PyOpenGLng, proudly blessed as is, is an experimental OpenGL wrapper for Python which generate the
-requested OpenGL API from the `OpenGL XML Registry
-<https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api>`_ and use an automatic
-translator to map the C API to Python. Actually the wrapper use ctypes.
-
-By design this wrapper supports all the OpenGL version, but it focus towards the programmable
-pipeline and the most recent API. On Linux desktop Mesa release 10 supports OpenGL 3.3.
-
-The Python package provides three components:
-
-* an Oriented Object API to the OpenGL XML registry,
-* a ctypes wrapper,
-* and an experimental high level API.
-
-===================
- Table of Contents
-===================
-
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 3
   :numbered:
 
-  install.rst
-  tools.rst
-  api/PyOpenGLng.rst
-
-=========
- Indexes
-=========
-
-  * :ref:`genindex`
-  * :ref:`modindex`
-  * :ref:`search`
+  installation.rst
+  reference-manual.rst
 
 .. End

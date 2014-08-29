@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3.3.14. TextureFont &mdash; PyOpenGLng 0.1.0 documentation</title>
+    <title>2.1.3.14. TextureFont &mdash; PyOpenGLng 0.1.0 documentation</title>
     
     <link rel="stylesheet" href="../../../static/PyOpenGLng.css" type="text/css" />
     <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
@@ -26,9 +24,9 @@
     <script type="text/javascript" src="../../../static/underscore.js"></script>
     <script type="text/javascript" src="../../../static/doctools.js"></script>
     <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="../../../index.html" />
-    <link rel="up" title="3.3. HighLevelApi" href="../HighLevelApi.html" />
-    <link rel="next" title="3.3.15. TextureVertexArray" href="TextureVertexArray.html" />
-    <link rel="prev" title="3.3.13. TextureAtlas" href="TextureAtlas.html" /> 
+    <link rel="up" title="2.1.3. HighLevelApi" href="../HighLevelApi.html" />
+    <link rel="next" title="2.1.3.15. TextureVertexArray" href="TextureVertexArray.html" />
+    <link rel="prev" title="2.1.3.13. TextureAtlas" href="TextureAtlas.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,14 +39,15 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="TextureVertexArray.html" title="3.3.15. TextureVertexArray"
+          <a href="TextureVertexArray.html" title="2.1.3.15. TextureVertexArray"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="TextureAtlas.html" title="3.3.13. TextureAtlas"
+          <a href="TextureAtlas.html" title="2.1.3.13. TextureAtlas"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
-          <li><a href="../../PyOpenGLng.html" >3. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li>
-          <li><a href="../HighLevelApi.html" accesskey="U">3.3. <tt class="docutils literal"><span class="pre">HighLevelApi</span></tt></a> &raquo;</li> 
+          <li><a href="../../../reference-manual.html" >2. API Documentation</a> &raquo;</li>
+          <li><a href="../../PyOpenGLng.html" >2.1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li>
+          <li><a href="../HighLevelApi.html" accesskey="U">2.1.3. <tt class="docutils literal"><span class="pre">HighLevelApi</span></tt></a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -57,8 +56,131 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="texturefont">
-<h1>3.3.14. <tt class="xref py py-mod docutils literal"><span class="pre">TextureFont</span></tt><a class="headerlink" href="#texturefont" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-PyOpenGLng.HighLevelApi.TextureFont">
+<span id="texturefont"></span><h1>2.1.3.14. <tt class="xref py py-mod docutils literal"><span class="pre">TextureFont</span></tt><a class="headerlink" href="#module-PyOpenGLng.HighLevelApi.TextureFont" title="Permalink to this headline">¶</a></h1>
+<p>Texture font class</p>
+<dl class="class">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.FontMetrics">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.TextureFont.</tt><tt class="descname">FontMetrics</tt><big>(</big><em>texture_font_size</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#FontMetrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.FontMetrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureFont">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.TextureFont.</tt><tt class="descname">TextureFont</tt><big>(</big><em>font_path</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureFont"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureFont" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A texture font gathers a set of glyph relatively to a given font filename and size.</p>
+<p>Points are a physical unit, where 1 point equals 1/72th of an inch. The size in pixel of a glyph
+is thus size_in_point * resolution_in_dpi / 72.</p>
+<dl class="method">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureFont._dump_face_info">
+<tt class="descname">_dump_face_info</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureFont._dump_face_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureFont._dump_face_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureFont._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x712d710&gt;</em><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureFont._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureFont.atlas">
+<tt class="descname">atlas</tt><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureFont.atlas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureFont.atlas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.TextureFont.</tt><tt class="descname">TextureFontSize</tt><big>(</big><em>texture_font</em>, <em>font_size</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureFontSize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize._set_face_transfrom">
+<tt class="descname">_set_face_transfrom</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureFontSize._set_face_transfrom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize._set_face_transfrom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize._set_kerning">
+<tt class="descname">_set_kerning</tt><big>(</big><em>glyph1</em>, <em>glyph2</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureFontSize._set_kerning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize._set_kerning" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.font">
+<tt class="descname">font</tt><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureFontSize.font"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.font" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.load_all_glyphs">
+<tt class="descname">load_all_glyphs</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureFontSize.load_all_glyphs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.load_all_glyphs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.load_from_string">
+<tt class="descname">load_from_string</tt><big>(</big><em>charcodes</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureFontSize.load_from_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.load_from_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.load_glyph">
+<tt class="descname">load_glyph</tt><big>(</big><em>charcode</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureFontSize.load_glyph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.load_glyph" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.metrics">
+<tt class="descname">metrics</tt><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureFontSize.metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.metrics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.size">
+<tt class="descname">size</tt><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureFontSize.size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureGlyph">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.TextureFont.</tt><tt class="descname">TextureGlyph</tt><big>(</big><em>charcode</em>, <em>size</em>, <em>offset</em>, <em>advance</em>, <em>texture_coordinates</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureGlyph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureGlyph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A texture glyph gathers information relative to the size/offset/advance and texture coordinates
+of a single character. It is generally built automatically by a TextureFont.</p>
+<p>Build a new texture glyph</p>
+<dl class="docutils">
+<dt>charcode <span class="classifier-delimiter">:</span> <span class="classifier">char</span></dt>
+<dd>Represented character</dd>
+<dt>size: tuple of 2 ints</dt>
+<dd>Glyph size in pixels</dd>
+<dt>offset: tuple of 2 floats</dt>
+<dd>Glyph offset relatively to anchor point</dd>
+<dt>advance: tuple of 2 floats</dt>
+<dd>Glyph advance</dd>
+<dt>texture_coordinates: tuple of 4 floats</dt>
+<dd>Texture coordinates of bottom-left and top-right corner</dd>
+</dl>
+<dl class="method">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.TextureGlyph.get_kerning">
+<tt class="descname">get_kerning</tt><big>(</big><em>charcode</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#TextureGlyph.get_kerning"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.TextureGlyph.get_kerning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get kerning information</p>
+<dl class="docutils">
+<dt>charcode: char</dt>
+<dd>Character preceding this glyph</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.from_64th_point">
+<tt class="descclassname">PyOpenGLng.HighLevelApi.TextureFont.</tt><tt class="descname">from_64th_point</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#from_64th_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.from_64th_point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.test_bit">
+<tt class="descclassname">PyOpenGLng.HighLevelApi.TextureFont.</tt><tt class="descname">test_bit</tt><big>(</big><em>flags</em>, <em>mask</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#test_bit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.test_bit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="PyOpenGLng.HighLevelApi.TextureFont.to_64th_point">
+<tt class="descclassname">PyOpenGLng.HighLevelApi.TextureFont.</tt><tt class="descname">to_64th_point</tt><big>(</big><em>x</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureFont.html#to_64th_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureFont.to_64th_point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 
 
@@ -69,10 +191,10 @@
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="TextureAtlas.html"
-                        title="previous chapter">3.3.13. <tt class="docutils literal"><span class="pre">TextureAtlas</span></tt></a></p>
+                        title="previous chapter">2.1.3.13. <tt class="docutils literal"><span class="pre">TextureAtlas</span></tt></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="TextureVertexArray.html"
-                        title="next chapter">3.3.15. <tt class="docutils literal"><span class="pre">TextureVertexArray</span></tt></a></p>
+                        title="next chapter">2.1.3.15. <tt class="docutils literal"><span class="pre">TextureVertexArray</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api/PyOpenGLng/HighLevelApi/TextureFont.txt"
@@ -105,19 +227,20 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="TextureVertexArray.html" title="3.3.15. TextureVertexArray"
+          <a href="TextureVertexArray.html" title="2.1.3.15. TextureVertexArray"
              >next</a> |</li>
         <li class="right" >
-          <a href="TextureAtlas.html" title="3.3.13. TextureAtlas"
+          <a href="TextureAtlas.html" title="2.1.3.13. TextureAtlas"
              >previous</a> |</li>
         <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
-          <li><a href="../../PyOpenGLng.html" >3. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li>
-          <li><a href="../HighLevelApi.html" >3.3. <tt class="docutils literal"><span class="pre">HighLevelApi</span></tt></a> &raquo;</li> 
+          <li><a href="../../../reference-manual.html" >2. API Documentation</a> &raquo;</li>
+          <li><a href="../../PyOpenGLng.html" >2.1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li>
+          <li><a href="../HighLevelApi.html" >2.1.3. <tt class="docutils literal"><span class="pre">HighLevelApi</span></tt></a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Fabrice Salvaire.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

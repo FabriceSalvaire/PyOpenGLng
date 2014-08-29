@@ -1,0 +1,521 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyOpenGLng.HighLevelApi.TextureFont &mdash; PyOpenGLng 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../static/PyOpenGLng.css" type="text/css" />
+    <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for PyOpenGLng.HighLevelApi.TextureFont</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c"># </span>
+<span class="c"># PyOpenGLng - An OpenGL Python Wrapper with a High Level API.</span>
+<span class="c"># Copyright (C) 2014 Fabrice Salvaire</span>
+<span class="c">#</span>
+<span class="c"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c"># it under the terms of the GNU General Public License as published by</span>
+<span class="c"># the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c"># (at your option) any later version.</span>
+<span class="c"># </span>
+<span class="c"># This program is distributed in the hope that it will be useful,</span>
+<span class="c"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c"># GNU General Public License for more details.</span>
+<span class="c"># </span>
+<span class="c"># You should have received a copy of the GNU General Public License</span>
+<span class="c"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c"># </span>
+<span class="c">####################################################################################################</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c">#</span>
+<span class="c"># This source code is derived from:</span>
+<span class="c">#</span>
+<span class="c">#   Nicolas P. Rougier, Higher Quality 2D Text Rendering,</span>
+<span class="c">#   Journal of Computer Graphics Techniques (JCGT), vol. 2, no. 1, 50-64, 2013.</span>
+<span class="c">#   Available online http://jcgt.org/published/0002/01/04/1</span>
+<span class="c">#</span>
+<span class="c">#  Copyright 2011 Nicolas P. Rougier</span>
+<span class="c">#  Distributed under the terms of the new BSD license.</span>
+<span class="c">#</span>
+<span class="c">####################################################################################################</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c">#</span>
+<span class="c">#                                              Audit</span>
+<span class="c">#</span>
+<span class="c"># - 30/01/2014 Fabrice</span>
+<span class="c">#  - update doc</span>
+<span class="c">#  - pass atlas as parameter</span>
+<span class="c">#  - compute atlas size</span>
+<span class="c">#  - add SDF</span>
+<span class="c">#  - texture coordinate vs atlas coordinate</span>
+<span class="c">#</span>
+<span class="c">####################################################################################################</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="sd">&quot;&quot;&quot; Texture font class &quot;&quot;&quot;</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">unicodedata</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">freetype</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="kn">from</span> <span class="nn">.TextureAtlas</span> <span class="kn">import</span> <span class="n">TextureAtlas</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="n">_module_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="c">####################################################################################################</span>
+
+<div class="viewcode-block" id="from_64th_point"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.from_64th_point">[docs]</a><span class="k">def</span> <span class="nf">from_64th_point</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">/</span><span class="mf">64.</span>
+</div>
+<div class="viewcode-block" id="to_64th_point"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.to_64th_point">[docs]</a><span class="k">def</span> <span class="nf">to_64th_point</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="mi">64</span>
+
+<span class="c">####################################################################################################</span>
+</div>
+<div class="viewcode-block" id="test_bit"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.test_bit">[docs]</a><span class="k">def</span> <span class="nf">test_bit</span><span class="p">(</span><span class="n">flags</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">flags</span> <span class="o">&amp;</span> <span class="n">mask</span> <span class="o">==</span> <span class="mi">1</span>
+
+<span class="c">####################################################################################################</span>
+</div>
+<div class="viewcode-block" id="TextureFont"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureFont">[docs]</a><span class="k">class</span> <span class="nc">TextureFont</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A texture font gathers a set of glyph relatively to a given font filename and size.</span>
+
+<span class="sd">    Points are a physical unit, where 1 point equals 1/72th of an inch. The size in pixel of a glyph</span>
+<span class="sd">    is thus size_in_point * resolution_in_dpi / 72.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_logger</span> <span class="o">=</span> <span class="n">_module_logger</span><span class="o">.</span><span class="n">getChild</span><span class="p">(</span><span class="s">&#39;TextureFont&#39;</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font_path</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_font_path</span> <span class="o">=</span> <span class="n">font_path</span>
+
+        <span class="c"># Fixme: an atlas could be shared by several fonts and sizes</span>
+        <span class="n">atlas_size</span> <span class="o">=</span> <span class="mi">1024</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atlas</span> <span class="o">=</span> <span class="n">TextureAtlas</span><span class="p">(</span><span class="n">atlas_size</span><span class="p">,</span> <span class="n">atlas_size</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dirty</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_face</span> <span class="o">=</span> <span class="n">freetype</span><span class="o">.</span><span class="n">Face</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_font_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_face</span><span class="o">.</span><span class="n">select_charmap</span><span class="p">(</span><span class="n">freetype</span><span class="o">.</span><span class="n">FT_ENCODING_UNICODE</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_font_size</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c">##############################################</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TextureFont.atlas"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureFont.atlas">[docs]</a>    <span class="k">def</span> <span class="nf">atlas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atlas</span>
+
+    <span class="c">##############################################</span>
+</div>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font_size</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">font_size</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font_size</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_font_size</span><span class="p">[</span><span class="n">font_size</span><span class="p">]</span> <span class="o">=</span> <span class="n">TextureFontSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font_size</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font_size</span><span class="p">[</span><span class="n">font_size</span><span class="p">]</span>
+
+    <span class="c">##############################################</span>
+
+<div class="viewcode-block" id="TextureFont._dump_face_info"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureFont._dump_face_info">[docs]</a>    <span class="k">def</span> <span class="nf">_dump_face_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">face</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_face</span>
+
+        <span class="n">string_template</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">postscript name:     </span><span class="si">%s</span><span class="s"></span>
+<span class="s">family name:         </span><span class="si">%s</span><span class="s"></span>
+<span class="s">style name:          </span><span class="si">%s</span><span class="s"></span>
+<span class="s">number of faces:     </span><span class="si">%u</span><span class="s"></span>
+<span class="s">number of glyphs:    </span><span class="si">%u</span><span class="s"></span>
+<span class="s">available sizes:     </span><span class="si">%s</span><span class="s"></span>
+<span class="s">char maps:           </span><span class="si">%s</span><span class="s"></span>
+<span class="s">units per em:        </span><span class="si">%s</span><span class="s"></span>
+<span class="s">flags:               </span><span class="si">%s</span><span class="s"></span>
+<span class="s">bold:                </span><span class="si">%s</span><span class="s"></span>
+<span class="s">italic:              </span><span class="si">%s</span><span class="s"></span>
+<span class="s">scalable:            </span><span class="si">%s</span><span class="s"></span>
+<span class="s">ascender:            </span><span class="si">%u</span><span class="s"></span>
+<span class="s">descender:           </span><span class="si">%u</span><span class="s"></span>
+<span class="s">height:              </span><span class="si">%u</span><span class="s"></span>
+<span class="s">max advance width:   </span><span class="si">%u</span><span class="s"></span>
+<span class="s">max advance height:  </span><span class="si">%u</span><span class="s"></span>
+<span class="s">underline position:  </span><span class="si">%u</span><span class="s"></span>
+<span class="s">underline thickness: </span><span class="si">%u</span><span class="s"></span>
+<span class="s">has horizontal:      </span><span class="si">%s</span><span class="s"></span>
+<span class="s">has vertical:        </span><span class="si">%s</span><span class="s"></span>
+<span class="s">has kerning:         </span><span class="si">%s</span><span class="s"></span>
+<span class="s">is fixed width:      </span><span class="si">%s</span><span class="s"></span>
+<span class="s">is scalable:         </span><span class="si">%s</span><span class="s"></span>
+<span class="s">&quot;&quot;&quot;</span>
+
+        <span class="k">print</span> <span class="n">string_template</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">postscript_name</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">family_name</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">style_name</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">num_faces</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">num_glyphs</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">available_sizes</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">([</span><span class="n">charmap</span><span class="o">.</span><span class="n">encoding_name</span> <span class="k">for</span> <span class="n">charmap</span> <span class="ow">in</span> <span class="n">face</span><span class="o">.</span><span class="n">charmaps</span><span class="p">]),</span>
+            <span class="nb">hex</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">style_flags</span><span class="p">),</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">units_per_EM</span><span class="p">,</span>
+            <span class="n">test_bit</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">style_flags</span><span class="p">,</span> <span class="n">freetype</span><span class="o">.</span><span class="n">FT_STYLE_FLAG_BOLD</span><span class="p">),</span>
+            <span class="n">test_bit</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">style_flags</span><span class="p">,</span> <span class="n">freetype</span><span class="o">.</span><span class="n">FT_STYLE_FLAG_ITALIC</span><span class="p">),</span>
+            <span class="n">test_bit</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">style_flags</span><span class="p">,</span> <span class="n">freetype</span><span class="o">.</span><span class="n">FT_FACE_FLAG_SCALABLE</span><span class="p">),</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">ascender</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">descender</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">height</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">max_advance_width</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">max_advance_height</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">underline_position</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">underline_thickness</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">has_horizontal</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">has_vertical</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">has_kerning</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">is_fixed_width</span><span class="p">,</span>
+            <span class="n">face</span><span class="o">.</span><span class="n">is_scalable</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">print</span> <span class="s">&quot;Glyph Table:&quot;</span>
+        <span class="n">charcode</span><span class="p">,</span> <span class="n">glyph_index</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">get_first_char</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">glyph_index</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;  [</span><span class="si">%d</span><span class="s">] 0x</span><span class="si">%04lx</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">glyph_index</span><span class="p">,</span>
+                                            <span class="n">charcode</span><span class="p">,</span>
+                                            <span class="nb">unichr</span><span class="p">(</span><span class="n">charcode</span><span class="p">),</span>
+                                            <span class="n">unicodedata</span><span class="o">.</span><span class="n">name</span><span class="p">(</span><span class="nb">unichr</span><span class="p">(</span><span class="n">charcode</span><span class="p">)))</span>
+            <span class="c"># face.get_glyph_name(glyph_index) # is not available</span>
+            <span class="n">charcode</span><span class="p">,</span> <span class="n">glyph_index</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">get_next_char</span><span class="p">(</span><span class="n">charcode</span><span class="p">,</span> <span class="n">glyph_index</span><span class="p">)</span>
+
+<span class="c">####################################################################################################</span>
+</div></div>
+<div class="viewcode-block" id="TextureFontSize"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize">[docs]</a><span class="k">class</span> <span class="nc">TextureFontSize</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="c">##############################################</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texture_font</span><span class="p">,</span> <span class="n">font_size</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_font</span> <span class="o">=</span> <span class="n">texture_font</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="n">font_size</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span> <span class="o">=</span> <span class="n">FontMetrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_glyphs</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c">##############################################</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TextureFontSize.font"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.font">[docs]</a>    <span class="k">def</span> <span class="nf">font</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TextureFontSize.size"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="TextureFontSize.metrics"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.metrics">[docs]</a>    <span class="k">def</span> <span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metrics</span>
+
+    <span class="c">##############################################</span>
+</div>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">charcode</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">charcode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glyphs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_glyph</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%c</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">charcode</span><span class="p">)</span> <span class="c"># Fixme: %c ?</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glyphs</span><span class="p">[</span><span class="n">charcode</span><span class="p">]</span>
+
+    <span class="c">##############################################</span>
+
+<div class="viewcode-block" id="TextureFontSize.load_all_glyphs"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.load_all_glyphs">[docs]</a>    <span class="k">def</span> <span class="nf">load_all_glyphs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c"># self.load_from_string(string.printable)</span>
+
+        <span class="n">face</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font</span><span class="o">.</span><span class="n">_face</span>
+        <span class="n">charcode</span><span class="p">,</span> <span class="n">glyph_index</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">get_first_char</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">glyph_index</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_glyph</span><span class="p">(</span><span class="nb">unichr</span><span class="p">(</span><span class="n">charcode</span><span class="p">))</span>
+            <span class="n">charcode</span><span class="p">,</span> <span class="n">glyph_index</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">get_next_char</span><span class="p">(</span><span class="n">charcode</span><span class="p">,</span> <span class="n">glyph_index</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+ </div>
+<div class="viewcode-block" id="TextureFontSize.load_from_string"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.load_from_string">[docs]</a>    <span class="k">def</span> <span class="nf">load_from_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">charcodes</span><span class="p">):</span>
+
+        <span class="k">for</span> <span class="n">charcode</span> <span class="ow">in</span> <span class="n">charcodes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_glyph</span><span class="p">(</span><span class="n">charcode</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+ </div>
+<div class="viewcode-block" id="TextureFontSize._set_face_transfrom"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize._set_face_transfrom">[docs]</a>    <span class="k">def</span> <span class="nf">_set_face_transfrom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">face</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font</span><span class="o">.</span><span class="n">_face</span>
+        <span class="n">horizontal_scale</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">resolution</span> <span class="o">=</span> <span class="mi">72</span> <span class="c"># dpi</span>
+        <span class="n">face</span><span class="o">.</span><span class="n">set_char_size</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">to_64th_point</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">)),</span> <span class="mi">0</span><span class="p">,</span>
+                           <span class="n">horizontal_scale</span><span class="o">*</span><span class="n">resolution</span><span class="p">,</span> <span class="n">resolution</span><span class="p">)</span>
+        <span class="c"># Matrix cooeficients are expressed in 16.16 fixed-point units.</span>
+        <span class="c"># 2**16 = 0x10000L = 65536</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">freetype</span><span class="o">.</span><span class="n">Matrix</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mi">16</span><span class="o">/</span><span class="n">horizontal_scale</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+                                 <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">16</span><span class="p">)</span>
+        <span class="c"># The vector coordinates are expressed in 1/64th of a pixel</span>
+        <span class="c"># (also known as 26.6 fixed-point numbers).</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">freetype</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">face</span><span class="o">.</span><span class="n">set_transform</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">delta</span><span class="p">)</span>
+
+        <span class="n">freetype</span><span class="o">.</span><span class="n">set_lcd_filter</span><span class="p">(</span><span class="n">freetype</span><span class="o">.</span><span class="n">FT_LCD_FILTER_LIGHT</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+ </div>
+<div class="viewcode-block" id="TextureFontSize.load_glyph"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize.load_glyph">[docs]</a>    <span class="k">def</span> <span class="nf">load_glyph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">charcode</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">charcode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glyphs</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_face_transfrom</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirty</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="n">face</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font</span><span class="o">.</span><span class="n">_face</span>
+        <span class="n">atlas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font</span><span class="o">.</span><span class="n">_atlas</span>
+
+        <span class="n">flags</span> <span class="o">=</span> <span class="n">freetype</span><span class="o">.</span><span class="n">FT_LOAD_RENDER</span> <span class="o">|</span> <span class="n">freetype</span><span class="o">.</span><span class="n">FT_LOAD_FORCE_AUTOHINT</span>
+        <span class="k">if</span> <span class="n">atlas</span><span class="o">.</span><span class="n">depth</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">flags</span> <span class="o">|=</span> <span class="n">freetype</span><span class="o">.</span><span class="n">FT_LOAD_TARGET_LCD</span>
+
+        <span class="n">face</span><span class="o">.</span><span class="n">load_char</span><span class="p">(</span><span class="n">charcode</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span>
+        <span class="c"># face.load_glyph(glyph_index, flags) # Fixme: index using charcode</span>
+
+        <span class="n">bitmap</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">glyph</span><span class="o">.</span><span class="n">bitmap</span> <span class="c"># a list</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">glyph</span><span class="o">.</span><span class="n">bitmap_left</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">glyph</span><span class="o">.</span><span class="n">bitmap_top</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">glyph</span><span class="o">.</span><span class="n">bitmap</span><span class="o">.</span><span class="n">width</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">glyph</span><span class="o">.</span><span class="n">bitmap</span><span class="o">.</span><span class="n">rows</span>
+        <span class="n">pitch</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">glyph</span><span class="o">.</span><span class="n">bitmap</span><span class="o">.</span><span class="n">pitch</span> <span class="c"># stride / number of bytes taken by one bitmap row</span>
+
+        <span class="c"># Glyphes are separated by a margin</span>
+        <span class="c"># margin = 1 # px</span>
+        <span class="c"># dimension are given in pixel thus we correct the bitmap width</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">atlas</span><span class="o">.</span><span class="n">get_region</span><span class="p">(</span><span class="n">width</span><span class="o">/</span><span class="n">atlas</span><span class="o">.</span><span class="n">depth</span> <span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="n">rows</span> <span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s">&quot;Cannot allocate glyph in atlas&quot;</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">w</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">h</span><span class="o">-</span><span class="mi">2</span> <span class="c"># = width/depth, rows</span>
+
+        <span class="c"># Remove padding</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bitmap</span><span class="o">.</span><span class="n">buffer</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">pitch</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,:</span><span class="n">width</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ubyte</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">width</span><span class="o">/</span><span class="n">atlas</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span> <span class="n">atlas</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
+        
+        <span class="c"># Gamma correction</span>
+        <span class="c"># gamma = 1.5</span>
+        <span class="c"># Z = (data/255.0)**gamma</span>
+        <span class="c"># data = Z*255</span>
+
+        <span class="n">atlas</span><span class="o">.</span><span class="n">set_region</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">),</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="c"># Compute texture coordinates</span>
+        <span class="n">u0</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">atlas</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+        <span class="n">v0</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">atlas</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+        <span class="n">u1</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">atlas</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+        <span class="n">v1</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">atlas</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+        <span class="n">texture_coordinate</span> <span class="o">=</span> <span class="p">(</span><span class="n">u0</span><span class="p">,</span> <span class="n">v0</span><span class="p">,</span> <span class="n">u1</span><span class="p">,</span> <span class="n">v1</span><span class="p">)</span>
+
+        <span class="c"># Build glyph</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">left</span><span class="p">,</span> <span class="n">top</span>
+        <span class="n">advance</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">glyph</span><span class="o">.</span><span class="n">advance</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">face</span><span class="o">.</span><span class="n">glyph</span><span class="o">.</span><span class="n">advance</span><span class="o">.</span><span class="n">y</span>
+        <span class="n">glyph</span> <span class="o">=</span> <span class="n">TextureGlyph</span><span class="p">(</span><span class="n">charcode</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">advance</span><span class="p">,</span> <span class="n">texture_coordinate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_glyphs</span><span class="p">[</span><span class="n">charcode</span><span class="p">]</span> <span class="o">=</span> <span class="n">glyph</span>
+
+        <span class="c"># Generate kerning</span>
+        <span class="c"># Fixme: exhaustive?</span>
+        <span class="k">for</span> <span class="n">glyph2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glyphs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_kerning</span><span class="p">(</span><span class="n">glyph</span><span class="p">,</span> <span class="n">glyph2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_kerning</span><span class="p">(</span><span class="n">glyph2</span><span class="p">,</span> <span class="n">glyph</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="TextureFontSize._set_kerning"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureFontSize._set_kerning">[docs]</a>    <span class="k">def</span> <span class="nf">_set_kerning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">glyph1</span><span class="p">,</span> <span class="n">glyph2</span><span class="p">):</span>
+
+        <span class="n">charcode1</span> <span class="o">=</span> <span class="n">glyph1</span><span class="o">.</span><span class="n">charcode</span>
+        <span class="n">charcode2</span> <span class="o">=</span> <span class="n">glyph2</span><span class="o">.</span><span class="n">charcode</span>
+        <span class="n">face</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font</span><span class="o">.</span><span class="n">_face</span>
+        <span class="n">kerning</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">get_kerning</span><span class="p">(</span><span class="n">charcode2</span><span class="p">,</span> <span class="n">charcode1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">freetype</span><span class="o">.</span><span class="n">FT_KERNING_UNFITTED</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kerning</span><span class="o">.</span><span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c"># 64 * 64 because of 26.6 encoding AND the transform matrix</span>
+            <span class="n">glyph1</span><span class="o">.</span><span class="n">_kerning</span><span class="p">[</span><span class="n">charcode2</span><span class="p">]</span> <span class="o">=</span> <span class="n">kerning</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="mi">64</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c">####################################################################################################</span>
+</div></div>
+<div class="viewcode-block" id="FontMetrics"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.FontMetrics">[docs]</a><span class="k">class</span> <span class="nc">FontMetrics</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="c">##############################################</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texture_font_size</span><span class="p">):</span>
+
+        <span class="n">face</span> <span class="o">=</span> <span class="n">texture_font_size</span><span class="o">.</span><span class="n">_font</span><span class="o">.</span><span class="n">_face</span>
+        <span class="n">face</span><span class="o">.</span><span class="n">set_char_size</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">to_64th_point</span><span class="p">(</span><span class="n">texture_font_size</span><span class="o">.</span><span class="n">size</span><span class="p">)))</span>
+        <span class="n">metrics</span> <span class="o">=</span> <span class="n">face</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ascender</span> <span class="o">=</span> <span class="n">from_64th_point</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">ascender</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">descender</span> <span class="o">=</span> <span class="n">from_64th_point</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">descender</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">from_64th_point</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">height</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linegap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ascender</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">descender</span> <span class="c"># Fixme: check</span>
+
+<span class="c">####################################################################################################</span>
+</div>
+<div class="viewcode-block" id="TextureGlyph"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureGlyph">[docs]</a><span class="k">class</span> <span class="nc">TextureGlyph</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A texture glyph gathers information relative to the size/offset/advance and texture coordinates</span>
+<span class="sd">    of a single character. It is generally built automatically by a TextureFont.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">charcode</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">advance</span><span class="p">,</span> <span class="n">texture_coordinates</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a new texture glyph</span>
+
+<span class="sd">        Parameter:</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        charcode : char</span>
+<span class="sd">            Represented character</span>
+
+<span class="sd">        size: tuple of 2 ints</span>
+<span class="sd">            Glyph size in pixels</span>
+
+<span class="sd">        offset: tuple of 2 floats</span>
+<span class="sd">            Glyph offset relatively to anchor point</span>
+
+<span class="sd">        advance: tuple of 2 floats</span>
+<span class="sd">            Glyph advance</span>
+
+<span class="sd">        texture_coordinates: tuple of 4 floats</span>
+<span class="sd">            Texture coordinates of bottom-left and top-right corner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">charcode</span> <span class="o">=</span> <span class="n">charcode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">advance</span> <span class="o">=</span> <span class="n">advance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">texture_coordinates</span> <span class="o">=</span> <span class="n">texture_coordinates</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kerning</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c">##############################################</span>
+
+<div class="viewcode-block" id="TextureGlyph.get_kerning"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextureFont.html#PyOpenGLng.HighLevelApi.TextureFont.TextureGlyph.get_kerning">[docs]</a>    <span class="k">def</span> <span class="nf">get_kerning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">charcode</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Get kerning information</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+
+<span class="sd">        charcode: char</span>
+<span class="sd">            Character preceding this glyph</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kerning</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">charcode</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c"># </span>
+<span class="c"># End</span>
+<span class="c"># </span>
+<span class="c">####################################################################################################</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

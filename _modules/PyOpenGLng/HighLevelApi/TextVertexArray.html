@@ -1,0 +1,318 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyOpenGLng.HighLevelApi.TextVertexArray &mdash; PyOpenGLng 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../static/PyOpenGLng.css" type="text/css" />
+    <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for PyOpenGLng.HighLevelApi.TextVertexArray</h1><div class="highlight"><pre>
+<span class="c">####################################################################################################</span>
+<span class="c"># </span>
+<span class="c"># PyOpenGLng - An OpenGL Python Wrapper with a High Level API.</span>
+<span class="c"># Copyright (C) 2014 Fabrice Salvaire</span>
+<span class="c">#</span>
+<span class="c"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c"># it under the terms of the GNU General Public License as published by</span>
+<span class="c"># the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c"># (at your option) any later version.</span>
+<span class="c"># </span>
+<span class="c"># This program is distributed in the hope that it will be useful,</span>
+<span class="c"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c"># GNU General Public License for more details.</span>
+<span class="c"># </span>
+<span class="c"># You should have received a copy of the GNU General Public License</span>
+<span class="c"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c"># </span>
+<span class="c">####################################################################################################</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c">#</span>
+<span class="c"># This source code is derived from:</span>
+<span class="c">#</span>
+<span class="c">#   Nicolas P. Rougier, Higher Quality 2D Text Rendering,</span>
+<span class="c">#   Journal of Computer Graphics Techniques (JCGT), vol. 2, no. 1, 50-64, 2013.</span>
+<span class="c">#   Available online http://jcgt.org/published/0002/01/04/1</span>
+<span class="c">#</span>
+<span class="c">#  Copyright 2011 Nicolas P. Rougier</span>
+<span class="c">#  Distributed under the terms of the new BSD license.</span>
+<span class="c">#</span>
+<span class="c">####################################################################################################</span>
+
+<span class="sd">&quot;&quot;&quot; This modules provides tools to manage text. &quot;&quot;&quot;</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">OpenGL.GL</span> <span class="kn">as</span> <span class="nn">GL</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="kn">from</span> <span class="nn">.TextureFont</span> <span class="kn">import</span> <span class="n">from_64th_point</span>
+<span class="kn">from</span> <span class="nn">.Buffer</span> <span class="kn">import</span> <span class="n">GlArrayBuffer</span>
+<span class="kn">from</span> <span class="nn">.VertexArrayObject</span> <span class="kn">import</span> <span class="n">GlVertexArrayObject</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="n">_module_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="c">####################################################################################################</span>
+
+<div class="viewcode-block" id="TextVertexArray"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextVertexArray.html#PyOpenGLng.HighLevelApi.TextVertexArray.TextVertexArray">[docs]</a><span class="k">class</span> <span class="nc">TextVertexArray</span><span class="p">(</span><span class="n">GlVertexArrayObject</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class wraps a Text Vertex Array. &quot;&quot;&quot;</span>
+
+    <span class="n">_logger</span> <span class="o">=</span> <span class="n">_module_logger</span><span class="o">.</span><span class="n">getChild</span><span class="p">(</span><span class="s">&#39;TextVertexArray&#39;</span><span class="p">)</span>
+
+    <span class="n">_uv_vbo</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_texture</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">TextVertexArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_texture</span> <span class="o">=</span> <span class="n">image_texture</span> <span class="c"># Fixme: could contains several font and size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_font_atlas_shape</span> <span class="o">=</span> <span class="n">image_texture</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_vertexes</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glyph_sizes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_texture_coordinates</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_colours</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_arrays</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    
+<div class="viewcode-block" id="TextVertexArray._create_arrays"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextVertexArray.html#PyOpenGLng.HighLevelApi.TextVertexArray.TextVertexArray._create_arrays">[docs]</a>    <span class="k">def</span> <span class="nf">_create_arrays</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number_of_vertexes</span><span class="p">):</span>
+
+        <span class="n">vertexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_vertexes</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">glyph_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_vertexes</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">texture_coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_vertexes</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">colours</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_vertexes</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">vertexes</span><span class="p">,</span> <span class="n">glyph_sizes</span><span class="p">,</span> <span class="n">texture_coordinates</span><span class="p">,</span> <span class="n">colours</span>
+
+    <span class="c">##############################################</span>
+    </div>
+<div class="viewcode-block" id="TextVertexArray.add"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextVertexArray.html#PyOpenGLng.HighLevelApi.TextVertexArray.TextVertexArray.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">font_size</span><span class="p">,</span>
+            <span class="n">colour</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">anchor_x</span><span class="o">=</span><span class="s">&#39;left&#39;</span><span class="p">,</span> <span class="n">anchor_y</span><span class="o">=</span><span class="s">&#39;baseline&#39;</span><span class="p">,</span>
+            <span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c"># Compute glyph vertexes </span>
+
+        <span class="n">font</span> <span class="o">=</span> <span class="n">font_size</span><span class="o">.</span><span class="n">font</span>
+
+        <span class="n">number_of_glyphs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">number_of_vertexes</span> <span class="o">=</span> <span class="n">number_of_glyphs</span>
+        <span class="n">vertexes</span><span class="p">,</span> <span class="n">glyph_sizes</span><span class="p">,</span> <span class="n">texture_coordinates</span><span class="p">,</span> <span class="n">colours</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_arrays</span><span class="p">(</span><span class="n">number_of_vertexes</span><span class="p">)</span>
+
+        <span class="n">pen</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span>
+        <span class="n">prev</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">charcode</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="n">glyph</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">[</span><span class="n">charcode</span><span class="p">]</span>
+            <span class="n">kerning</span> <span class="o">=</span> <span class="n">glyph</span><span class="o">.</span><span class="n">get_kerning</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span>
+
+            <span class="n">x0</span> <span class="o">=</span> <span class="n">pen</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">glyph</span><span class="o">.</span><span class="n">offset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">kerning</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span> <span class="c"># fractional part of x0</span>
+            <span class="n">x0</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+            <span class="n">y0</span> <span class="o">=</span> <span class="n">pen</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">glyph</span><span class="o">.</span><span class="n">offset</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c"># x1 = x0 + glyph.size[0]</span>
+            <span class="c"># y1 = y0 - glyph.size[1]</span>
+            <span class="n">u0</span><span class="p">,</span> <span class="n">v0</span><span class="p">,</span> <span class="n">u1</span><span class="p">,</span> <span class="n">v1</span> <span class="o">=</span> <span class="n">glyph</span><span class="o">.</span><span class="n">texture_coordinates</span>
+
+            <span class="n">vertexes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x0</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="n">y0</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span>
+            <span class="n">glyph_sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">glyph</span><span class="o">.</span><span class="n">size</span>
+            <span class="n">texture_coordinates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">u0</span><span class="p">,</span> <span class="n">v0</span><span class="p">)</span>
+            <span class="n">colours</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">colour</span>
+
+            <span class="n">pen</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pen</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">from_64th_point</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">advance</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="n">kerning</span>
+            <span class="n">pen</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">pen</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">from_64th_point</span><span class="p">(</span><span class="n">glyph</span><span class="o">.</span><span class="n">advance</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="n">prev</span> <span class="o">=</span> <span class="n">charcode</span>
+
+        <span class="c"># Correct width for last glyph</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">pen</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">glyph</span><span class="o">.</span><span class="n">advance</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mf">64.0</span> <span class="o">+</span> <span class="n">glyph</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">anchor_y</span> <span class="o">==</span> <span class="s">&#39;top&#39;</span><span class="p">:</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="o">-</span><span class="nb">round</span><span class="p">(</span><span class="n">font_size</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">ascender</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">anchor_y</span> <span class="o">==</span> <span class="s">&#39;center&#39;</span><span class="p">:</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="o">+</span><span class="nb">round</span><span class="p">(</span><span class="o">-</span><span class="n">font_size</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">height</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="n">font_size</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">descender</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">anchor_y</span> <span class="o">==</span> <span class="s">&#39;bottom&#39;</span><span class="p">:</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="o">-</span><span class="nb">round</span><span class="p">(</span><span class="n">font_size</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">descender</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">anchor_x</span> <span class="o">==</span> <span class="s">&#39;right&#39;</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="o">-</span><span class="n">width</span>
+        <span class="k">elif</span> <span class="n">anchor_x</span> <span class="o">==</span> <span class="s">&#39;center&#39;</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="o">-</span><span class="n">width</span> <span class="o">/</span> <span class="mf">2.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c"># Block position</span>
+        <span class="n">vertexes</span><span class="p">[:,:</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">dx</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">dy</span><span class="p">))</span>
+
+        <span class="c"># Concatenate the vertexes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_vertexes</span> <span class="o">+=</span> <span class="n">number_of_vertexes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_vertexes</span><span class="p">,</span> <span class="n">vertexes</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_glyph_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_glyph_sizes</span><span class="p">,</span> <span class="n">glyph_sizes</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_texture_coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_texture_coordinates</span><span class="p">,</span> <span class="n">texture_coordinates</span><span class="p">))</span>
+        <span class="c"># self._horizontal_offsets = np.concatenate((self._horizontal_offsets, horizontal_offsets))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_colours</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_colours</span><span class="p">,</span> <span class="n">colours</span><span class="p">))</span>
+
+    <span class="c">##############################################</span>
+    </div>
+    <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TextVertexArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__del__</span><span class="p">()</span>
+
+    <span class="c">##############################################</span>
+    
+<div class="viewcode-block" id="TextVertexArray.upload"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextVertexArray.html#PyOpenGLng.HighLevelApi.TextVertexArray.TextVertexArray.upload">[docs]</a>    <span class="k">def</span> <span class="nf">upload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c"># Create VBO</span>
+        <span class="c"># self._logger.debug(str(self._vertexes))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertexes_vbo</span> <span class="o">=</span> <span class="n">GlArrayBuffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vertexes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_glyph_sizes_vbo</span> <span class="o">=</span> <span class="n">GlArrayBuffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_glyph_sizes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_texture_coordinates_vbo</span> <span class="o">=</span> <span class="n">GlArrayBuffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_texture_coordinates</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_colours_vbo</span> <span class="o">=</span> <span class="n">GlArrayBuffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_colours</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    </div>
+<div class="viewcode-block" id="TextVertexArray.bind_to_shader"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextVertexArray.html#PyOpenGLng.HighLevelApi.TextVertexArray.TextVertexArray.bind_to_shader">[docs]</a>    <span class="k">def</span> <span class="nf">bind_to_shader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shader_program_interface</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+
+        <span class="n">shader_program_interface</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">bind_to_buffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vertexes_vbo</span><span class="p">)</span> <span class="c"># self._vertex_vbo</span>
+        <span class="n">shader_program_interface</span><span class="o">.</span><span class="n">glyph_size</span><span class="o">.</span><span class="n">bind_to_buffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_glyph_sizes_vbo</span><span class="p">)</span>
+        <span class="n">shader_program_interface</span><span class="o">.</span><span class="n">position_uv</span><span class="o">.</span><span class="n">bind_to_buffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_texture_coordinates_vbo</span><span class="p">)</span> <span class="c"># self._uv_vbo</span>
+        <span class="n">shader_program_interface</span><span class="o">.</span><span class="n">colour</span><span class="o">.</span><span class="n">bind_to_buffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_colours_vbo</span><span class="p">)</span>
+
+        <span class="c"># Texture unit as default</span>
+        <span class="c"># shader_program.uniforms.texture0 = 0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">unbind</span><span class="p">()</span>
+
+    <span class="c">##############################################</span>
+    </div>
+<div class="viewcode-block" id="TextVertexArray.draw"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/TextVertexArray.html#PyOpenGLng.HighLevelApi.TextVertexArray.TextVertexArray.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shader_program</span><span class="p">):</span>
+
+        <span class="n">GL</span><span class="o">.</span><span class="n">glEnable</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_BLEND</span><span class="p">)</span>
+        <span class="c"># Blending: O = Sf*S + Df*D</span>
+        <span class="c"># alpha: 0: complete transparency, 1: complete opacity</span>
+        <span class="c"># Set (Sf, Df) for transparency: O = Sa*S + (1-Sa)*D </span>
+        <span class="c"># GL.glBlendEquation(GL.GL_FUNC_ADD)</span>
+        <span class="n">GL</span><span class="o">.</span><span class="n">glBlendFunc</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_SRC_ALPHA</span><span class="p">,</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_ONE_MINUS_SRC_ALPHA</span><span class="p">)</span>
+
+        <span class="n">shader_program</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_texture</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+
+        <span class="n">shader_program</span><span class="o">.</span><span class="n">uniforms</span><span class="o">.</span><span class="n">font_atlas</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">shader_program</span><span class="o">.</span><span class="n">uniforms</span><span class="o">.</span><span class="n">font_atlas_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font_atlas_shape</span>
+        <span class="n">shader_program</span><span class="o">.</span><span class="n">uniforms</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.</span>
+
+        <span class="n">GL</span><span class="o">.</span><span class="n">glDrawArrays</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_POINTS</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_vertexes</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">unbind</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image_texture</span><span class="o">.</span><span class="n">unbind</span><span class="p">()</span>
+        <span class="n">shader_program</span><span class="o">.</span><span class="n">unbind</span><span class="p">()</span>
+
+        <span class="n">GL</span><span class="o">.</span><span class="n">glDisable</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_BLEND</span><span class="p">)</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c"># </span>
+<span class="c"># End</span>
+<span class="c"># </span>
+<span class="c">####################################################################################################</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
