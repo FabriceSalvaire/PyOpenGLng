@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4. API Documentation &mdash; PyOpenGLng 0.1.0 documentation</title>
+    <title>2. Examples &mdash; PyOpenGLng 0.1.0 documentation</title>
     
     <link rel="stylesheet" href="static/PyOpenGLng.css" type="text/css" />
     <link rel="stylesheet" href="static/pygments.css" type="text/css" />
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="static/underscore.js"></script>
     <script type="text/javascript" src="static/doctools.js"></script>
     <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="index.html" />
-    <link rel="next" title="4.1. PyOpenGLng" href="api/PyOpenGLng.html" />
-    <link rel="prev" title="3. Tools" href="tools.html" /> 
+    <link rel="next" title="3. API Documentation" href="reference-manual.html" />
+    <link rel="prev" title="1. Installation" href="installation.html" /> 
   </head>
   <body>
     <div class="related">
@@ -38,10 +38,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api/PyOpenGLng.html" title="4.1. PyOpenGLng"
+          <a href="reference-manual.html" title="3. API Documentation"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="tools.html" title="3. Tools"
+          <a href="installation.html" title="1. Installation"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -52,37 +52,30 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <span class="target" id="reference-manual-page"></span><div class="section" id="api-documentation">
-<h1>4. API Documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
-<p>This is the auto-generated API documentation for the PyOpenGLng library.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">The API documentation is automatically generated from the docstrings in the source
-using the Sphinx tool.  This way to produce the documentation is know to be perfectible
-actually, but not too bad.</p>
+  <span class="target" id="examples-page"></span><div class="section" id="examples">
+<h1>2. Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<p>Some examples are provided with the PyOpenGLng source in the <tt class="file docutils literal"><span class="pre">examples</span></tt> directory, we will
+presents them in the followings.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">PyOpenGLng was only tested on the Linux platform.</p>
 </div>
-<p>Contents:</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="api/PyOpenGLng.html">4.1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/Config.html">4.1.1. <tt class="docutils literal"><span class="pre">Config</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/GlApi.html">4.1.2. <tt class="docutils literal"><span class="pre">GlApi</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/HighLevelApi.html">4.1.3. <tt class="docutils literal"><span class="pre">HighLevelApi</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/Tools.html">4.1.4. <tt class="docutils literal"><span class="pre">Tools</span></tt></a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/PyOpenGLng/Wrapper.html">4.1.5. <tt class="docutils literal"><span class="pre">Wrapper</span></tt></a></li>
-</ul>
-</li>
-</ul>
+<p>First of all, either you have to install PyOpenGLng (using virtualenv for example) or you must setup
+your <tt class="docutils literal"><span class="pre">PYTHONPATH</span></tt> environment variable. For example enter these commands in a Linux terminal:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nb">cd </span>pyopenglng
+<span class="nb">export </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="nv">$PWD</span>:<span class="nv">$PYTHONPATH</span>
+</pre></div>
 </div>
-<div class="section" id="indexes">
-<h2>4.2. Indexes<a class="headerlink" href="#indexes" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
-<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
-<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
-</ul>
-</div></blockquote>
+<p>The script <tt class="file docutils literal"><span class="pre">test-high-level-api.py</span></tt> shows an usage of the high level API for both OpenGL
+version 3 and 4. The first one is intended for platform running the <a class="reference external" href="http://www.mesa3d.org">Mesa 3D Graphics Library</a> which support the OpenGL
+3.3 API on Intel HD GPU (since release 10.0 / november 2013). The second one is intended for
+platform running a proprietary driver like the one provided by Nvidia which implements OpenGL up to
+the version 4.4.</p>
+<p>To run this example, enter the following commands in a Linux terminal:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd examples
+python test-high-level-api.py --opengl=v3 # designed to run on Mesa
+python test-high-level-api.py --opengl=v4 # require a proprietary driver
+</pre></div>
 </div>
 </div>
 
@@ -92,23 +85,15 @@ actually, but not too bad.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">4. API Documentation</a><ul>
-<li><a class="reference internal" href="#indexes">4.2. Indexes</a></li>
-</ul>
-</li>
-</ul>
-
   <h4>Previous topic</h4>
-  <p class="topless"><a href="tools.html"
-                        title="previous chapter">3. Tools</a></p>
+  <p class="topless"><a href="installation.html"
+                        title="previous chapter">1. Installation</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="api/PyOpenGLng.html"
-                        title="next chapter">4.1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a></p>
+  <p class="topless"><a href="reference-manual.html"
+                        title="next chapter">3. API Documentation</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/reference-manual.txt"
+    <li><a href="_sources/examples.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -138,10 +123,10 @@ actually, but not too bad.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api/PyOpenGLng.html" title="4.1. PyOpenGLng"
+          <a href="reference-manual.html" title="3. API Documentation"
              >next</a> |</li>
         <li class="right" >
-          <a href="tools.html" title="3. Tools"
+          <a href="installation.html" title="1. Installation"
              >previous</a> |</li>
         <li><a href="index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li> 
       </ul>

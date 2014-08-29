@@ -47,17 +47,6 @@ Then to build and install PyOpenGLng run these commands:
   python setup.py build
   python setup.py install
 
-Testing
--------
-
-To test PyOpenGLng, run the following commands in a terminal::
-
-  cd pyopenglng
-  export PYTHONPATH=$PWD:$PYTHONPATH
-  cd examples
-  python test-high-level-api.py --opengl=v3 # designed to run on Mesa
-  python test-high-level-api.py --opengl=v4 # require a proprietary driver
-
 ..
   How To Install PyOpenGLng
   The PyOpenGLng project is hosted on `github <http://github.com/FabriceSalvaire/PyOpenGLng>`_.
