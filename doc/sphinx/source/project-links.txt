@@ -1,0 +1,33 @@
+.. -*- Mode: rst -*-
+
+.. |ohloh| image:: https://www.openhub.net/accounts/230426/widgets/account_tiny.gif
+   :target: https://www.openhub.net/accounts/fabricesalvaire
+   :alt: Fabrice Salvaire's Ohloh profile
+   :height: 15px
+   :width:  80px
+
+.. |PyOpenGLngUrl| replace:: http://fabricesalvaire.github.io/PyOpenGLng
+
+.. |PyOpenGLngHomePage| replace:: PyOpenGLng Home Page
+.. _PyOpenGLngHomePage: http://fabricesalvaire.github.io/PyOpenGLng
+
+.. |PyOpenGLngDoc| replace:: PyOpenGLng Documentation
+.. _PyOpenGLngDoc: http://pyopenglng.readthedocs.org/en/latest
+
+.. |PyOpenGLng@readthedocs-badge| image:: https://readthedocs.org/projects/pyopenglng/badge/?version=latest
+   :target: http://pyopenglng.readthedocs.org/en/latest
+
+.. |PyOpenGLng@github| replace:: https://github.com/FabriceSalvaire/PyOpenGLng
+.. .. _PyOpenGLng@github: https://github.com/FabriceSalvaire/PyOpenGLng
+
+.. |PyOpenGLng@readthedocs| replace:: http://pyopenglng.readthedocs.org
+.. .. _PyOpenGLng@readthedocs: http://pyopenglng.readthedocs.org
+
+.. |PyOpenGLng@pypi| replace:: https://pypi.python.org/pypi/PyOpenGLng
+.. .. _PyOpenGLng@pypi: https://pypi.python.org/pypi/PyOpenGLng
+
+.. |Build Status| image:: https://travis-ci.org/FabriceSalvaire/PyOpenGLng.svg?branch=master
+   :target: https://travis-ci.org/FabriceSalvaire/PyOpenGLng
+   :alt: PyOpenGLng build status @travis-ci.org
+
+.. End
