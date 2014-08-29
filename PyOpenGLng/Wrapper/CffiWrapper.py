@@ -17,16 +17,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # 
 ####################################################################################################
+
+""" The CFFI wrapper is not yed implemented. """
+
+####################################################################################################
+
+from cffi import FFI
+
+####################################################################################################
     
 __basic_api__ = """
  const char* glGetString(int name);
- """
+"""
  
-from cffi import FFI
 ffi = FFI()
 ffi.cdef(__basic_api__)
-libGL = ffi.dlopen(libGL_name)
-version_string = ffi.string(libGL.glGetString(__GL.GL_VERSION__))
+
+# libGL = ffi.dlopen(libGL_name)
+# version_string = ffi.string(libGL.glGetString(__GL.GL_VERSION__))
 
 ####################################################################################################
 # 

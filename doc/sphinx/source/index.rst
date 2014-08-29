@@ -24,10 +24,17 @@ Welcome to the PyOpenGLng documentation!
 
 The procedure to install PyOpenGLng is described in the :ref:`Installation Manual <installation-page>`.
 
+=========
+ Testing
+=========
+
+Some examples are provided with PyOpenGLng, see the :ref:`example section <examples-page>`.
+
 ===============
  Documentation
 ===============
 
+ * :ref:`Tools <tools-page>`
  * :ref:`PyOpenGLng Reference Manual <reference-manual-page>`
 
 ==========
@@ -39,6 +46,8 @@ The procedure to install PyOpenGLng is described in the :ref:`Installation Manua
   :numbered:
 
   installation.rst
+  examples.rst
+  tools.rst
   reference-manual.rst
 
 .. End

@@ -61,7 +61,7 @@ argument_parser.add_argument('--profile',
 for action, help_message in (
     ('validate', 'validate xml file'),
     ('translate-type', 'translate gl to c type'),
-    ('build-wrapper', 'Build wraper'),
+    ('build-wrapper', 'Build wrapper'),
     ('summary', 'summary'),
     ('list-enums', 'list enums'),
     ('list-commands', 'list commands'),

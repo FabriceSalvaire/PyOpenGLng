@@ -12,4 +12,22 @@
 .. |Sphinx| replace:: Sphinx
 .. _Sphinx: http://sphinx-doc.org
 
+.. |Mesa| replace:: Mesa 3D Graphics Library
+.. _Mesa: http://www.mesa3d.org
+
+.. |ctypes| replace:: ctypes
+.. _ctypes: https://docs.python.org/2/library/ctypes.html
+
+.. |cffi| replace:: CFFI
+.. _cffi: https://cffi.readthedocs.org
+
+.. |OpenGL| replace:: OpenGL
+.. _OpenGL: http://www.opengl.org
+
+.. |OpenGL_registry| replace:: OpenGL Registry
+.. _OpenGL_registry: http://www.opengl.org/registry
+
+.. |OpenGL_XML_registry| replace:: OpenGL XML Registry
+.. _OpenGL_XML_registry: https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api
+
 .. End
