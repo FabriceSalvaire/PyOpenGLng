@@ -1,7 +1,8 @@
 #! /bin/bash
-mv .git .git-backup
+rm -rf .git
 git init
 bzr fast-export --plain --git-branch=master | git fast-import
 git remote add origin git@github.com:FabriceSalvaire/PyOpenGLng.git
 git push origin # --force
+# git push -f origin HEAD^:master # to revert a commit
 # End
