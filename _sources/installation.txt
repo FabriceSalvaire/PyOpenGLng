@@ -18,17 +18,6 @@ PyOpenGLng requires the following dependencies:
  * |Numpy|_
  * PyQt 4.9 for the high level API and the examples
 
-Also it is recommanded to have these Python modules:
-
- * |IPython|_
- * pip
- * virtualenv
-
-For development, you will need in addition:
-
- * |Sphinx|_
- * circuit_macros and a LaTeX environment
-
 Installation from PyPi Repository
 ---------------------------------
 
@@ -63,7 +52,6 @@ Testing
 
 To test PyOpenGLng, run the following commands in a terminal::
 
-  git clone git@github.com:FabriceSalvaire/PyOpenGLng.git pyopenglng
   cd pyopenglng
   export PYTHONPATH=$PWD:$PYTHONPATH
   cd examples
