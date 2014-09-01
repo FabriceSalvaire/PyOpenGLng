@@ -16,6 +16,7 @@ PyOpenGLng requires the following dependencies:
 
  * |Python|_ 2.7
  * |Numpy|_
+ * freetype-py 
  * PyQt 4.9 for the high level API and the examples
 
 Installation from PyPi Repository
