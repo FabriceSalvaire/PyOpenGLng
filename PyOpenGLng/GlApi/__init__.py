@@ -18,8 +18,10 @@
 # 
 ####################################################################################################
 
-"""This module implements an Oriented Object interface to the OpenGL Registry XML file which
-describe the OpenGL API and theses official extensions.
+"""This module implements an Oriented Object interface to the `OpenGL XML API Registry
+<http://www.opengl.org/registry>`_ which describe the OpenGL API and theses official extensions. The
+XML file and its relative documentation are stored in the `Khronos OpenGL API CVS
+<https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api>`_.
 
 To generate the API of a particular OpenGL version uses for example this code snippet::
 

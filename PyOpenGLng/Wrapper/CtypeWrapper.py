@@ -18,14 +18,14 @@
 # 
 ####################################################################################################
 
-"""This module implements a ctypes wrapper for OpenGL based on information provided by the Oriented
-Object OpenGL API :class:`PyOpenGLng.GlApi`.
+"""This module implements a ctypes wrapper for OpenGL based on information provided by the OpenGL
+API :class:`PyOpenGLng.GlApi`.
 
 Prototype Translation
 ---------------------
 
-The C language defines strictly for a function by a prototype how to use the parameters and its
-output. <<ENGLISH>>
+The C language defines strictly by a prototype how to use the parameters and the output of a
+function.
 
 The OpenGL API only use fundamental types, pointer and array for parameters and return. The API do
 not use structures or unions which are compound types. Example of fundamental types are integer,

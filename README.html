@@ -354,15 +354,15 @@ ul.auto-toc {
 <p>The official PyOpenGLng Home Page is located at <a class="reference external" href="http://fabricesalvaire.github.io/PyOpenGLng">http://fabricesalvaire.github.io/PyOpenGLng</a></p>
 <p>The latest documentation build from the git repository is available at readthedocs.org <a class="reference external" href="http://pyopenglng.readthedocs.org/en/latest"><img alt="PyOpenGLng&#64;readthedocs-badge" src="https://readthedocs.org/projects/pyopenglng/badge/?version=latest" /></a></p>
 <p>Written by <a class="reference external" href="http://fabrice-salvaire.pagesperso-orange.fr">Fabrice Salvaire</a>.</p>
-<p><a class="reference external" href="https://travis-ci.org/FabriceSalvaire/PyOpenGLng"><img alt="PyOpenGLng build status &#64;travis-ci.org" src="https://travis-ci.org/FabriceSalvaire/PyOpenGLng.svg?branch=master" /></a></p>
+<!-- |Build Status| -->
 <hr class="docutils" />
 <!-- -*- Mode: rst -*- -->
 </div>
 <div class="section" id="introduction">
 <h1>Introduction</h1>
-<p>PyOpenGLng, proudly blessed as is, is an experimental OpenGL wrapper for Python which generate the
-requested OpenGL API from the <a class="reference external" href="https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api">OpenGL XML Registry</a> and use an automatic
-translator to map the C API to Python. Actually the wrapper use ctypes.</p>
+<p>PyOpenGLng, proudly blessed as is, is an experimental <a class="reference external" href="http://www.opengl.org">OpenGL</a> wrapper for <a class="reference external" href="http://python.org">Python</a> which generate
+the requested OpenGL API from the <a class="reference external" href="http://www.opengl.org/registry">OpenGL XML API Registry</a> and use an automatic translator to map the
+C API to Python. Actually the wrapper use ctypes.</p>
 <p>By design this wrapper supports all the OpenGL version, but it focus towards the programmable
 pipeline and the most recent API. On Linux desktop Mesa release 10 supports OpenGL 3.3.</p>
 <p>The Python package provides three components:</p>
@@ -406,17 +406,6 @@ git clone git&#64;github.com:FabriceSalvaire/PyOpenGLng.git
 <pre class="code sh literal-block">
 python setup.py build
 python setup.py install
-</pre>
-</div>
-<div class="section" id="testing">
-<h2>Testing</h2>
-<p>To test PyOpenGLng, run the following commands in a terminal:</p>
-<pre class="literal-block">
-cd pyopenglng
-export PYTHONPATH=$PWD:$PYTHONPATH
-cd examples
-python test-high-level-api.py --opengl=v3 # designed to run on Mesa
-python test-high-level-api.py --opengl=v4 # require a proprietary driver
 </pre>
 <!-- How To Install PyOpenGLng
 The PyOpenGLng project is hosted on `github <http://github.com/FabriceSalvaire/PyOpenGLng>`_.

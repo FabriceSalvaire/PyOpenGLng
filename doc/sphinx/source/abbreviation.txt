@@ -24,10 +24,10 @@
 .. |OpenGL| replace:: OpenGL
 .. _OpenGL: http://www.opengl.org
 
-.. |OpenGL_registry| replace:: OpenGL Registry
+.. |OpenGL_registry| replace:: OpenGL XML API Registry
 .. _OpenGL_registry: http://www.opengl.org/registry
 
-.. |OpenGL_XML_registry| replace:: OpenGL XML Registry
-.. _OpenGL_XML_registry: https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api
+.. |OpenGL_registry_cvs| replace:: Khronos OpenGL API CVS
+.. _OpenGL_registry_cvs: https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api
 
 .. End

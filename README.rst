@@ -47,6 +47,24 @@
 .. |Sphinx| replace:: Sphinx
 .. _Sphinx: http://sphinx-doc.org
 
+.. |Mesa| replace:: Mesa 3D Graphics Library
+.. _Mesa: http://www.mesa3d.org
+
+.. |ctypes| replace:: ctypes
+.. _ctypes: https://docs.python.org/2/library/ctypes.html
+
+.. |cffi| replace:: CFFI
+.. _cffi: https://cffi.readthedocs.org
+
+.. |OpenGL| replace:: OpenGL
+.. _OpenGL: http://www.opengl.org
+
+.. |OpenGL_registry| replace:: OpenGL XML API Registry
+.. _OpenGL_registry: http://www.opengl.org/registry
+
+.. |OpenGL_registry_cvs| replace:: Khronos OpenGL API CVS
+.. _OpenGL_registry_cvs: https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api
+
 .. End
 
 ============
@@ -59,7 +77,8 @@ The latest documentation build from the git repository is available at readthedo
 
 Written by `Fabrice Salvaire <http://fabrice-salvaire.pagesperso-orange.fr>`_.
 
-|Build Status|
+..
+  |Build Status|
 
 -----
 
@@ -70,10 +89,9 @@ Written by `Fabrice Salvaire <http://fabrice-salvaire.pagesperso-orange.fr>`_.
  Introduction
 ==============
 
-PyOpenGLng, proudly blessed as is, is an experimental OpenGL wrapper for |Python| which generate the
-requested OpenGL API from the `OpenGL XML Registry
-<https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api>`_ and use an automatic
-translator to map the C API to Python. Actually the wrapper use ctypes.
+PyOpenGLng, proudly blessed as is, is an experimental |OpenGL|_ wrapper for |Python|_ which generate
+the requested OpenGL API from the |OpenGL_Registry|_ and use an automatic translator to map the
+C API to Python. Actually the wrapper use ctypes.
 
 By design this wrapper supports all the OpenGL version, but it focus towards the programmable
 pipeline and the most recent API. On Linux desktop Mesa release 10 supports OpenGL 3.3.
@@ -132,17 +150,6 @@ Then to build and install PyOpenGLng run these commands:
 
   python setup.py build
   python setup.py install
-
-Testing
--------
-
-To test PyOpenGLng, run the following commands in a terminal::
-
-  cd pyopenglng
-  export PYTHONPATH=$PWD:$PYTHONPATH
-  cd examples
-  python test-high-level-api.py --opengl=v3 # designed to run on Mesa
-  python test-high-level-api.py --opengl=v4 # require a proprietary driver
 
 ..
   How To Install PyOpenGLng
