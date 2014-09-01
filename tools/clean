@@ -27,11 +27,15 @@
 root_dir=`dirname $0`
 root_dir=`dirname ${root_dir}`
 
-rm -rf ${root_dir}/build
-rm -rf ${root_dir}/dist
-find ${root_dir} -name "*pyc" -exec rm {} \;
-find ${root_dir} -name "*~" -exec rm {} \;
-find ${root_dir} -name "*_flymake.py" -exec rm {} \;
+if [ "x${root_dir}" == 'x/' ]; then
+  echo Error: The file was sourced!
+else
+  rm -rf ${root_dir}/build
+  rm -rf ${root_dir}/dist
+  find ${root_dir} -name "*pyc" -exec rm {} \;
+  find ${root_dir} -name "*~" -exec rm {} \;
+  find ${root_dir} -name "*_flymake.py" -exec rm {} \;
+fi
 
 ####################################################################################################
 #
