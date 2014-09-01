@@ -63,19 +63,20 @@
 <li class="toctree-l1"><a class="reference internal" href="GlApi/ManualParser.html">4.1.2.2. <tt class="docutils literal"><span class="pre">ManualParser</span></tt></a></li>
 </ul>
 </div>
-<span class="target" id="module-PyOpenGLng.GlApi"></span><p>This module implements an Oriented Object interface of the OpenGL Registry XML file which
-describe the OpenGL API and its official extensions.</p>
-<p>To generate the API of a particular OpenGL version uses, for example:</p>
+<span class="target" id="module-PyOpenGLng.GlApi"></span><p>This module implements an Oriented Object interface to the OpenGL Registry XML file which
+describe the OpenGL API and theses official extensions.</p>
+<p>To generate the API of a particular OpenGL version uses for example this code snippet:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">xml_file_path</span> <span class="o">=</span> <span class="n">default_api_path</span><span class="p">(</span><span class="s">&#39;gl&#39;</span><span class="p">)</span> <span class="c"># path to gl.xml</span>
 <span class="n">gl_spec</span> <span class="o">=</span> <span class="n">GlSpecParser</span><span class="p">(</span><span class="n">xml_file_path</span><span class="p">)</span>
 <span class="n">api_enums</span><span class="p">,</span> <span class="n">api_commands</span> <span class="o">=</span> <span class="n">gl_spec</span><span class="o">.</span><span class="n">generate_api</span><span class="p">(</span><span class="s">&#39;gles&#39;</span><span class="p">,</span> <span class="n">ApiNumber</span><span class="p">(</span><span class="s">&#39;2.0&#39;</span><span class="p">),</span> <span class="s">&#39;core&#39;</span><span class="p">)</span>
 <span class="n">api_enums</span><span class="p">,</span> <span class="n">api_commands</span> <span class="o">=</span> <span class="n">gl_spec</span><span class="o">.</span><span class="n">generate_api</span><span class="p">(</span><span class="s">&#39;gl&#39;</span><span class="p">,</span> <span class="n">ApiNumber</span><span class="p">(</span><span class="s">&#39;4.4&#39;</span><span class="p">),</span> <span class="s">&#39;core&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Then you will get an instance of <a class="reference internal" href="#PyOpenGLng.GlApi.Enums" title="PyOpenGLng.GlApi.Enums"><tt class="xref py py-class docutils literal"><span class="pre">Enums</span></tt></a> and <a class="reference internal" href="#PyOpenGLng.GlApi.Commands" title="PyOpenGLng.GlApi.Commands"><tt class="xref py py-class docutils literal"><span class="pre">Commands</span></tt></a> corresponding to the requested
-API.</p>
-<p>The <strong class="command">query-opengl-api</strong> tool in the <tt class="file docutils literal"><span class="pre">bin</span></tt> directory provides some commands to query
-the OpenGL API. See its source code for example how to use this module.</p>
+<p>Then you will get an instance of the class <a class="reference internal" href="#PyOpenGLng.GlApi.Enums" title="PyOpenGLng.GlApi.Enums"><tt class="xref py py-class docutils literal"><span class="pre">Enums</span></tt></a> and <a class="reference internal" href="#PyOpenGLng.GlApi.Commands" title="PyOpenGLng.GlApi.Commands"><tt class="xref py py-class docutils literal"><span class="pre">Commands</span></tt></a> corresponding to the
+requested API.</p>
+<p>The <strong class="command">query-opengl-api</strong> tool in the <tt class="file docutils literal"><span class="pre">bin</span></tt> directory provides some functions to query
+the OpenGL API. You could look at its source code to learn how to use this module. See the
+<a class="reference internal" href="../../tools.html#tools-page"><em>tools section</em></a>.</p>
 <dl class="class">
 <dt id="PyOpenGLng.GlApi.Command">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Command</tt><big>(</big><em>name</em>, <em>return_type</em>, <em>parameters=()</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Command" title="Permalink to this definition">¶</a></dt>
@@ -498,7 +499,7 @@ destination keys.</p>
 
 <dl class="attribute">
 <dt id="PyOpenGLng.GlApi.GlSpecParser._logger">
-<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x34c62d0&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._logger" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x375d4d0&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._logger" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -861,7 +862,7 @@ no content, but contains elements:</p>
 </div></blockquote>
 <dl class="attribute">
 <dt id="PyOpenGLng.GlApi.RequiredInterface._logger">
-<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x34c6150&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredInterface._logger" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x375d350&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredInterface._logger" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">

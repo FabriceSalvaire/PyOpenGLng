@@ -67,21 +67,23 @@
 <span class="c"># </span>
 <span class="c">####################################################################################################</span>
 
-<span class="sd">&quot;&quot;&quot; This module implements an Oriented Object interface of the OpenGL Registry XML file which</span>
-<span class="sd">describe the OpenGL API and its official extensions.</span>
+<span class="sd">&quot;&quot;&quot;This module implements an Oriented Object interface to the OpenGL Registry XML file which</span>
+<span class="sd">describe the OpenGL API and theses official extensions.</span>
 
-<span class="sd">To generate the API of a particular OpenGL version uses, for example::</span>
+<span class="sd">To generate the API of a particular OpenGL version uses for example this code snippet::</span>
 
 <span class="sd">  xml_file_path = default_api_path(&#39;gl&#39;) # path to gl.xml</span>
 <span class="sd">  gl_spec = GlSpecParser(xml_file_path)</span>
 <span class="sd">  api_enums, api_commands = gl_spec.generate_api(&#39;gles&#39;, ApiNumber(&#39;2.0&#39;), &#39;core&#39;)</span>
 <span class="sd">  api_enums, api_commands = gl_spec.generate_api(&#39;gl&#39;, ApiNumber(&#39;4.4&#39;), &#39;core&#39;)</span>
 
-<span class="sd">Then you will get an instance of :class:`Enums` and :class:`Commands` corresponding to the requested</span>
-<span class="sd">API.</span>
+<span class="sd">Then you will get an instance of the class :class:`Enums` and :class:`Commands` corresponding to the</span>
+<span class="sd">requested API.</span>
 
-<span class="sd">The :command:`query-opengl-api` tool in the :file:`bin` directory provides some commands to query</span>
-<span class="sd">the OpenGL API. See its source code for example how to use this module.</span>
+<span class="sd">The :command:`query-opengl-api` tool in the :file:`bin` directory provides some functions to query</span>
+<span class="sd">the OpenGL API. You could look at its source code to learn how to use this module. See the</span>
+<span class="sd">:ref:`tools section &lt;tools-page&gt;`.</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c">####################################################################################################</span>
