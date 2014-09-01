@@ -18,21 +18,23 @@
 # 
 ####################################################################################################
 
-""" This module implements an Oriented Object interface of the OpenGL Registry XML file which
-describe the OpenGL API and its official extensions.
+"""This module implements an Oriented Object interface to the OpenGL Registry XML file which
+describe the OpenGL API and theses official extensions.
 
-To generate the API of a particular OpenGL version uses, for example::
+To generate the API of a particular OpenGL version uses for example this code snippet::
 
   xml_file_path = default_api_path('gl') # path to gl.xml
   gl_spec = GlSpecParser(xml_file_path)
   api_enums, api_commands = gl_spec.generate_api('gles', ApiNumber('2.0'), 'core')
   api_enums, api_commands = gl_spec.generate_api('gl', ApiNumber('4.4'), 'core')
 
-Then you will get an instance of :class:`Enums` and :class:`Commands` corresponding to the requested
-API.
+Then you will get an instance of the class :class:`Enums` and :class:`Commands` corresponding to the
+requested API.
 
-The :command:`query-opengl-api` tool in the :file:`bin` directory provides some commands to query
-the OpenGL API. See its source code for example how to use this module.
+The :command:`query-opengl-api` tool in the :file:`bin` directory provides some functions to query
+the OpenGL API. You could look at its source code to learn how to use this module. See the
+:ref:`tools section <tools-page>`.
+
 """
 
 ####################################################################################################

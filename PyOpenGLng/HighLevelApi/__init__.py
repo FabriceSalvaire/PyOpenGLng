@@ -18,6 +18,21 @@
 # 
 ####################################################################################################
 
+"""This module provides an experimental High Level API for OpenGL.
+
+The API features:
+
+* an ortho 2D viewport manager
+* a shader manager
+* 1D and 2D texture
+* vertex array
+* rendering of text using freetype
+* drawing of basic geometrical objects like segments
+
+For examples using this API see the :ref:`example section <examples-page>`.
+
+"""
+
 ####################################################################################################
 
 import logging
