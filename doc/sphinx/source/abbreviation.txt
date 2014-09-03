@@ -16,10 +16,10 @@
 .. _Mesa: http://www.mesa3d.org
 
 .. |ctypes| replace:: ctypes
-.. _ctypes: https://docs.python.org/2/library/ctypes.html
+.. _ctypes: http://docs.python.org/2/library/ctypes.html
 
 .. |cffi| replace:: CFFI
-.. _cffi: https://cffi.readthedocs.org
+.. _cffi: http://cffi.readthedocs.org
 
 .. |OpenGL| replace:: OpenGL
 .. _OpenGL: http://www.opengl.org
@@ -29,5 +29,8 @@
 
 .. |OpenGL_registry_cvs| replace:: Khronos OpenGL API CVS
 .. _OpenGL_registry_cvs: https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api
+
+.. |pypy| replace:: pypy
+.. _pypy: http://pypy.org
 
 .. End

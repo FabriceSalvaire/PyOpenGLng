@@ -51,10 +51,10 @@
 .. _Mesa: http://www.mesa3d.org
 
 .. |ctypes| replace:: ctypes
-.. _ctypes: https://docs.python.org/2/library/ctypes.html
+.. _ctypes: http://docs.python.org/2/library/ctypes.html
 
 .. |cffi| replace:: CFFI
-.. _cffi: https://cffi.readthedocs.org
+.. _cffi: http://cffi.readthedocs.org
 
 .. |OpenGL| replace:: OpenGL
 .. _OpenGL: http://www.opengl.org
@@ -64,6 +64,9 @@
 
 .. |OpenGL_registry_cvs| replace:: Khronos OpenGL API CVS
 .. _OpenGL_registry_cvs: https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api
+
+.. |pypy| replace:: pypy
+.. _pypy: http://pypy.org
 
 .. End
 
@@ -89,18 +92,32 @@ Written by `Fabrice Salvaire <http://fabrice-salvaire.pagesperso-orange.fr>`_.
  Introduction
 ==============
 
-PyOpenGLng, proudly blessed as is, is an experimental |OpenGL|_ wrapper for |Python|_ which generate
+PyOpenGLng, proudly blessed as is, is an experimental |OpenGL|_ wrapper for |Python|_ which generates
 the requested OpenGL API from the |OpenGL_Registry|_ and use an automatic translator to map the
-C API to Python. Actually the wrapper use ctypes.
+C API to Python. The interface between C and Python is supported by |ctypes|_  and also by |CFFI|_
+which paves the way to use the |pypy|_ interpreter.
 
 By design this wrapper supports all the OpenGL version, but it focus towards the programmable
-pipeline and the most recent API. On Linux desktop Mesa release 10 supports OpenGL 3.3.
+pipeline and the most recent OpenGL API. On Linux desktop, |Mesa|_ release 10 (November 2013)
+supports the OpenGL 3.3 API for Intel HD GPU.
 
 The Python package provides three components:
 
 * an Oriented Object API to the OpenGL XML registry,
-* a ctypes wrapper,
-* and an experimental high level API.
+* a ctypes and CFFI wrapper,
+* an experimental high level API.
+
+.. warning:: We should test all the API to claim a compliance with the OpenGL API. Since the OpenGL
+  API becomes more and more large and complex over the release, such attempt would require a huge
+  amount of work. Up to now only a part of the API was tested successfully.
+
+Bibliography
+-------------
+
+The followings list of links provides an overview on the topic:
+
+* `PyOpenGL - the de facto standard OpenGL Python binding <http://pyopengl.sourceforge.net>`_
+* `Vispy - a high-performance interactive 2D/3D data visualization library <http://vispy.org>`_
 
 .. End
 
@@ -120,6 +137,7 @@ PyOpenGLng requires the following dependencies:
 
  * |Python|_ 2.7
  * |Numpy|_
+ * freetype-py 
  * PyQt 4.9 for the high level API and the examples
 
 Installation from PyPi Repository

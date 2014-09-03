@@ -360,19 +360,35 @@ ul.auto-toc {
 </div>
 <div class="section" id="introduction">
 <h1>Introduction</h1>
-<p>PyOpenGLng, proudly blessed as is, is an experimental <a class="reference external" href="http://www.opengl.org">OpenGL</a> wrapper for <a class="reference external" href="http://python.org">Python</a> which generate
+<p>PyOpenGLng, proudly blessed as is, is an experimental <a class="reference external" href="http://www.opengl.org">OpenGL</a> wrapper for <a class="reference external" href="http://python.org">Python</a> which generates
 the requested OpenGL API from the <a class="reference external" href="http://www.opengl.org/registry">OpenGL XML API Registry</a> and use an automatic translator to map the
-C API to Python. Actually the wrapper use ctypes.</p>
+C API to Python. The interface between C and Python is supported by <a class="reference external" href="http://docs.python.org/2/library/ctypes.html">ctypes</a>  and also by <a class="reference external" href="http://cffi.readthedocs.org">CFFI</a>
+which paves the way to use the <a class="reference external" href="http://pypy.org">pypy</a> interpreter.</p>
 <p>By design this wrapper supports all the OpenGL version, but it focus towards the programmable
-pipeline and the most recent API. On Linux desktop Mesa release 10 supports OpenGL 3.3.</p>
+pipeline and the most recent OpenGL API. On Linux desktop, <a class="reference external" href="http://www.mesa3d.org">Mesa 3D Graphics Library</a> release 10 (November 2013)
+supports the OpenGL 3.3 API for Intel HD GPU.</p>
 <p>The Python package provides three components:</p>
 <ul class="simple">
 <li>an Oriented Object API to the OpenGL XML registry,</li>
-<li>a ctypes wrapper,</li>
-<li>and an experimental high level API.</li>
+<li>a ctypes and CFFI wrapper,</li>
+<li>an experimental high level API.</li>
+</ul>
+<div class="warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">We should test all the API to claim a compliance with the OpenGL API. Since the OpenGL
+API becomes more and more large and complex over the release, such attempt would require a huge
+amount of work. Up to now only a part of the API was tested successfully.</p>
+</div>
+<div class="section" id="bibliography">
+<h2>Bibliography</h2>
+<p>The followings list of links provides an overview on the topic:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://pyopengl.sourceforge.net">PyOpenGL - the de facto standard OpenGL Python binding</a></li>
+<li><a class="reference external" href="http://vispy.org">Vispy - a high-performance interactive 2D/3D data visualization library</a></li>
 </ul>
 <!-- End -->
 <!-- -*- Mode: rst -*- -->
+</div>
 </div>
 <div class="section" id="installation">
 <span id="installation-page"></span><h1>Installation</h1>
@@ -383,6 +399,7 @@ pipeline and the most recent API. On Linux desktop Mesa release 10 supports Open
 <ul class="simple">
 <li><a class="reference external" href="http://python.org">Python</a> 2.7</li>
 <li><a class="reference external" href="http://www.numpy.org">Numpy</a></li>
+<li>freetype-py</li>
 <li>PyQt 4.9 for the high level API and the examples</li>
 </ul>
 </blockquote>
