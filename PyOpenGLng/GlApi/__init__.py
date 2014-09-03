@@ -816,12 +816,12 @@ class Command(object):
 
     ##############################################
 
-    def prototype(self):
+    def prototype(self, with_size=True):
 
         """ Return the C function prototype. """
 
         return '%s %s (%s)' % (self.return_type.prototype(), self.name,
-                               ', '.join([parameter.prototype() for parameter in self.parameters]))
+                               ', '.join([parameter.prototype(with_size) for parameter in self.parameters]))
 
     ##############################################
 
@@ -952,7 +952,7 @@ class Parameter(object):
 
     ##############################################
 
-    def _format_type(self, type_string):
+    def _format_type(self, type_string, with_size=True):
 
         """ Format a type, add ``const``, ``*`` and ``[]`` if they are relevant. """
         
@@ -960,16 +960,17 @@ class Parameter(object):
             type_string = 'const ' + type_string
         if self.pointer:
             type_string += ' ' + '*'*self.pointer
-        if self.size_parameter is not None:
-            type_string += ' [%s]' % self.size_parameter
-        elif self.array_size is not None:
-            type_string += ' [%u]' % self.array_size
+        if with_size:
+            if self.size_parameter is not None:
+                type_string += ' [%s]' % self.size_parameter
+            elif self.array_size is not None:
+                type_string += ' [%u]' % self.array_size
         
         return type_string
 
     ##############################################
 
-    def format_gl_type(self):
+    def format_gl_type(self, with_size=True):
 
         """ format the translated type parameter. """
 
@@ -981,7 +982,7 @@ class Parameter(object):
         # Fixme: void
         # else c_type = 'void'
 
-        return self._format_type(c_type)
+        return self._format_type(c_type, with_size)
 
     ##############################################
 
@@ -996,16 +997,16 @@ class Parameter(object):
 
     ##############################################
 
-    def prototype(self):
+    def prototype(self, with_size=True):
 
         """ Return the C parameter declaration but with translated type. """
 
         # Fixme: method name
 
         if self.name is not None:
-            return '%s %s' % (self.format_gl_type(), self.name)
+            return '%s %s' % (self.format_gl_type(with_size), self.name)
         else:
-            return self.format_gl_type()
+            return self.format_gl_type(with_size)
 
     ##############################################
 

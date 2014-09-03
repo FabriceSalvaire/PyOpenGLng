@@ -36,6 +36,11 @@ argument_parser.add_argument('--opengl',
                              choices=('v3', 'v4'),
                              help='OpenGL version')
 
+argument_parser.add_argument('--wrapper',
+                             default='ctypes',
+                             choices=('ctypes', 'cffi'),
+                             help='set the wrapper')
+
 args = argument_parser.parse_args()
 
 ####################################################################################################

@@ -52,7 +52,8 @@ def init(wrapper='ctypes', api='gl', api_number=None, profile='core', check_api_
         from .CtypeWrapper import CtypeWrapper
         Wrapper = CtypeWrapper
     elif wrapper == 'cffi':
-        raise NotImplementedError
+        from .CffiWrapper import CffiWrapper
+        Wrapper = CffiWrapper
     else:
         ValueError("wrapper must be 'ctypes' or 'cffi'")
 
@@ -62,6 +63,7 @@ def init(wrapper='ctypes', api='gl', api_number=None, profile='core', check_api_
         raise NotImplementedError
 
     # Fixme: store ApiNumber in CtypeWrapper
+    # Fixme: called before context for example ???
     version_string = Wrapper.load_library(libGL_name)
 
     if check_api_number:
