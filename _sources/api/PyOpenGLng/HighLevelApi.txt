@@ -20,7 +20,6 @@
   HighLevelApi/TextureVertexArray
   HighLevelApi/Type
   HighLevelApi/VertexArrayObject
-  HighLevelApi/opengl-usage
 
 .. automodule:: PyOpenGLng.HighLevelApi
    :members:

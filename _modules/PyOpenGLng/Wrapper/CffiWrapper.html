@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PyOpenGLng.Wrapper.CtypeWrapper &mdash; PyOpenGLng 0.1.0 documentation</title>
+    <title>PyOpenGLng.Wrapper.CffiWrapper &mdash; PyOpenGLng 0.1.0 documentation</title>
     
     <link rel="stylesheet" href="../../../static/PyOpenGLng.css" type="text/css" />
     <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
@@ -47,7 +47,7 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for PyOpenGLng.Wrapper.CtypeWrapper</h1><div class="highlight"><pre>
+  <h1>Source code for PyOpenGLng.Wrapper.CffiWrapper</h1><div class="highlight"><pre>
 <span class="c">####################################################################################################</span>
 <span class="c"># </span>
 <span class="c"># PyOpenGLng - An OpenGL Python Wrapper with a High Level API.</span>
@@ -252,6 +252,9 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
+<span class="kn">from</span> <span class="nn">cffi</span> <span class="kn">import</span> <span class="n">FFI</span>
+<span class="n">ffi</span> <span class="o">=</span> <span class="n">FFI</span><span class="p">()</span>
+
 <span class="c">####################################################################################################</span>
 
 <span class="kn">from</span> <span class="nn">PythonicWrapper</span> <span class="kn">import</span> <span class="n">PythonicWrapper</span>
@@ -298,7 +301,7 @@
     <span class="s">&#39;&lt;f8&#39;</span><span class="p">:</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_double</span><span class="p">,</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="to_ctypes_type"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.to_ctypes_type">[docs]</a><span class="k">def</span> <span class="nf">to_ctypes_type</span><span class="p">(</span><span class="n">parameter</span><span class="p">):</span>
+<div class="viewcode-block" id="to_ctypes_type"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.to_ctypes_type">[docs]</a><span class="k">def</span> <span class="nf">to_ctypes_type</span><span class="p">(</span><span class="n">parameter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Return the ctypes type corresponding to a parameter. &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_generic_pointer</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span>
@@ -306,9 +309,16 @@
         <span class="n">c_type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">c_type</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">__to_ctypes_type__</span><span class="p">[</span><span class="n">c_type</span><span class="p">]</span>
 </div>
-<div class="viewcode-block" id="numpy_to_ctypes_type"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.numpy_to_ctypes_type">[docs]</a><span class="k">def</span> <span class="nf">numpy_to_ctypes_type</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+<div class="viewcode-block" id="numpy_to_ctypes_type"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.numpy_to_ctypes_type">[docs]</a><span class="k">def</span> <span class="nf">numpy_to_ctypes_type</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Return the ctypes type corresponding to a Numpy array data type. &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">__numpy_to_ctypes_type__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">str</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="to_cffi_type"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.to_cffi_type">[docs]</a><span class="k">def</span> <span class="nf">to_cffi_type</span><span class="p">(</span><span class="n">parameter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return the ctypes type corresponding to a parameter. &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">is_generic_pointer</span><span class="p">():</span>
+        <span class="k">return</span> <span class="s">&#39;void *&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">c_type</span><span class="p">)</span>
 
 <span class="c">####################################################################################################</span>
 </div>
@@ -319,14 +329,15 @@
 
 <span class="c">####################################################################################################</span>
 
-<div class="viewcode-block" id="check_numpy_type"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.check_numpy_type">[docs]</a><span class="k">def</span> <span class="nf">check_numpy_type</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">ctypes_type</span><span class="p">):</span>
+<div class="viewcode-block" id="check_numpy_type"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.check_numpy_type">[docs]</a><span class="k">def</span> <span class="nf">check_numpy_type</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">ctypes_type</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Check the Numpy array data type is same as *ctypes_type*. &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">numpy_to_ctypes_type</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> <span class="o">!=</span> <span class="n">ctypes_type</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Type mismatch: </span><span class="si">%s</span><span class="s"> instead of </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">ctypes_type</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+    <span class="c">#!# if numpy_to_ctypes_type(array) != ctypes_type:</span>
+    <span class="c">#!#     raise ValueError(&quot;Type mismatch: %s instead of %s&quot; % (array.dtype, ctypes_type.__name__))</span>
+    <span class="k">return</span> <span class="bp">True</span>
 
 <span class="c">####################################################################################################</span>
 </div>
-<div class="viewcode-block" id="GlEnums"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.GlEnums">[docs]</a><span class="k">class</span> <span class="nc">GlEnums</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="GlEnums"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.GlEnums">[docs]</a><span class="k">class</span> <span class="nc">GlEnums</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="c">##############################################</span>
 
@@ -338,7 +349,7 @@
 
 <span class="c">####################################################################################################</span>
 </div>
-<div class="viewcode-block" id="GlCommands"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.GlCommands">[docs]</a><span class="k">class</span> <span class="nc">GlCommands</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="GlCommands"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.GlCommands">[docs]</a><span class="k">class</span> <span class="nc">GlCommands</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="c">##############################################</span>
 
@@ -354,7 +365,7 @@
 
 <span class="c">####################################################################################################</span>
 </div>
-<div class="viewcode-block" id="ParameterWrapperBase"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase">[docs]</a><span class="k">class</span> <span class="nc">ParameterWrapperBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ParameterWrapperBase"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.ParameterWrapperBase">[docs]</a><span class="k">class</span> <span class="nc">ParameterWrapperBase</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="c"># Fixme: wrapper, translator</span>
 
@@ -362,7 +373,7 @@
 
     <span class="c">##############################################</span>
 
-<div class="viewcode-block" id="ParameterWrapperBase.repr_string"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapperBase.repr_string">[docs]</a>    <span class="k">def</span> <span class="nf">repr_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
+<div class="viewcode-block" id="ParameterWrapperBase.repr_string"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.ParameterWrapperBase.repr_string">[docs]</a>    <span class="k">def</span> <span class="nf">repr_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s">&#39;&lt;&#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="o">.</span><span class="n">format_gl_type</span><span class="p">()</span> <span class="o">+</span> <span class="s">&#39;&gt; &#39;</span> <span class="o">+</span> <span class="n">parameter</span><span class="o">.</span><span class="n">name</span>
 
@@ -374,7 +385,7 @@
 
 <span class="c">####################################################################################################</span>
 </div>
-<div class="viewcode-block" id="ParameterWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapper">[docs]</a><span class="k">class</span> <span class="nc">ParameterWrapper</span><span class="p">(</span><span class="n">ParameterWrapperBase</span><span class="p">):</span>
+<div class="viewcode-block" id="ParameterWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.ParameterWrapper">[docs]</a><span class="k">class</span> <span class="nc">ParameterWrapper</span><span class="p">(</span><span class="n">ParameterWrapperBase</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot; Translate a fundamental type. &quot;&quot;&quot;</span>
 
@@ -384,19 +395,19 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span> <span class="o">=</span> <span class="n">parameter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">location</span> <span class="c"># Fixme: doublon?</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">to_ctypes_type</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">to_cffi_type</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
 
     <span class="c">##############################################</span>
 
-<div class="viewcode-block" id="ParameterWrapper.from_python"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.ParameterWrapper.from_python">[docs]</a>    <span class="k">def</span> <span class="nf">from_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">c_parameters</span><span class="p">):</span>
+<div class="viewcode-block" id="ParameterWrapper.from_python"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.ParameterWrapper.from_python">[docs]</a>    <span class="k">def</span> <span class="nf">from_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">c_parameters</span><span class="p">,</span> <span class="n">keepalive</span><span class="p">):</span>
 
-        <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_location</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">None</span>
 
 <span class="c">####################################################################################################</span>
 </div></div>
-<div class="viewcode-block" id="PointerWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.PointerWrapper">[docs]</a><span class="k">class</span> <span class="nc">PointerWrapper</span><span class="p">(</span><span class="n">ParameterWrapperBase</span><span class="p">):</span>
+<div class="viewcode-block" id="PointerWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.PointerWrapper">[docs]</a><span class="k">class</span> <span class="nc">PointerWrapper</span><span class="p">(</span><span class="n">ParameterWrapperBase</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot; Translate a pointer.</span>
 
@@ -422,23 +433,23 @@
         <span class="c"># Fixme: same as ...</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span> <span class="o">=</span> <span class="n">parameter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">location</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">to_ctypes_type</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">to_cffi_type</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
 
     <span class="c">##############################################</span>
 
-<div class="viewcode-block" id="PointerWrapper.from_python"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.PointerWrapper.from_python">[docs]</a>    <span class="k">def</span> <span class="nf">from_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">c_parameters</span><span class="p">):</span>
+<div class="viewcode-block" id="PointerWrapper.from_python"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.PointerWrapper.from_python">[docs]</a>    <span class="k">def</span> <span class="nf">from_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">c_parameters</span><span class="p">,</span> <span class="n">keepalive</span><span class="p">):</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">const</span><span class="p">:</span> <span class="c"># const char *</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">==</span> <span class="s">&#39;char&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span><span class="o">.</span><span class="n">const</span><span class="p">:</span> <span class="c"># const char *</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;const char *&#39;</span><span class="p">)</span>
-            <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parameter</span><span class="p">))</span>
+            <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&#39;char []&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">parameter</span><span class="p">))</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;ndarray&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">!=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">!=</span> <span class="s">&#39;void *&#39;</span><span class="p">:</span>
                 <span class="n">check_numpy_type</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">)</span>
-            <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">))</span>
+            <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">+</span> <span class="s">&#39; *&#39;</span><span class="p">,</span>   <span class="n">parameter</span><span class="o">.</span><span class="n">__array_interface__</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="c"># buffer interface ???</span>
         <span class="k">elif</span> <span class="n">parameter</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;None&#39;</span><span class="p">)</span>
-            <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># already done</span>
+            <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">NULL</span> <span class="c"># already done</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
         <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctypes_parameter</span>
@@ -447,7 +458,7 @@
 
 <span class="c">####################################################################################################</span>
 </div></div>
-<div class="viewcode-block" id="ReferenceWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.ReferenceWrapper">[docs]</a><span class="k">class</span> <span class="nc">ReferenceWrapper</span><span class="p">(</span><span class="n">ParameterWrapperBase</span><span class="p">):</span>
+<div class="viewcode-block" id="ReferenceWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.ReferenceWrapper">[docs]</a><span class="k">class</span> <span class="nc">ReferenceWrapper</span><span class="p">(</span><span class="n">ParameterWrapperBase</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot; Translate a parameter passed by reference.</span>
 
@@ -465,21 +476,21 @@
         <span class="c"># Fixme: same as ...</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameter</span> <span class="o">=</span> <span class="n">parameter</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="o">=</span> <span class="n">parameter</span><span class="o">.</span><span class="n">location</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">to_ctypes_type</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">to_cffi_type</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
 
     <span class="c">##############################################</span>
 
-<div class="viewcode-block" id="ReferenceWrapper.from_python"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.ReferenceWrapper.from_python">[docs]</a>    <span class="k">def</span> <span class="nf">from_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c_parameters</span><span class="p">):</span>
+<div class="viewcode-block" id="ReferenceWrapper.from_python"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.ReferenceWrapper.from_python">[docs]</a>    <span class="k">def</span> <span class="nf">from_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c_parameters</span><span class="p">,</span> <span class="n">keepalive</span><span class="p">):</span>
 
-        <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">()</span>
-        <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">ctypes_parameter</span><span class="p">)</span>
+        <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">+</span> <span class="s">&#39; *&#39;</span><span class="p">)</span>
+        <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctypes_parameter</span>
         <span class="n">to_python_converter</span> <span class="o">=</span> <span class="n">ValueConverter</span><span class="p">(</span><span class="n">ctypes_parameter</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">to_python_converter</span>
 
 <span class="c">####################################################################################################</span>
 </div></div>
-<div class="viewcode-block" id="ArrayWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.ArrayWrapper">[docs]</a><span class="k">class</span> <span class="nc">ArrayWrapper</span><span class="p">(</span><span class="n">ParameterWrapperBase</span><span class="p">):</span>
+<div class="viewcode-block" id="ArrayWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.ArrayWrapper">[docs]</a><span class="k">class</span> <span class="nc">ArrayWrapper</span><span class="p">(</span><span class="n">ParameterWrapperBase</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot; Base class for Array Wrapper. &quot;&quot;&quot;</span>
 
@@ -497,9 +508,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_parameter</span> <span class="o">=</span> <span class="n">pointer_parameter</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_size_location</span> <span class="o">=</span> <span class="n">size_parameter</span><span class="o">.</span><span class="n">location</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_size_type</span> <span class="o">=</span> <span class="n">to_ctypes_type</span><span class="p">(</span><span class="n">size_parameter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_size_type</span> <span class="o">=</span> <span class="n">to_cffi_type</span><span class="p">(</span><span class="n">size_parameter</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_location</span> <span class="o">=</span> <span class="n">pointer_parameter</span><span class="o">.</span><span class="n">location</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">=</span> <span class="n">to_ctypes_type</span><span class="p">(</span><span class="n">pointer_parameter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">=</span> <span class="n">to_cffi_type</span><span class="p">(</span><span class="n">pointer_parameter</span><span class="p">)</span>
 
     <span class="c">##############################################</span>
 
@@ -509,7 +520,7 @@
 
 <span class="c">####################################################################################################</span>
 </div>
-<div class="viewcode-block" id="OutputArrayWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper">[docs]</a><span class="k">class</span> <span class="nc">OutputArrayWrapper</span><span class="p">(</span><span class="n">ArrayWrapper</span><span class="p">):</span>
+<div class="viewcode-block" id="OutputArrayWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.OutputArrayWrapper">[docs]</a><span class="k">class</span> <span class="nc">OutputArrayWrapper</span><span class="p">(</span><span class="n">ArrayWrapper</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot; Translate an output array parameter.</span>
 <span class="sd">    </span>
@@ -532,30 +543,30 @@
 
     <span class="c">##############################################</span>
 
-<div class="viewcode-block" id="OutputArrayWrapper.from_python"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.OutputArrayWrapper.from_python">[docs]</a>    <span class="k">def</span> <span class="nf">from_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">c_parameters</span><span class="p">):</span>
+<div class="viewcode-block" id="OutputArrayWrapper.from_python"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.OutputArrayWrapper.from_python">[docs]</a>    <span class="k">def</span> <span class="nf">from_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">c_parameters</span><span class="p">,</span> <span class="n">keepalive</span><span class="p">):</span>
 
         <span class="c"># print self._pointer_parameter.long_repr(), self._pointer_type, type(parameter)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">==</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">==</span> <span class="s">&#39;void *&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;void *&#39;</span><span class="p">)</span>
             <span class="c"># Generic pointer: thus the array data type is not specified by the API</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
                 <span class="c"># The output array is provided by user and the size is specified in byte</span>
                 <span class="n">array</span> <span class="o">=</span> <span class="n">parameter</span>
-                <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_location</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_type</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">nbytes</span><span class="p">)</span>
-                <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">)</span>
+                <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_type</span><span class="p">,</span> <span class="n">array</span><span class="o">.</span><span class="n">nbytes</span><span class="p">)</span>
+                <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="s">&#39;void *&#39;</span><span class="p">,</span>   <span class="n">array</span><span class="o">.</span><span class="n">__array_interface__</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
                 <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctypes_parameter</span>
                 <span class="k">return</span> <span class="bp">None</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">==</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">==</span> <span class="s">&#39;char&#39;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;char *&#39;</span><span class="p">)</span>
             <span class="c"># The array size is provided by user</span>
             <span class="n">size_parameter</span> <span class="o">=</span> <span class="n">parameter</span>
-            <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_location</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_type</span><span class="p">(</span><span class="n">size_parameter</span><span class="p">)</span>
-            <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">create_string_buffer</span><span class="p">(</span><span class="n">size_parameter</span><span class="p">)</span>
+            <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_type</span><span class="p">,</span> <span class="n">size_parameter</span><span class="p">)</span>
+            <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&#39;char []&#39;</span><span class="p">,</span> <span class="n">size_parameter</span><span class="p">)</span>
             <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctypes_parameter</span>
-            <span class="n">to_python_converter</span> <span class="o">=</span> <span class="n">ValueConverter</span><span class="p">(</span><span class="n">ctypes_parameter</span><span class="p">)</span>
+            <span class="n">to_python_converter</span> <span class="o">=</span> <span class="n">StringConverter</span><span class="p">(</span><span class="n">ctypes_parameter</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">to_python_converter</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;ndarray&#39;</span><span class="p">)</span>
@@ -563,8 +574,8 @@
             <span class="c"># The output array is provided by user</span>
             <span class="n">array</span> <span class="o">=</span> <span class="n">parameter</span>
             <span class="n">check_numpy_type</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span><span class="p">)</span>
-            <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_location</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_type</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
-            <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span><span class="p">))</span>
+            <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_type</span><span class="p">,</span> <span class="n">array</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+            <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">+</span> <span class="s">&#39; *&#39;</span><span class="p">,</span>   <span class="n">array</span><span class="o">.</span><span class="n">__array_interface__</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctypes_parameter</span>
             <span class="k">return</span> <span class="bp">None</span>
         <span class="k">else</span><span class="p">:</span>
@@ -572,57 +583,58 @@
             <span class="c"># Typed pointer</span>
             <span class="c"># The array size is provided by user</span>
             <span class="n">size_parameter</span> <span class="o">=</span> <span class="n">parameter</span>
-            <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_location</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_type</span><span class="p">(</span><span class="n">size_parameter</span><span class="p">)</span>
+            <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_type</span><span class="p">,</span> <span class="n">size_parameter</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">size_parameter</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size_parameter_threshold</span><span class="p">:</span>
-                <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">size_parameter</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span><span class="p">)</span>
-                <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span><span class="p">))</span>
+                <span class="n">ctypes_pointer_type</span> <span class="o">=</span> <span class="n">to_ctypes_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_parameter</span><span class="p">)</span>
+                <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">size_parameter</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">ctypes_pointer_type</span><span class="p">)</span>
+                <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">+</span> <span class="s">&#39; *&#39;</span><span class="p">,</span>   <span class="n">array</span><span class="o">.</span><span class="n">__array_interface__</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
                 <span class="n">to_python_converter</span> <span class="o">=</span> <span class="n">IdentityConverter</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">array_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">*</span> <span class="n">size_parameter</span>
-                <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">array_type</span><span class="p">()</span>
+                <span class="c">#!# array_type = self._pointer_type * size_parameter #!# ???</span>
+                <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">+</span> <span class="s">&#39;[]&#39;</span><span class="p">,</span> <span class="n">size_parameter</span><span class="p">)</span>
                 <span class="n">to_python_converter</span> <span class="o">=</span> <span class="n">ListConverter</span><span class="p">(</span><span class="n">ctypes_parameter</span><span class="p">)</span>
             <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctypes_parameter</span>
             <span class="k">return</span> <span class="n">to_python_converter</span>
 
 <span class="c">####################################################################################################</span>
 </div></div>
-<div class="viewcode-block" id="InputArrayWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.InputArrayWrapper">[docs]</a><span class="k">class</span> <span class="nc">InputArrayWrapper</span><span class="p">(</span><span class="n">ArrayWrapper</span><span class="p">):</span>
+<div class="viewcode-block" id="InputArrayWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.InputArrayWrapper">[docs]</a><span class="k">class</span> <span class="nc">InputArrayWrapper</span><span class="p">(</span><span class="n">ArrayWrapper</span><span class="p">):</span>
 
     <span class="n">_logger</span> <span class="o">=</span> <span class="n">_module_logger</span><span class="o">.</span><span class="n">getChild</span><span class="p">(</span><span class="s">&#39;InputArrayWrapper&#39;</span><span class="p">)</span>
 
     <span class="c">##############################################</span>
 
-<div class="viewcode-block" id="InputArrayWrapper.from_python"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.InputArrayWrapper.from_python">[docs]</a>    <span class="k">def</span> <span class="nf">from_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">c_parameters</span><span class="p">):</span>
+<div class="viewcode-block" id="InputArrayWrapper.from_python"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.InputArrayWrapper.from_python">[docs]</a>    <span class="k">def</span> <span class="nf">from_python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">c_parameters</span><span class="p">,</span> <span class="n">keepalive</span><span class="p">):</span>
 
         <span class="c"># print array</span>
         <span class="c"># print self._pointer_parameter.long_repr()</span>
         <span class="c"># print self._pointer_type</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_parameter</span><span class="o">.</span><span class="n">pointer</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">==</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char</span><span class="p">:</span> <span class="c"># Fixme: should be c_char_p</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">==</span> <span class="s">&#39;char&#39;</span><span class="p">:</span> <span class="c"># Fixme: should be c_char_p</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;string -&gt; const char **&#39;</span><span class="p">)</span>
                     <span class="n">size_parameter</span> <span class="o">=</span> <span class="mi">1</span>
-                    <span class="n">string_array_type</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span> <span class="o">*</span> <span class="mi">1</span>
-                    <span class="n">string_array</span> <span class="o">=</span> <span class="n">string_array_type</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">(</span><span class="n">array</span><span class="p">))</span>
+                    <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">ffi</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&#39;char[]&#39;</span><span class="p">,</span> <span class="n">array</span><span class="p">)]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;string array -&gt; const char **&#39;</span><span class="p">)</span>
                     <span class="n">size_parameter</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
-                    <span class="n">string_array_type</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span> <span class="o">*</span> <span class="n">size_parameter</span>
-                    <span class="n">string_array</span> <span class="o">=</span> <span class="n">string_array_type</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">array</span><span class="p">])</span>
+                    <span class="n">strings</span> <span class="o">=</span> <span class="p">[</span><span class="n">ffi</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;char[]&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">array</span><span class="p">]</span>
+                <span class="n">string_array</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;char *[]&quot;</span><span class="p">,</span> <span class="n">strings</span><span class="p">)</span>
+                <span class="n">keepalive</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">strings</span><span class="p">)</span>
                 <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">string_array</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;ndarray&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">==</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">==</span> <span class="s">&#39;void *&#39;</span><span class="p">:</span>
                 <span class="n">size_parameter</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">nbytes</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">==</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_float</span><span class="p">:</span> <span class="c"># fixme</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">==</span> <span class="s">&#39;float&#39;</span><span class="p">:</span> <span class="c"># fixme</span>
                 <span class="n">size_parameter</span> <span class="o">=</span> <span class="mi">1</span> <span class="c"># array.shape[0]</span>
             <span class="c"># else:</span>
             <span class="c">#     size_parameter = array.nbytes</span>
             <span class="c"># ctypes_parameter = array.ctypes.data_as(ctypes.c_void_p)</span>
-            <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span><span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span><span class="p">))</span>
+            <span class="n">ctypes_parameter</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_type</span> <span class="o">+</span> <span class="s">&#39; *&#39;</span><span class="p">,</span>   <span class="n">array</span><span class="o">.</span><span class="n">__array_interface__</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
         <span class="c"># elif isinstance(array, collections.Iterable):</span>
         <span class="c">#     self._logger.debug(&#39;Iterable&#39;) # unused</span>
         <span class="c">#     size_parameter = len(array)</span>
@@ -631,14 +643,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">array</span><span class="p">))</span>
 
-        <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_location</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_type</span><span class="p">(</span><span class="n">size_parameter</span><span class="p">)</span>
+        <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_type</span><span class="p">,</span> <span class="n">size_parameter</span><span class="p">)</span>
         <span class="n">c_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pointer_location</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctypes_parameter</span>
 
         <span class="k">return</span> <span class="bp">None</span>
 
 <span class="c">####################################################################################################</span>
 </div></div>
-<div class="viewcode-block" id="ToPythonConverter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.ToPythonConverter">[docs]</a><span class="k">class</span> <span class="nc">ToPythonConverter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ToPythonConverter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.ToPythonConverter">[docs]</a><span class="k">class</span> <span class="nc">ToPythonConverter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot; Base class for C to Python converter. &quot;&quot;&quot;</span>
 
@@ -652,29 +664,34 @@
 
 <span class="c">####################################################################################################</span>
 </div>
-<div class="viewcode-block" id="IdentityConverter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.IdentityConverter">[docs]</a><span class="k">class</span> <span class="nc">IdentityConverter</span><span class="p">(</span><span class="n">ToPythonConverter</span><span class="p">):</span>
+<div class="viewcode-block" id="IdentityConverter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.IdentityConverter">[docs]</a><span class="k">class</span> <span class="nc">IdentityConverter</span><span class="p">(</span><span class="n">ToPythonConverter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Identity converter. &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_object</span>
 </div>
-<div class="viewcode-block" id="ListConverter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.ListConverter">[docs]</a><span class="k">class</span> <span class="nc">ListConverter</span><span class="p">(</span><span class="n">ToPythonConverter</span><span class="p">):</span>
+<div class="viewcode-block" id="ListConverter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.ListConverter">[docs]</a><span class="k">class</span> <span class="nc">ListConverter</span><span class="p">(</span><span class="n">ToPythonConverter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Convert the C object to a Python list. &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_c_object</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="ValueConverter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.ValueConverter">[docs]</a><span class="k">class</span> <span class="nc">ValueConverter</span><span class="p">(</span><span class="n">ToPythonConverter</span><span class="p">):</span>
+<div class="viewcode-block" id="ValueConverter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.ValueConverter">[docs]</a><span class="k">class</span> <span class="nc">ValueConverter</span><span class="p">(</span><span class="n">ToPythonConverter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Get the Python value of the ctype object. &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_object</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_object</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c">#!#</span>
+</div>
+<div class="viewcode-block" id="StringConverter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.StringConverter">[docs]</a><span class="k">class</span> <span class="nc">StringConverter</span><span class="p">(</span><span class="n">ToPythonConverter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Get the Python value of the ctype object. &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ffi</span><span class="o">.</span><span class="n">string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_c_object</span><span class="p">)</span>
 
 <span class="c">####################################################################################################</span>
 </div>
-<div class="viewcode-block" id="CommandNotAvailable"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.CommandNotAvailable">[docs]</a><span class="k">class</span> <span class="nc">CommandNotAvailable</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="CommandNotAvailable"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.CommandNotAvailable">[docs]</a><span class="k">class</span> <span class="nc">CommandNotAvailable</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span>
 
 <span class="c">####################################################################################################</span>
 </div>
-<div class="viewcode-block" id="GlCommandWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper">[docs]</a><span class="k">class</span> <span class="nc">GlCommandWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="GlCommandWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.GlCommandWrapper">[docs]</a><span class="k">class</span> <span class="nc">GlCommandWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="n">_logger</span> <span class="o">=</span> <span class="n">_module_logger</span><span class="o">.</span><span class="n">getChild</span><span class="p">(</span><span class="s">&#39;GlCommandWrapper&#39;</span><span class="p">)</span>
 
@@ -701,6 +718,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_wrappers</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reference_parameter_wrappers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_return_type_converter</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">command</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;GLsync&#39;</span><span class="p">,</span> <span class="s">&#39;GLDEBUGPROC&#39;</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span>
@@ -745,13 +763,14 @@
             <span class="n">ctypes_type</span> <span class="o">=</span> <span class="n">to_ctypes_type</span><span class="p">(</span><span class="n">return_type</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">return_type</span><span class="o">.</span><span class="n">pointer</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">ctypes_type</span> <span class="o">==</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_ubyte</span><span class="p">:</span> <span class="c"># return type is char *</span>
-                    <span class="n">ctypes_type</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span>
+                    <span class="c">#!# ctypes_type = ctypes.c_char_p</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_return_type_converter</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">string</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="o">.</span><span class="n">restype</span> <span class="o">=</span> <span class="n">ctypes_type</span>
+            <span class="c">#!# self._function.restype = ctypes_type</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_return_void</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="o">.</span><span class="n">restype</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="c">#!# self._function.restype = None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_return_void</span> <span class="o">=</span> <span class="bp">True</span> <span class="c"># Fixme: required or doublon?</span>
 
         <span class="n">manual_page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manual_page</span><span class="p">()</span>
@@ -776,17 +795,18 @@
                                       <span class="k">for</span> <span class="n">parameter_wrapper</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameter_wrappers</span><span class="p">]))</span>
 
         <span class="c"># Initialise the input/output parameter array</span>
-        <span class="n">c_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_parameters</span>
+        <span class="n">c_parameters</span> <span class="o">=</span> <span class="p">[</span><span class="n">ffi</span><span class="o">.</span><span class="n">NULL</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_number_of_parameters</span>
         <span class="n">to_python_converters</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c"># Set the input parameters and append python converters for output</span>
+        <span class="n">keepalive</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c"># first process the given parameters</span>
         <span class="k">for</span> <span class="n">parameter_wrapper</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameter_wrappers</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
-            <span class="n">to_python_converter</span> <span class="o">=</span> <span class="n">parameter_wrapper</span><span class="o">.</span><span class="n">from_python</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">c_parameters</span><span class="p">)</span>
+            <span class="n">to_python_converter</span> <span class="o">=</span> <span class="n">parameter_wrapper</span><span class="o">.</span><span class="n">from_python</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">c_parameters</span><span class="p">,</span> <span class="n">keepalive</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">to_python_converter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">to_python_converters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_python_converter</span><span class="p">)</span>
         <span class="c"># second process the parameters by reference</span>
         <span class="k">for</span> <span class="n">parameter_wrapper</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference_parameter_wrappers</span><span class="p">:</span>
-            <span class="n">to_python_converter</span> <span class="o">=</span> <span class="n">parameter_wrapper</span><span class="o">.</span><span class="n">from_python</span><span class="p">(</span><span class="n">c_parameters</span><span class="p">)</span>
+            <span class="n">to_python_converter</span> <span class="o">=</span> <span class="n">parameter_wrapper</span><span class="o">.</span><span class="n">from_python</span><span class="p">(</span><span class="n">c_parameters</span><span class="p">,</span> <span class="n">keepalive</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">to_python_converter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">to_python_converters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">to_python_converter</span><span class="p">)</span>
 
@@ -800,6 +820,9 @@
                           <span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="p">(</span><span class="o">*</span><span class="n">c_parameters</span><span class="p">)</span>
+        <span class="c">#!# CFFI: string must be converted</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_type_converter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_type_converter</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
         <span class="c"># Check error</span>
         <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;check_error&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
@@ -830,11 +853,11 @@
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_command</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="o">.</span><span class="n">argtypes</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; -&gt; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_function</span><span class="o">.</span><span class="n">restype</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_command</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="c">#!# + &#39; &#39; + str(self._function.argtypes) + &#39; -&gt; &#39; + str(self._function.restype)</span>
 
     <span class="c">##############################################</span>
 
-<div class="viewcode-block" id="GlCommandWrapper._manual_page"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper._manual_page">[docs]</a>    <span class="k">def</span> <span class="nf">_manual_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GlCommandWrapper._manual_page"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.GlCommandWrapper._manual_page">[docs]</a>    <span class="k">def</span> <span class="nf">_manual_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">command_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_command</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;man&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]:</span>
@@ -847,7 +870,7 @@
 
     <span class="c">##############################################</span>
 </div>
-<div class="viewcode-block" id="GlCommandWrapper._xml_manual_name"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper._xml_manual_name">[docs]</a>    <span class="k">def</span> <span class="nf">_xml_manual_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GlCommandWrapper._xml_manual_name"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.GlCommandWrapper._xml_manual_name">[docs]</a>    <span class="k">def</span> <span class="nf">_xml_manual_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="c"># some commands are merged together: e.g. glVertexAttrib.xml</span>
         <span class="n">page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manual_page</span><span class="p">()</span>
@@ -859,13 +882,13 @@
 
     <span class="c">##############################################</span>
 </div>
-<div class="viewcode-block" id="GlCommandWrapper.xml_manual_path"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.xml_manual_path">[docs]</a>    <span class="k">def</span> <span class="nf">xml_manual_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GlCommandWrapper.xml_manual_path"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.GlCommandWrapper.xml_manual_path">[docs]</a>    <span class="k">def</span> <span class="nf">xml_manual_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Config</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">manual_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wrapper</span><span class="o">.</span><span class="n">api_number</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xml_manual_name</span><span class="p">())</span>
 
     <span class="c">##############################################</span>
 </div>
-<div class="viewcode-block" id="GlCommandWrapper.xml_manual_url"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.xml_manual_url">[docs]</a>    <span class="k">def</span> <span class="nf">xml_manual_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="GlCommandWrapper.xml_manual_url"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.GlCommandWrapper.xml_manual_url">[docs]</a>    <span class="k">def</span> <span class="nf">xml_manual_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">local</span><span class="p">:</span>
             <span class="k">return</span> <span class="s">&#39;file://&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml_manual_path</span><span class="p">()</span>
@@ -874,7 +897,7 @@
 
     <span class="c">##############################################</span>
 </div>
-<div class="viewcode-block" id="GlCommandWrapper.manual"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.manual">[docs]</a>    <span class="k">def</span> <span class="nf">manual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="GlCommandWrapper.manual"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.GlCommandWrapper.manual">[docs]</a>    <span class="k">def</span> <span class="nf">manual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;linux&#39;</span><span class="p">):</span>
             <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml_manual_url</span><span class="p">(</span><span class="n">local</span><span class="p">)</span>
@@ -887,7 +910,7 @@
 
     <span class="c">##############################################</span>
 </div>
-<div class="viewcode-block" id="GlCommandWrapper.help"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.help">[docs]</a>    <span class="k">def</span> <span class="nf">help</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GlCommandWrapper.help"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.GlCommandWrapper.help">[docs]</a>    <span class="k">def</span> <span class="nf">help</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="c"># Fixme: help(instance)</span>
         <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span>
@@ -895,31 +918,38 @@
     <span class="c">##############################################</span>
 </div>
     <span class="nd">@property</span>
-<div class="viewcode-block" id="GlCommandWrapper.call_counter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.call_counter">[docs]</a>    <span class="k">def</span> <span class="nf">call_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GlCommandWrapper.call_counter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.GlCommandWrapper.call_counter">[docs]</a>    <span class="k">def</span> <span class="nf">call_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_counter</span>
 
     <span class="c">##############################################</span>
 </div>
-<div class="viewcode-block" id="GlCommandWrapper.reset_call_counter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.GlCommandWrapper.reset_call_counter">[docs]</a>    <span class="k">def</span> <span class="nf">reset_call_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GlCommandWrapper.reset_call_counter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.GlCommandWrapper.reset_call_counter">[docs]</a>    <span class="k">def</span> <span class="nf">reset_call_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_call_counter</span> <span class="o">=</span> <span class="mi">0</span>
 
 <span class="c">####################################################################################################</span>
 </div></div>
-<div class="viewcode-block" id="CtypeWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper">[docs]</a><span class="k">class</span> <span class="nc">CtypeWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="CffiWrapper"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.CffiWrapper">[docs]</a><span class="k">class</span> <span class="nc">CffiWrapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="n">libGL</span> <span class="o">=</span> <span class="bp">None</span>
 
-    <span class="n">_logger</span> <span class="o">=</span> <span class="n">_module_logger</span><span class="o">.</span><span class="n">getChild</span><span class="p">(</span><span class="s">&#39;CtypeWrapper&#39;</span><span class="p">)</span>
+    <span class="n">_logger</span> <span class="o">=</span> <span class="n">_module_logger</span><span class="o">.</span><span class="n">getChild</span><span class="p">(</span><span class="s">&#39;CffiWrapper&#39;</span><span class="p">)</span>
 
     <span class="c">##############################################</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="CtypeWrapper.load_library"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.load_library">[docs]</a>    <span class="k">def</span> <span class="nf">load_library</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">libGL_name</span><span class="p">):</span>
+<div class="viewcode-block" id="CffiWrapper.load_library"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.CffiWrapper.load_library">[docs]</a>    <span class="k">def</span> <span class="nf">load_library</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">libGL_name</span><span class="p">):</span>
 
-        <span class="n">cls</span><span class="o">.</span><span class="n">libGL</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">cdll</span><span class="o">.</span><span class="n">LoadLibrary</span><span class="p">(</span><span class="n">libGL_name</span><span class="p">)</span>
-        <span class="n">cls</span><span class="o">.</span><span class="n">libGL</span><span class="o">.</span><span class="n">glGetString</span><span class="o">.</span><span class="n">restype</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char_p</span>
+        <span class="n">basic_api</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">        const char* glGetString(int name);</span>
+<span class="s">        &quot;&quot;&quot;</span>
+        <span class="n">ffi</span><span class="o">.</span><span class="n">cdef</span><span class="p">(</span><span class="n">basic_api</span><span class="p">)</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">libGL</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">dlopen</span><span class="p">(</span><span class="n">libGL_name</span><span class="p">)</span>
         <span class="n">GL_VERSION</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="s">&#39;0x1F02&#39;</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
         <span class="n">version_string</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">libGL</span><span class="o">.</span><span class="n">glGetString</span><span class="p">(</span><span class="n">GL_VERSION</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">version_string</span> <span class="o">!=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">NULL</span><span class="p">:</span>
+            <span class="n">version_string</span> <span class="o">=</span> <span class="n">ffi</span><span class="o">.</span><span class="n">string</span><span class="p">(</span><span class="n">version_string</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">version_string</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="k">return</span> <span class="n">version_string</span>
 
@@ -939,7 +969,7 @@
 
     <span class="c">##############################################</span>
 
-<div class="viewcode-block" id="CtypeWrapper._init_enums"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper._init_enums">[docs]</a>    <span class="k">def</span> <span class="nf">_init_enums</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_enums</span><span class="p">):</span>
+<div class="viewcode-block" id="CffiWrapper._init_enums"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.CffiWrapper._init_enums">[docs]</a>    <span class="k">def</span> <span class="nf">_init_enums</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_enums</span><span class="p">):</span>
 
         <span class="n">gl_enums</span> <span class="o">=</span> <span class="n">GlEnums</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">enum</span> <span class="ow">in</span> <span class="n">api_enums</span><span class="p">:</span>
@@ -953,7 +983,20 @@
 
     <span class="c">##############################################</span>
 </div>
-<div class="viewcode-block" id="CtypeWrapper._init_commands"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper._init_commands">[docs]</a>    <span class="k">def</span> <span class="nf">_init_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_commands</span><span class="p">):</span>
+<div class="viewcode-block" id="CffiWrapper._reload_library"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.CffiWrapper._reload_library">[docs]</a>    <span class="k">def</span> <span class="nf">_reload_library</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_commands</span><span class="p">):</span>
+
+        <span class="n">api_definition</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">api_commands</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
+            <span class="n">prototype</span> <span class="o">=</span> <span class="n">command</span><span class="o">.</span><span class="n">prototype</span><span class="p">(</span><span class="n">with_size</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s">&#39;GLDEBUGPROC&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prototype</span> <span class="ow">and</span> <span class="s">&#39;GLsync&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prototype</span><span class="p">:</span> <span class="c"># Fixme:</span>
+                <span class="n">api_definition</span> <span class="o">+=</span> <span class="n">prototype</span> <span class="o">+</span> <span class="s">&#39;;</span><span class="se">\n</span><span class="s">&#39;</span>
+        <span class="n">ffi</span><span class="o">.</span><span class="n">cdef</span><span class="p">(</span><span class="n">api_definition</span><span class="p">,</span> <span class="n">override</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="CffiWrapper._init_commands"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.CffiWrapper._init_commands">[docs]</a>    <span class="k">def</span> <span class="nf">_init_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_commands</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reload_library</span><span class="p">(</span><span class="n">api_commands</span><span class="p">)</span>
 
         <span class="n">gl_commands</span> <span class="o">=</span> <span class="n">GlCommands</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">api_commands</span><span class="o">.</span><span class="n">itervalues</span><span class="p">():</span>
@@ -977,7 +1020,7 @@
 
     <span class="c">##############################################</span>
 </div>
-<div class="viewcode-block" id="CtypeWrapper.check_error"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.check_error">[docs]</a>    <span class="k">def</span> <span class="nf">check_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CffiWrapper.check_error"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.CffiWrapper.check_error">[docs]</a>    <span class="k">def</span> <span class="nf">check_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="n">error_code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">glGetError</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">error_code</span><span class="p">:</span>
@@ -986,7 +1029,7 @@
 
     <span class="c">##############################################</span>
 </div>
-<div class="viewcode-block" id="CtypeWrapper._error_code_message"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper._error_code_message">[docs]</a>    <span class="k">def</span> <span class="nf">_error_code_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_code</span><span class="p">):</span>
+<div class="viewcode-block" id="CffiWrapper._error_code_message"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.CffiWrapper._error_code_message">[docs]</a>    <span class="k">def</span> <span class="nf">_error_code_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error_code</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">error_code</span><span class="p">:</span>
             <span class="c"># GL_NO_ERROR: The value of this symbolic constant is guaranteed to be 0.</span>
@@ -1011,26 +1054,26 @@
 
     <span class="c">##############################################</span>
 </div>
-<div class="viewcode-block" id="CtypeWrapper.error_checker"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.error_checker">[docs]</a>    <span class="k">def</span> <span class="nf">error_checker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CffiWrapper.error_checker"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.CffiWrapper.error_checker">[docs]</a>    <span class="k">def</span> <span class="nf">error_checker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="n">ErrorContextManager</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="c">##############################################</span>
 </div>
-<div class="viewcode-block" id="CtypeWrapper.called_commands"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.called_commands">[docs]</a>    <span class="k">def</span> <span class="nf">called_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CffiWrapper.called_commands"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.CffiWrapper.called_commands">[docs]</a>    <span class="k">def</span> <span class="nf">called_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         
         <span class="k">return</span> <span class="p">[</span><span class="n">command</span> <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="k">if</span> <span class="n">command</span><span class="o">.</span><span class="n">call_counter</span><span class="p">]</span>
 
     <span class="c">##############################################</span>
 </div>
-<div class="viewcode-block" id="CtypeWrapper.reset_call_counter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.CtypeWrapper.reset_call_counter">[docs]</a>    <span class="k">def</span> <span class="nf">reset_call_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="CffiWrapper.reset_call_counter"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.CffiWrapper.reset_call_counter">[docs]</a>    <span class="k">def</span> <span class="nf">reset_call_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         
         <span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">:</span>
             <span class="n">command</span><span class="o">.</span><span class="n">reset_call_counter</span><span class="p">()</span>
 
 <span class="c">####################################################################################################</span>
 </div></div>
-<div class="viewcode-block" id="ErrorContextManager"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CtypeWrapper.html#PyOpenGLng.Wrapper.CtypeWrapper.ErrorContextManager">[docs]</a><span class="k">class</span> <span class="nc">ErrorContextManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ErrorContextManager"><a class="viewcode-back" href="../../../api/PyOpenGLng/Wrapper/CffiWrapper.html#PyOpenGLng.Wrapper.CffiWrapper.ErrorContextManager">[docs]</a><span class="k">class</span> <span class="nc">ErrorContextManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="c">##############################################</span>
 

@@ -1,0 +1,10 @@
+*******************
+ :mod:`.#__init__`
+*******************
+
+.. automodule:: PyOpenGLng.GlApi..#__init__
+   :members:
+   :show-inheritance:
+
+
+.. End

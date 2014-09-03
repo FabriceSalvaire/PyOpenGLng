@@ -63,8 +63,8 @@
 <li class="toctree-l1"><a class="reference internal" href="GlApi/ManualParser.html">4.1.2.2. <tt class="docutils literal"><span class="pre">ManualParser</span></tt></a></li>
 </ul>
 </div>
-<span class="target" id="module-PyOpenGLng.GlApi"></span><p>This module implements an Oriented Object interface to the OpenGL Registry XML file which
-describe the OpenGL API and theses official extensions.</p>
+<span class="target" id="module-PyOpenGLng.GlApi"></span><p>This module implements an Oriented Object interface to the <a class="reference external" href="http://www.opengl.org/registry">OpenGL XML API Registry</a> which describe the OpenGL API and theses official extensions. The
+XML file and its relative documentation are stored in the <a class="reference external" href="https://cvs.khronos.org/svn/repos/ogl/trunk/doc/registry/public/api">Khronos OpenGL API CVS</a>.</p>
 <p>To generate the API of a particular OpenGL version uses for example this code snippet:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">xml_file_path</span> <span class="o">=</span> <span class="n">default_api_path</span><span class="p">(</span><span class="s">&#39;gl&#39;</span><span class="p">)</span> <span class="c"># path to gl.xml</span>
 <span class="n">gl_spec</span> <span class="o">=</span> <span class="n">GlSpecParser</span><span class="p">(</span><span class="n">xml_file_path</span><span class="p">)</span>
@@ -170,7 +170,7 @@ expected to be found in other header files, should not be wrapped in <tt class="
 
 <dl class="method">
 <dt id="PyOpenGLng.GlApi.Command.prototype">
-<tt class="descname">prototype</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Command.prototype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Command.prototype" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">prototype</tt><big>(</big><em>with_size=True</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Command.prototype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Command.prototype" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the C function prototype.</p>
 </dd></dl>
 
@@ -499,7 +499,7 @@ destination keys.</p>
 
 <dl class="attribute">
 <dt id="PyOpenGLng.GlApi.GlSpecParser._logger">
-<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x3675c10&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._logger" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x39cd310&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._logger" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -727,13 +727,13 @@ in <tt class="docutils literal"><span class="pre">&lt;ptype&gt;</span></tt> tags
 </div></blockquote>
 <dl class="method">
 <dt id="PyOpenGLng.GlApi.Parameter._format_type">
-<tt class="descname">_format_type</tt><big>(</big><em>type_string</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Parameter._format_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Parameter._format_type" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">_format_type</tt><big>(</big><em>type_string</em>, <em>with_size=True</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Parameter._format_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Parameter._format_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Format a type, add <tt class="docutils literal"><span class="pre">const</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">[]</span></tt> if they are relevant.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="PyOpenGLng.GlApi.Parameter.format_gl_type">
-<tt class="descname">format_gl_type</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Parameter.format_gl_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Parameter.format_gl_type" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">format_gl_type</tt><big>(</big><em>with_size=True</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Parameter.format_gl_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Parameter.format_gl_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>format the translated type parameter.</p>
 </dd></dl>
 
@@ -750,7 +750,7 @@ in <tt class="docutils literal"><span class="pre">&lt;ptype&gt;</span></tt> tags
 
 <dl class="method">
 <dt id="PyOpenGLng.GlApi.Parameter.prototype">
-<tt class="descname">prototype</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Parameter.prototype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Parameter.prototype" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">prototype</tt><big>(</big><em>with_size=True</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Parameter.prototype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Parameter.prototype" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the C parameter declaration but with translated type.</p>
 </dd></dl>
 
@@ -862,7 +862,7 @@ no content, but contains elements:</p>
 </div></blockquote>
 <dl class="attribute">
 <dt id="PyOpenGLng.GlApi.RequiredInterface._logger">
-<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x3675a90&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredInterface._logger" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x39cd190&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredInterface._logger" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">

@@ -101,7 +101,8 @@
         <span class="kn">from</span> <span class="nn">.CtypeWrapper</span> <span class="kn">import</span> <span class="n">CtypeWrapper</span>
         <span class="n">Wrapper</span> <span class="o">=</span> <span class="n">CtypeWrapper</span>
     <span class="k">elif</span> <span class="n">wrapper</span> <span class="o">==</span> <span class="s">&#39;cffi&#39;</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="kn">from</span> <span class="nn">.CffiWrapper</span> <span class="kn">import</span> <span class="n">CffiWrapper</span>
+        <span class="n">Wrapper</span> <span class="o">=</span> <span class="n">CffiWrapper</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;wrapper must be &#39;ctypes&#39; or &#39;cffi&#39;&quot;</span><span class="p">)</span>
 
@@ -111,6 +112,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="c"># Fixme: store ApiNumber in CtypeWrapper</span>
+    <span class="c"># Fixme: called before context for example ???</span>
     <span class="n">version_string</span> <span class="o">=</span> <span class="n">Wrapper</span><span class="o">.</span><span class="n">load_library</span><span class="p">(</span><span class="n">libGL_name</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">check_api_number</span><span class="p">:</span>
