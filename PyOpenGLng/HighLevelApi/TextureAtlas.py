@@ -97,7 +97,10 @@ class TextureAtlas:
         self._height = ceil2(height)
         self._width = ceil2(width)
         self._depth = depth
-        self._data = np.zeros((self._height, self._width, self._depth), dtype=np.ubyte)
+        if self._depth == 1: # Fixme: check?
+            self._data = np.zeros((self._height, self._width), dtype=np.ubyte)
+        else:
+            self._data = np.zeros((self._height, self._width, self._depth), dtype=np.ubyte)
         self._nodes = [(0, 0, self._width)]
         self._used = 0 # used area
 
@@ -138,7 +141,10 @@ class TextureAtlas:
 
         # self._logger.debug(str(region))
         x, y, width, height = region
-        self._data[y:y+height, x:x+width, :] = data
+        if self._depth == 1: # Fixme: check?
+            self._data[y:y+height, x:x+width] = data
+        else:
+            self._data[y:y+height, x:x+width, :] = data
 
     ##############################################
 
