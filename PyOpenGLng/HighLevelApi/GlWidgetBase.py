@@ -215,7 +215,6 @@ class GlWidgetBase(QtOpenGL.QGLWidget):
     
     def zoom_interval(self, interval):
 
-        self.viewport_history.push_viewport_state('zoom bounding box')
         self.glortho2d.zoom_interval(interval)
         self.update()
 
