@@ -96,8 +96,12 @@ class ImageTexture(object):
 
         GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP)
         GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP)
-        GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
-        GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR)
+        minifying_function = GL.GL_LINEAR
+        # minifying_function = GL.GL_NEAREST
+        # minifying_function = GL.GL_LINEAR_MIPMAP_LINEAR
+        # minifying_function = GL.GL_NEAREST_MIPMAP_NEAREST
+        GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, minifying_function)
+        GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, minifying_function)
 
         # Fixme: required?
         GL.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1) # 1 means byte-alignment
