@@ -585,11 +585,9 @@ class InputArrayWrapper(ArrayWrapper):
             #     size_parameter = array.nbytes
             # ctypes_parameter = array.ctypes.data_as(ctypes.c_void_p)
             ctypes_parameter = ffi.cast(self._pointer_type + ' *',   array.__array_interface__['data'][0])
-        # elif isinstance(array, collections.Iterable):
-        #     self._logger.debug('Iterable') # unused
-        #     size_parameter = len(array)
-        #     array_type = self._pointer_type * size_parameter
-        #     ctypes_parameter = array_type(array)
+        elif isinstance(array, collections.Iterable):
+            size_parameter = len(array)
+            ctypes_parameter = ffi.new(self._pointer_type + '[]', array)
         else:
             raise ValueError(str(array))
 

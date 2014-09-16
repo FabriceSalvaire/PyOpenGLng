@@ -92,7 +92,7 @@ class GlBuffer(object):
     def __del__(self):
 
         self._logger.debug("Delete Object %u" % (self._buffer_object_id))
-        GL.glDeleteBuffers(1, [self._buffer_object_id])
+        GL.glDeleteBuffers([self._buffer_object_id])
 
     ##############################################
     

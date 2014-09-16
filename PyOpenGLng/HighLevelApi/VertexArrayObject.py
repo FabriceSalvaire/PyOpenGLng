@@ -60,7 +60,7 @@ class GlVertexArrayObject(object):
     def __del__(self):
 
         self._logger.debug("Delete VAO %u" % (self._vao_id))
-        GL.glDeleteVertexArrays(1, [self._vao_id])
+        GL.glDeleteVertexArrays([self._vao_id])
 
     ##############################################
     
