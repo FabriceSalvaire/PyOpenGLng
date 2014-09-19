@@ -381,7 +381,6 @@ class TextureGlyph(object):
         Build a new texture glyph
 
         Parameter:
-        ----------
 
         charcode : char
             Represented character
@@ -414,7 +413,6 @@ class TextureGlyph(object):
         """ Get kerning information
 
         Parameters:
-        -----------
 
         charcode: char
             Character preceding this glyph

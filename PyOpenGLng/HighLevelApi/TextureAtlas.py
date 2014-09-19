@@ -63,13 +63,12 @@ class TextureAtlas:
     this is an implementation of the Skyline Bottom-Left algorithm based on C++ sources provided by
     Jukka Jylänki at: http://clb.demon.fi/files/RectangleBinPack/
 
-    Example usage:
-    --------------
+    Example usage::
 
-    atlas = TextureAtlas(512,512,3)
-    region = atlas.get_region(20,20)
-    ...
-    atlas.set_region(region, data)
+        atlas = TextureAtlas(512,512,3)
+        region = atlas.get_region(20,20)
+        ...
+        atlas.set_region(region, data)
     """
 
     _logger = _module_logger.getChild('TextureAtlas')
@@ -82,7 +81,6 @@ class TextureAtlas:
         Initialize a new atlas of given size.
 
         Parameters
-        ----------
 
         width : int
             Width of the underlying texture
@@ -130,7 +128,6 @@ class TextureAtlas:
         Set a given region width provided data.
 
         Parameters
-        ----------
 
         region : (int,int,int,int)
             an allocated region (x,y,width,height)
@@ -154,7 +151,6 @@ class TextureAtlas:
         Get a free region of given size and allocate it
 
         Parameters
-        ----------
 
         width : int
             Width of region to allocate
@@ -163,7 +159,6 @@ class TextureAtlas:
             Height of region to allocate
 
         Return
-        ------
             A newly allocated region as (x,y,width,height) or (-1,-1,0,0)
         """
 
@@ -219,7 +214,6 @@ class TextureAtlas:
         Test if region (width,height) fit into self._nodes[index]
 
         Parameters
-        ----------
 
         index : int
             Index of the internal node to be tested
