@@ -97,4 +97,14 @@ And you can translate the GL type to C using::
 
     void glActiveTexture (unsigned int texture)
 
+To get the translation use::
+
+    > query-opengl-api --api=gl --api-number=3.3 --profile=core --build-wrapper --command glDeleteBuffers
+
+    glDeleteBuffers - delete named buffer objects
+    
+    glDeleteBuffers (InputArrayWrapper<const unsigned int * [n]> buffers)
+    
+    void glDeleteBuffers (GLsizei n, const GLuint * [n] buffers)
+
 .. End

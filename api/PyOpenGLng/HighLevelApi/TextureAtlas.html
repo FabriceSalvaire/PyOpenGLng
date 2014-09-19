@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -66,11 +68,15 @@
 Practical Approach to Two-Dimensional Rectangle Bin Packing&#8221;, February 27, 2010. More precisely,
 this is an implementation of the Skyline Bottom-Left algorithm based on C++ sources provided by
 Jukka Jylänki at: <a class="reference external" href="http://clb.demon.fi/files/RectangleBinPack/">http://clb.demon.fi/files/RectangleBinPack/</a></p>
-<p>atlas = TextureAtlas(512,512,3)
-region = atlas.get_region(20,20)
-...
-atlas.set_region(region, data)</p>
+<p>Example usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">atlas</span> <span class="o">=</span> <span class="n">TextureAtlas</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span><span class="mi">512</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">region</span> <span class="o">=</span> <span class="n">atlas</span><span class="o">.</span><span class="n">get_region</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="n">atlas</span><span class="o">.</span><span class="n">set_region</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>Initialize a new atlas of given size.</p>
+<p>Parameters</p>
 <dl class="docutils">
 <dt>width <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
 <dd>Width of the underlying texture</dd>
@@ -83,6 +89,7 @@ atlas.set_region(region, data)</p>
 <dt id="PyOpenGLng.HighLevelApi.TextureAtlas.TextureAtlas._fit">
 <tt class="descname">_fit</tt><big>(</big><em>index</em>, <em>width</em>, <em>height</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureAtlas.html#TextureAtlas._fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureAtlas.TextureAtlas._fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test if region (width,height) fit into self._nodes[index]</p>
+<p>Parameters</p>
 <dl class="docutils">
 <dt>index <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
 <dd>Index of the internal node to be tested</dd>
@@ -95,7 +102,7 @@ atlas.set_region(region, data)</p>
 
 <dl class="attribute">
 <dt id="PyOpenGLng.HighLevelApi.TextureAtlas.TextureAtlas._logger">
-<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0xa1c7a50&gt;</em><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureAtlas.TextureAtlas._logger" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x8211c10&gt;</em><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureAtlas.TextureAtlas._logger" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -118,14 +125,15 @@ atlas.set_region(region, data)</p>
 <dt id="PyOpenGLng.HighLevelApi.TextureAtlas.TextureAtlas.get_region">
 <tt class="descname">get_region</tt><big>(</big><em>width</em>, <em>height</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureAtlas.html#TextureAtlas.get_region"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureAtlas.TextureAtlas.get_region" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a free region of given size and allocate it</p>
+<p>Parameters</p>
 <dl class="docutils">
 <dt>width <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
 <dd>Width of region to allocate</dd>
 <dt>height <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
 <dd>Height of region to allocate</dd>
+<dt>Return</dt>
+<dd>A newly allocated region as (x,y,width,height) or (-1,-1,0,0)</dd>
 </dl>
-<blockquote>
-<div>A newly allocated region as (x,y,width,height) or (-1,-1,0,0)</div></blockquote>
 </dd></dl>
 
 <dl class="attribute">
@@ -142,6 +150,7 @@ atlas.set_region(region, data)</p>
 <dt id="PyOpenGLng.HighLevelApi.TextureAtlas.TextureAtlas.set_region">
 <tt class="descname">set_region</tt><big>(</big><em>region</em>, <em>data</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/TextureAtlas.html#TextureAtlas.set_region"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.TextureAtlas.TextureAtlas.set_region" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a given region width provided data.</p>
+<p>Parameters</p>
 <dl class="docutils">
 <dt>region <span class="classifier-delimiter">:</span> <span class="classifier">(int,int,int,int)</span></dt>
 <dd>an allocated region (x,y,width,height)</dd>
@@ -222,7 +231,7 @@ atlas.set_region(region, data)</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Fabrice Salvaire.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

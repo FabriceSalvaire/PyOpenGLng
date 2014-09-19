@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -145,8 +147,12 @@
 
         <span class="n">GL</span><span class="o">.</span><span class="n">glTexParameteri</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_TEXTURE_WRAP_S</span><span class="p">,</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_CLAMP</span><span class="p">)</span>
         <span class="n">GL</span><span class="o">.</span><span class="n">glTexParameteri</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_TEXTURE_WRAP_T</span><span class="p">,</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_CLAMP</span><span class="p">)</span>
-        <span class="n">GL</span><span class="o">.</span><span class="n">glTexParameteri</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_TEXTURE_MAG_FILTER</span><span class="p">,</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_LINEAR</span><span class="p">)</span>
-        <span class="n">GL</span><span class="o">.</span><span class="n">glTexParameteri</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_TEXTURE_MIN_FILTER</span><span class="p">,</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_LINEAR</span><span class="p">)</span>
+        <span class="n">minifying_function</span> <span class="o">=</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_LINEAR</span>
+        <span class="c"># minifying_function = GL.GL_NEAREST</span>
+        <span class="c"># minifying_function = GL.GL_LINEAR_MIPMAP_LINEAR</span>
+        <span class="c"># minifying_function = GL.GL_NEAREST_MIPMAP_NEAREST</span>
+        <span class="n">GL</span><span class="o">.</span><span class="n">glTexParameteri</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_TEXTURE_MAG_FILTER</span><span class="p">,</span> <span class="n">minifying_function</span><span class="p">)</span>
+        <span class="n">GL</span><span class="o">.</span><span class="n">glTexParameteri</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_TEXTURE_MIN_FILTER</span><span class="p">,</span> <span class="n">minifying_function</span><span class="p">)</span>
 
         <span class="c"># Fixme: required?</span>
         <span class="n">GL</span><span class="o">.</span><span class="n">glPixelStorei</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_UNPACK_ALIGNMENT</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="c"># 1 means byte-alignment</span>
@@ -234,7 +240,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Fabrice Salvaire.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

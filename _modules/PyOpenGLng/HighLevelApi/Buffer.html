@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -141,7 +143,7 @@
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Delete Object </span><span class="si">%u</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer_object_id</span><span class="p">))</span>
-        <span class="n">GL</span><span class="o">.</span><span class="n">glDeleteBuffers</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer_object_id</span><span class="p">])</span>
+        <span class="n">GL</span><span class="o">.</span><span class="n">glDeleteBuffers</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer_object_id</span><span class="p">])</span>
 
     <span class="c">##############################################</span>
     
@@ -289,7 +291,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Fabrice Salvaire.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

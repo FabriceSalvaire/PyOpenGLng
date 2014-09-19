@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -13,7 +15,7 @@
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
+        URL_ROOT:    '',
         VERSION:     '0.1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -57,7 +59,7 @@
 <p>The command <strong class="command">query-opengl-api</strong> in the <tt class="file docutils literal"><span class="pre">bin</span></tt> directory provides a tool to query the
 OpenGL API using the <a class="reference internal" href="api/PyOpenGLng/GlApi.html#module-PyOpenGLng.GlApi" title="PyOpenGLng.GlApi"><tt class="xref py py-obj docutils literal"><span class="pre">PyOpenGLng.GlApi</span></tt></a> module.</p>
 <p>The online help could be printed on the terminal using the command:</p>
-<div class="highlight-python"><div class="highlight"><pre>&gt; query-opengl-api --help
+<div class="highlight-python"><pre>&gt; query-opengl-api --help
 
 usage: query-opengl-api [-h] --api {gl,gles} --api-number API_NUMBER
                         [--profile {core,compatibility}] [--validate]
@@ -94,55 +96,57 @@ optional arguments:
                         (default: False)
   --enum ENUM           Show enum property (default: None)
   --command COMMAND     Show command prototype (default: None)
-  --man MAN             Show man page (default: None)
-</pre></div>
+  --man MAN             Show man page (default: None)</pre>
 </div>
 <p>We will presents the main functions in the followings.</p>
 <p>In any case, you have to select an API, its number and profile. As example we will use the OpenGL V3.3
 core profile API.</p>
 <p>You can print a summary on the API using:</p>
-<div class="highlight-python"><div class="highlight"><pre>&gt; query-opengl-api --api=gl --api-number=3.3 --profile=core --summary
+<div class="highlight-python"><pre>&gt; query-opengl-api --api=gl --api-number=3.3 --profile=core --summary
 
 OpenGL API gl 3.3 profile: core
   - Number of Enums:      797
-  - Number of Commands:   344
-</pre></div>
+  - Number of Commands:   344</pre>
 </div>
 <p>You can list all the enumerants using:</p>
-<div class="highlight-python"><div class="highlight"><pre>&gt; query-opengl-api --api=gl --api-number=3.3 --profile=core --list-enums
+<div class="highlight-python"><pre>&gt; query-opengl-api --api=gl --api-number=3.3 --profile=core --list-enums
 
 Enum GL_ACTIVE_ATTRIBUTES = 0x8b89
 Enum GL_ACTIVE_ATTRIBUTE_MAX_LENGTH = 0x8b8a
 Enum GL_ACTIVE_TEXTURE = 0x84e0
-...
-</pre></div>
+...</pre>
 </div>
 <p>You can list all the commands using:</p>
-<div class="highlight-python"><div class="highlight"><pre>&gt; query-opengl-api --api=gl --api-number=3.3 --profile=core --list-commands
+<div class="highlight-python"><pre>&gt; query-opengl-api --api=gl --api-number=3.3 --profile=core --list-commands
 
 glActiveTexture
 glAttachShader
 glBeginConditionalRender
-...
-</pre></div>
+...</pre>
 </div>
 <p>You can print the definition of an enumerant using:</p>
-<div class="highlight-python"><div class="highlight"><pre>&gt; query-opengl-api --api=gl --api-number=3.3 --profile=core --enum GL_ACTIVE_ATTRIBUTES
+<div class="highlight-python"><pre>&gt; query-opengl-api --api=gl --api-number=3.3 --profile=core --enum GL_ACTIVE_ATTRIBUTES
 
-Enum GL_ACTIVE_ATTRIBUTES = 0x8b89 (type: None, alias: None, api: None, comment: None)
-</pre></div>
+Enum GL_ACTIVE_ATTRIBUTES = 0x8b89 (type: None, alias: None, api: None, comment: None)</pre>
 </div>
 <p>You can print the definition of a command using:</p>
-<div class="highlight-python"><div class="highlight"><pre>&gt; query-opengl-api --api=gl --api-number=3.3 --profile=core --command glActiveTexture
+<div class="highlight-python"><pre>&gt; query-opengl-api --api=gl --api-number=3.3 --profile=core --command glActiveTexture
 
-void glActiveTexture (GLenum texture)
-</pre></div>
+void glActiveTexture (GLenum texture)</pre>
 </div>
 <p>And you can translate the GL type to C using:</p>
-<div class="highlight-python"><div class="highlight"><pre>&gt; query-opengl-api --api=gl --api-number=3.3 --profile=core --command glActiveTexture --translate-type
+<div class="highlight-python"><pre>&gt; query-opengl-api --api=gl --api-number=3.3 --profile=core --command glActiveTexture --translate-type
 
-void glActiveTexture (unsigned int texture)
-</pre></div>
+void glActiveTexture (unsigned int texture)</pre>
+</div>
+<p>To get the translation use:</p>
+<div class="highlight-python"><pre>&gt; query-opengl-api --api=gl --api-number=3.3 --profile=core --build-wrapper --command glDeleteBuffers
+
+glDeleteBuffers - delete named buffer objects
+
+glDeleteBuffers (InputArrayWrapper&lt;const unsigned int * [n]&gt; buffers)
+
+void glDeleteBuffers (GLsizei n, const GLuint * [n] buffers)</pre>
 </div>
 </div>
 
@@ -200,7 +204,7 @@ void glActiveTexture (unsigned int texture)
     </div>
     <div class="footer">
         &copy; Copyright 2013, Fabrice Salvaire.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

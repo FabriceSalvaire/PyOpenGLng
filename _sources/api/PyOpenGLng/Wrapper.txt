@@ -3,7 +3,6 @@
 ****************
 
 .. toctree::
-  Wrapper/.#CtypeWrapper
   Wrapper/CffiWrapper
   Wrapper/CtypeWrapper
   Wrapper/PythonicWrapper
