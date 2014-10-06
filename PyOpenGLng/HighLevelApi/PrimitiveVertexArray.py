@@ -152,6 +152,64 @@ class GlRectangleVertexArray(GlLinesVertexArray):
         self._vertex_array_buffer.set(vertex)
 
 ####################################################################################################
+
+class TriangleVertexArray(GlVertexArrayObject):
+
+    """ Base class to draw primitives as triangles. """
+
+    ##############################################
+    
+    def __init__(self, items=None):
+
+        super(TriangleVertexArray, self).__init__()
+
+        self._number_of_items = 0
+        self._positions_buffer = GlArrayBuffer()
+        self._colours_buffer = GlArrayBuffer()
+
+        if items is not None:
+            self.set(*items)
+
+    ##############################################
+    
+    def set(self, positions, colours):
+
+        """ Set the vertex array from an iterable of triangles. """
+
+        self._number_of_items = positions.shape[0]
+
+        # Fixme:
+        #  - set from high level primitive: slow
+        #  - set from Numpy array: fast but check for mistake
+
+        # vertex = np.zeros((self._number_of_objects, 3), dtype='f') # dtype=np.float
+
+        self._positions_buffer.set(positions)
+        self._colours_buffer.set(colours)
+
+    ##############################################
+    
+    def bind_to_shader(self, shader_program_interface):
+
+        """ Bind the vertex array to the shader program interface attribute.
+        """
+
+        self.bind()
+        shader_program_interface.position.bind_to_buffer(self._positions_buffer)
+        shader_program_interface.colour.bind_to_buffer(self._colours_buffer)
+        self.unbind()
+
+    ##############################################
+    
+    def draw(self):
+
+        """ Draw the vertex array as lines. """
+
+        self.bind()
+        GL.glDrawArrays(GL.GL_TRIANGLES, 0, 3*self._number_of_items)
+        self.unbind()
+
+####################################################################################################
 #
 # End
 #
