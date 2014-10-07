@@ -157,6 +157,8 @@ class TriangleVertexArray(GlVertexArrayObject):
 
     """ Base class to draw primitives as triangles. """
 
+    # Fixme: 3d
+
     ##############################################
     
     def __init__(self, items=None):
@@ -165,6 +167,7 @@ class TriangleVertexArray(GlVertexArrayObject):
 
         self._number_of_items = 0
         self._positions_buffer = GlArrayBuffer()
+        self._normals_buffer = GlArrayBuffer()
         self._colours_buffer = GlArrayBuffer()
 
         if items is not None:
@@ -172,7 +175,7 @@ class TriangleVertexArray(GlVertexArrayObject):
 
     ##############################################
     
-    def set(self, positions, colours):
+    def set(self, positions, normals, colours):
 
         """ Set the vertex array from an iterable of triangles. """
 
@@ -185,6 +188,7 @@ class TriangleVertexArray(GlVertexArrayObject):
         # vertex = np.zeros((self._number_of_objects, 3), dtype='f') # dtype=np.float
 
         self._positions_buffer.set(positions)
+        self._normals_buffer.set(normals)
         self._colours_buffer.set(colours)
 
     ##############################################
@@ -194,8 +198,11 @@ class TriangleVertexArray(GlVertexArrayObject):
         """ Bind the vertex array to the shader program interface attribute.
         """
 
+        # Fixme: we cannot reuse the vbo
+
         self.bind()
         shader_program_interface.position.bind_to_buffer(self._positions_buffer)
+        shader_program_interface.normal.bind_to_buffer(self._normals_buffer)
         shader_program_interface.colour.bind_to_buffer(self._colours_buffer)
         self.unbind()
 

@@ -41,6 +41,11 @@ argument_parser.add_argument('--wrapper',
                              choices=('ctypes', 'cffi'),
                              help='set the wrapper')
 
+argument_parser.add_argument('--example',
+                             default='2d',
+                             choices=('2d', '3d'),
+                             help='Select example')
+
 args = argument_parser.parse_args()
 
 ####################################################################################################
@@ -69,12 +74,17 @@ if args.debug_level != 'none':
 
 ####################################################################################################
 
-if args.opengl == 'v3':
-    from GlWidgetV3 import GlWidget
-elif args.opengl == 'v4':
-    from GlWidgetV4 import GlWidget
+if args.example == '2d':
+    if args.opengl == 'v3':
+        from GlWidgetV3 import GlWidget
+    elif args.opengl == 'v4':
+        from GlWidgetV4 import GlWidget
+    else:
+        raise ValueError('Unsupported OpenGL version')
+elif args.example == '3d':
+    from GlWidget3dV4 import GlWidget
 else:
-    raise ValueError('Unsupported OpenGL version')
+    raise ValueError('Unknown example')
 
 ####################################################################################################
 
