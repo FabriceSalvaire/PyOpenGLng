@@ -20,6 +20,8 @@
 
 ####################################################################################################
 
+import math
+
 import numpy as np
 
 ####################################################################################################
@@ -38,6 +40,21 @@ def norm(x):
     v = np.sqrt(np.sum(x**2, axis=1))
     v.shape = x.shape[0], 1
     return v
+
+####################################################################################################
+
+def compute_normals(positions):
+
+    # (V{i+1} - Vi)x(V{i+2} - V{i+1})
+    vertex1 = positions[::3]
+    vertex2 = positions[1::3]
+    vertex3 = positions[2::3]
+    vector1 = vertex2 - vertex1
+    vector2 = vertex3 - vertex2
+    normals = np.cross(vector1, vector2, axisa=-1, axisb=-1, axisc=-1)
+    normals /= norm(normals)
+
+    return normals
 
 ####################################################################################################
 
@@ -85,17 +102,7 @@ def unit_cube():
         position8, position4, position6], # near
                          dtype=np.float32)
 
-
-    # (V{i+1} - Vi)x(V{i+2} - V{i+1})
-    vertex1 = positions[::3]
-    vertex2 = positions[1::3]
-    vertex3 = positions[2::3]
-    vector1 = vertex2 - vertex1
-    vector2 = vertex3 - vertex2
-    normals = np.cross(vector1, vector2, axisa=-1, axisb=-1, axisc=-1)
-    normals /= norm(normals)
-
-    return positions, normals
+    return positions, compute_normals(positions)
 
 ####################################################################################################
 
@@ -130,6 +137,126 @@ def cube(width, height, depth):
         colour8, colour4, colour6], # near
                          dtype=np.float32)
     
+    return TriangleVertexArray((positions, normals, colours))
+
+####################################################################################################
+
+def sperical_to_cartesian(radius, inclination, azymuth):
+    rs = radius * math.sin(inclination)
+    return rs*math.cos(azymuth), rs*math.sin(azymuth), radius*math.cos(inclination)
+
+####################################################################################################
+
+def unit_sphere():
+
+    radius = 1
+    level_of_details = 30
+
+    # longitude_step = 360./level_of_details
+    # latitude_step = 90./level_of_details
+    # for longitude in np.arange(0., 360., longitude_step):
+    #     for latitude in np.arange(-90., 90., latitude_step):
+
+    inclination_step = math.pi / level_of_details
+    azymuth_step = 2*math.pi / level_of_details
+
+    vertexes = []
+
+    for azymuth in np.arange(0., 2*math.pi, azymuth_step):
+        for i, inclination in enumerate(np.arange(0., math.pi, inclination_step)):
+            next_inclination = inclination + inclination_step
+            next_azymuth = azymuth + azymuth_step
+            vertex1 = sperical_to_cartesian(radius, inclination, azymuth)
+            vertex2 = sperical_to_cartesian(radius, next_inclination, azymuth)
+            vertex3 = sperical_to_cartesian(radius, inclination, next_azymuth)
+            vertex4 = sperical_to_cartesian(radius, next_inclination, next_azymuth)
+            if i == 0:
+                vertexes.append(vertex1)
+                vertexes.append(vertex2)
+                vertexes.append(vertex4)
+            elif i == level_of_details -1:
+                vertexes.append(vertex1)
+                vertexes.append(vertex2)
+                vertexes.append(vertex3)
+            else:
+                vertexes.append(vertex1)
+                vertexes.append(vertex2)
+                vertexes.append(vertex3)
+                vertexes.append(vertex3)
+                vertexes.append(vertex2)
+                vertexes.append(vertex4)
+
+    positions = np.array(vertexes, dtype=np.float32)
+
+    return positions, compute_normals(positions)
+
+####################################################################################################
+
+def sphere(radius):
+
+    # Fixme: scale!
+
+    positions, normals = unit_sphere()
+
+    colour = (1, 0, 0, 1)
+    colours = np.zeros((positions.shape[0], 4), dtype=np.float32)
+    colours[...] = colour
+
+    return TriangleVertexArray((positions, normals, colours))
+
+####################################################################################################
+
+def torus_to_cartesian(radius, section_radius, inclination, azymuth):
+    c = math.cos(azymuth)
+    s = math.sin(azymuth) 
+    z = section_radius*math.cos(inclination)
+    r = radius + section_radius*math.sin(inclination) 
+    return r*c, r*s, z
+
+####################################################################################################
+
+def unit_torus():
+
+    radius = .5
+    section_radius = .3
+    level_of_details = 30
+
+    inclination_step = 2*math.pi / level_of_details
+    azymuth_step = 2*math.pi / level_of_details
+
+    vertexes = []
+
+    for azymuth in np.arange(0., 2*math.pi, azymuth_step):
+        for inclination in np.arange(0., 2*math.pi, inclination_step):
+            next_inclination = inclination + inclination_step
+            next_azymuth = azymuth + azymuth_step
+            vertex1 = torus_to_cartesian(radius, section_radius, inclination, azymuth)
+            vertex2 = torus_to_cartesian(radius, section_radius, next_inclination, azymuth)
+            vertex3 = torus_to_cartesian(radius, section_radius, inclination, next_azymuth)
+            vertex4 = torus_to_cartesian(radius, section_radius, next_inclination, next_azymuth)
+            vertexes.append(vertex1)
+            vertexes.append(vertex2)
+            vertexes.append(vertex3)
+            vertexes.append(vertex3)
+            vertexes.append(vertex2)
+            vertexes.append(vertex4)
+        
+    positions = np.array(vertexes, dtype=np.float32)
+
+    return positions, compute_normals(positions)
+
+####################################################################################################
+
+def torus(radius):
+
+    # Fixme: scale!
+
+    positions, normals = unit_torus()
+
+    colour = (1, 0, 0, 1)
+    colours = np.zeros((positions.shape[0], 4), dtype=np.float32)
+    colours[...] = colour
+
     return TriangleVertexArray((positions, normals, colours))
 
 ####################################################################################################
