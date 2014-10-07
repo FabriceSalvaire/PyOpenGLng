@@ -1,31 +1,29 @@
 /* *********************************************************************************************** */
 
-// #shader_type vertex
+// #shader_type fragment
 
-#version 330
-
-/* *********************************************************************************************** */
-
-#include(../include/model_view_projection_matrix_3d.glsl)
-#include(../include/position_shader_program_interface_3d.glsl)
+#version 400
 
 /* *********************************************************************************************** */
 
-uniform vec4 fixed_colour = vec4(1, 1, 1, 1);
-
-/* *********************************************************************************************** */
-
-out VertexAttributes
+in VertexAttributes
 {
-  vec4 colour;
+  vec3 front_colour;
+  vec3 back_colour;
 } vertex;
+
+/* *********************************************************************************************** */
+
+layout( location = 0 ) out vec4 fragment_colour;
 
 /* *********************************************************************************************** */
 
 void main()
 {
-  gl_Position = model_view_projection_matrix * vec4(position, 1);
-  vertex.colour = fixed_colour;
+  if (gl_FrontFacing)
+    fragment_colour = vec4(vertex.front_colour, 1.);
+  else
+    fragment_colour = vec4(vertex.back_colour, 1.);
 }
 
 /* *********************************************************************************************** *

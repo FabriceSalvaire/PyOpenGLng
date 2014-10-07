@@ -18,8 +18,9 @@ import numpy as np
 from PyOpenGLng.HighLevelApi import GL
 from PyOpenGLng.HighLevelApi.Buffer import GlUniformBuffer
 from PyOpenGLng.HighLevelApi.GlWidgetBase3D import GlWidgetBase3D
-from PyOpenGLng.HighLevelApi.Solids import cube
+from PyOpenGLng.HighLevelApi.Solids import cube, sphere, torus
 from PyOpenGLng.HighLevelApi.Transforms import *
+from PyOpenGLng.HighLevelApi.STL import StlParser
 from PyOpenGLng.Tools.Interval import IntervalInt2D
 
 ####################################################################################################
@@ -68,31 +69,46 @@ class GlWidget(GlWidgetBase3D):
 
         self.logger.debug('Update Model View Projection Matrix')
 
-        model_matrix = identity()
-        rotate_x(model_matrix, self.rotation_x)
-        rotate_y(model_matrix, self.rotation_y)
-        view_matrix = ortho(-2, 2, -2, 2, -2, 2)
-        model_view_matrix = np.dot(model_matrix, view_matrix)
-        self._viewport_uniform_buffer.set(model_view_matrix)
+        model_view_matrix = identity()
+        rotate_x(model_view_matrix, self.rotation_x)
+        rotate_y(model_view_matrix, self.rotation_y)
+        normal_matrix = model_view_matrix[:3,:3] # without translation
+        projection_matrix = ortho(-2, 2, -2, 2, -2, 2)
+        model_view_projection_matrix = np.dot(model_view_matrix, projection_matrix)
+
+        viewport_array = np.array(list(model_view_projection_matrix.transpose().flatten()) +
+                                  list(model_view_matrix.transpose().flatten()) +
+                                  list(normal_matrix.transpose().flatten()) +
+                                  list(projection_matrix.transpose().flatten()),
+                                  dtype=np.float32)
+
+        self._viewport_uniform_buffer.set(viewport_array)
 
     ##############################################
 
     def create_vertex_array_objects(self):
 
-        self.create_cube()
+        self.create_object()
 
     ##############################################
 
-    def create_cube(self):
+    def create_object(self):
 
-        self.cube_vertex_array = cube(1, 1, 1)
-        self.cube_vertex_array.bind_to_shader(self.basic_shader_interface.attributes)
+        # self.object_vertex_array = cube(1, 1, 1)
+        # self.object_vertex_array = sphere(1)
+        # self.object_vertex_array = torus(1)
+
+        # stl_path = 'cube.stl'
+        stl_path = 'cardan.stl'
+        stl_parser = StlParser(stl_path)
+        self.object_vertex_array = stl_parser.to_vertex_array()
+        self.object_vertex_array.bind_to_shader(self.basic_shader_interface.attributes)
 
     ##############################################
 
     def paint(self):
 
-        self.paint_cube()
+        self.paint_object()
 
         # print '\n', '='*100
         # for command in GL.called_commands():
@@ -103,21 +119,23 @@ class GlWidget(GlWidgetBase3D):
 
     ##############################################
 
-    def paint_cube(self):
+    def paint_object(self):
 
         GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL)
         GL.glEnable(GL.GL_POLYGON_OFFSET_FILL)
         GL.glPolygonOffset(1., 1.)
         shader_program = self.shader_manager.basic_shader_program
+        # shader_program = self.shader_manager.lighting_shader_program
+        # shader_program.light.Position = (0, 0, 100, 1)
         shader_program.bind()
-        self.cube_vertex_array.draw()
+        self.object_vertex_array.draw()
         GL.glDisable(GL.GL_POLYGON_OFFSET_FILL)
 
         GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE)
         GL.glLineWidth(1.)
         shader_program = self.shader_manager.fixed_colour_shader_program
         shader_program.bind()
-        self.cube_vertex_array.draw()
+        self.object_vertex_array.draw()
 
         shader_program.unbind()
 

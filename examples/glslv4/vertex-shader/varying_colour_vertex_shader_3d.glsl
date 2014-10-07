@@ -6,7 +6,7 @@
 
 /* *********************************************************************************************** */
 
-#include(../include/model_view_projection_matrix.glsl)
+#include(../include/model_view_projection_matrix_3d.glsl)
 #include(../include/position_shader_program_interface_3d.glsl)
 
 /* *********************************************************************************************** */

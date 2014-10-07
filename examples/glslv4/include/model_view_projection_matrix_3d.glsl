@@ -1,11 +1,11 @@
 /* *********************************************************************************************** */
 
-// layout (location = 0)
-in vec3 position;
-// layout (location = 1)
-in vec3 normal;
-// layout (location = 2)
-in vec4 colour;
+layout(std140) uniform viewport {
+  mat4 model_view_projection_matrix;
+  mat4 model_view_matrix;
+  mat3 normal_matrix;
+  mat4 projection_matrix;
+};
 
 /* *********************************************************************************************** *
  *
