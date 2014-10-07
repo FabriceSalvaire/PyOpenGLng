@@ -21,7 +21,6 @@ from PyOpenGLng.HighLevelApi.GlWidgetBase3D import GlWidgetBase3D
 from PyOpenGLng.HighLevelApi.Solids import cube, sphere, torus
 from PyOpenGLng.HighLevelApi.Transforms import *
 from PyOpenGLng.HighLevelApi.STL import StlParser
-from PyOpenGLng.Tools.Interval import IntervalInt2D
 
 ####################################################################################################
 
@@ -69,12 +68,17 @@ class GlWidget(GlWidgetBase3D):
 
         self.logger.debug('Update Model View Projection Matrix')
 
-        model_view_matrix = identity()
-        rotate_x(model_view_matrix, self.rotation_x)
-        rotate_y(model_view_matrix, self.rotation_y)
+        model_matrix = identity()
+        rotate_x(model_matrix, self.rotation_x)
+        rotate_y(model_matrix, self.rotation_y)
+        model_view_matrix = look_at(model_matrix, (0, 0, 2), (0, 0, 0), (0, 1, 0))
+        # model_view_matrix = model_matrix
         normal_matrix = model_view_matrix[:3,:3] # without translation
-        projection_matrix = ortho(-2, 2, -2, 2, -2, 2)
-        model_view_projection_matrix = np.dot(model_view_matrix, projection_matrix)
+        w = 3
+        projection_matrix = ortho(-w, w, -w, w, -w, w)
+        # projection_matrix = frustum(-2, 2, -2, 2, 1, 3)
+        # projection_matrix = perspective(60, 16/9., 1, 3)
+        model_view_projection_matrix = np.dot(projection_matrix, model_view_matrix)
 
         viewport_array = np.array(list(model_view_projection_matrix.transpose().flatten()) +
                                   list(model_view_matrix.transpose().flatten()) +
@@ -96,12 +100,12 @@ class GlWidget(GlWidgetBase3D):
 
         # self.object_vertex_array = cube(1, 1, 1)
         # self.object_vertex_array = sphere(1)
-        # self.object_vertex_array = torus(1)
+        self.object_vertex_array = torus(1)
 
         # stl_path = 'cube.stl'
         stl_path = 'cardan.stl'
-        stl_parser = StlParser(stl_path)
-        self.object_vertex_array = stl_parser.to_vertex_array()
+        # stl_parser = StlParser(stl_path)
+        # self.object_vertex_array = stl_parser.to_vertex_array()
         self.object_vertex_array.bind_to_shader(self.basic_shader_interface.attributes)
 
     ##############################################

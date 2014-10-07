@@ -42,7 +42,7 @@ def translate(matrix, x, y, z):
                   [0., 0., 0., 1.]],
                  dtype=matrix.dtype)
 
-    matrix[...] = np.dot(matrix, T)
+    matrix[...] = np.dot(T, matrix)
     return matrix
 
 ####################################################################################################
@@ -55,7 +55,7 @@ def scale(matrix, x, y, z):
                   [0., 0., 0., 1.]],
                  dtype=matrix.dtype)
 
-    matrix[...] = np.dot(matrix, S)
+    matrix[...] = np.dot(S, matrix)
     return matrix
 
 ####################################################################################################
@@ -71,7 +71,7 @@ def rotate_x(matrix, theta):
                   [0., 0., 0., 1.]],
                  dtype=matrix.dtype)
 
-    matrix[...] = np.dot(matrix, R)
+    matrix[...] = np.dot(R, matrix)
     return matrix
 
 ####################################################################################################
@@ -87,7 +87,7 @@ def rotate_y(matrix, theta):
                   [0., 0., 0., 1.]],
                  dtype=matrix.dtype)
 
-    matrix[...] = np.dot(matrix, R)
+    matrix[...] = np.dot(R, matrix)
     return matrix
 
 ####################################################################################################
@@ -103,7 +103,7 @@ def rotate_z(matrix, theta):
                   [0., 0., 0., 1.]],
                  dtype=matrix.dtype)
 
-    matrix[...] = np.dot(matrix, R)
+    matrix[...] = np.dot(R, matrix)
     return matrix
 
 ####################################################################################################
@@ -137,7 +137,7 @@ def rotate(matrix, x, y, z, angle):
                   [0, 0, 0, 1]],
                  dtype=matrix.dtype)
 
-    matrix[...] = np.dot(matrix, R)
+    matrix[...] = np.dot(R, matrix)
     return matrix
 
 ####################################################################################################
@@ -247,6 +247,44 @@ def perspective(fovy, aspect, near, far):
     matrix[2, 3] = 2. * near * far / dz
 
     return matrix
+
+####################################################################################################
+
+def look_at(matrix, eye, center, up):
+
+    """
+    eye_x, eye_y, eye_z
+      Specifies the position of the eye point.
+
+    center_x, center_y, center_z
+    Specifies the position of the reference point.
+
+    up_x, up_y, up_z
+    Specifies the direction of the up vector.
+    """            
+
+    eye = np.array(eye, dtype=np.float32)
+    center = np.array(center, dtype=np.float32)
+    up = np.array(up, dtype=np.float32)
+
+    f = center - eye
+    f /= np.sqrt(np.sum(f**2))
+
+    up /= np.sqrt(np.sum(up**2))
+
+    s = np.cross(f, up)
+
+    view = np.zeros((4, 4), dtype=np.float32)
+    view[0,:3] = s
+    view[1,:3] = up
+    view[2,:3] = -f
+    view[3,3] = 1.
+    view[:3,3] = -eye.T
+
+    view[...] = np.dot(view, matrix)
+    # translate(view, -eye[0], -eye[1], -eye[2])
+
+    return view
 
 ####################################################################################################
 # 
