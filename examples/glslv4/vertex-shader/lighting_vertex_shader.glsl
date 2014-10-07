@@ -25,13 +25,13 @@ struct MaterialInfo {
   float Shininess; // Specular shininess factor
 };
 
-uniform LightInfo light = LightInfo(vec4(0, 0, -10, 1),
+uniform LightInfo light = LightInfo(vec4(10, 10, 10, 1),
 				    vec3(1, 0, 0),
 				    vec3(1, 0, 0),
 				    vec3(1, 0, 0));
 
-uniform MaterialInfo material = MaterialInfo(vec3(.5),
-					     vec3(1.),
+uniform MaterialInfo material = MaterialInfo(vec3(.3),
+					     vec3(9.),
 					     vec3(.0),
 					     1.);
 
@@ -40,7 +40,7 @@ uniform MaterialInfo material = MaterialInfo(vec3(.5),
 out VertexAttributes
 {
   vec3 front_colour;
-  vec3 back_colour;
+  // vec3 back_colour;
 } vertex;
 
 /* *********************************************************************************************** */
@@ -71,11 +71,14 @@ phong_model(vec4 position, vec3 normal)
 
 void main()
 {
-  vec3 transformed_normal = normalize(normal_matrix * normal);
+  // vec3 transformed_normal = normalize(normal_matrix * normal);
+  vec3 transformed_normal = normalize(normal_matrix * vec4(normal, 0)).xyz;
   vec4 eye_coordinates = model_view_matrix * vec4(position, 1.);
   
   vertex.front_colour = phong_model(eye_coordinates, transformed_normal);
-  vertex.back_colour = phong_model(eye_coordinates, -transformed_normal);
+  // vertex.back_colour = phong_model(eye_coordinates, -transformed_normal);
+
+  // vertex.front_colour = normal * vec3(0.5) + vec3(0.5);
 
   gl_Position = model_view_projection_matrix * vec4(position, 1);
 }

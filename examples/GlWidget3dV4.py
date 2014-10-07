@@ -73,18 +73,24 @@ class GlWidget(GlWidgetBase3D):
         rotate_y(model_matrix, self.rotation_y)
         model_view_matrix = look_at(model_matrix, (0, 0, 2), (0, 0, 0), (0, 1, 0))
         # model_view_matrix = model_matrix
-        normal_matrix = model_view_matrix[:3,:3] # without translation
+        # Fixme: mat3 doesn't work
+        normal_matrix = np.zeros((4, 4), dtype=np.float32)
+        normal_matrix[:3,:3] = model_view_matrix[:3,:3] # without translation
         w = 3
         projection_matrix = ortho(-w, w, -w, w, -w, w)
         # projection_matrix = frustum(-2, 2, -2, 2, 1, 3)
         # projection_matrix = perspective(60, 16/9., 1, 3)
         model_view_projection_matrix = np.dot(projection_matrix, model_view_matrix)
 
-        viewport_array = np.array(list(model_view_projection_matrix.transpose().flatten()) +
-                                  list(model_view_matrix.transpose().flatten()) +
-                                  list(normal_matrix.transpose().flatten()) +
-                                  list(projection_matrix.transpose().flatten()),
-                                  dtype=np.float32)
+        data = []
+        for item in (
+                     model_view_matrix,
+                     normal_matrix,
+                     model_view_projection_matrix,
+                    ):
+            data += list(item.transpose().flatten())
+
+        viewport_array = np.array(data, dtype=np.float32)
 
         self._viewport_uniform_buffer.set(viewport_array)
 
@@ -100,12 +106,12 @@ class GlWidget(GlWidgetBase3D):
 
         # self.object_vertex_array = cube(1, 1, 1)
         # self.object_vertex_array = sphere(1)
-        self.object_vertex_array = torus(1)
+        # self.object_vertex_array = torus(1)
 
         # stl_path = 'cube.stl'
         stl_path = 'cardan.stl'
-        # stl_parser = StlParser(stl_path)
-        # self.object_vertex_array = stl_parser.to_vertex_array()
+        stl_parser = StlParser(stl_path)
+        self.object_vertex_array = stl_parser.to_vertex_array()
         self.object_vertex_array.bind_to_shader(self.basic_shader_interface.attributes)
 
     ##############################################
@@ -128,8 +134,8 @@ class GlWidget(GlWidgetBase3D):
         GL.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL)
         GL.glEnable(GL.GL_POLYGON_OFFSET_FILL)
         GL.glPolygonOffset(1., 1.)
-        shader_program = self.shader_manager.basic_shader_program
-        # shader_program = self.shader_manager.lighting_shader_program
+        # shader_program = self.shader_manager.basic_shader_program
+        shader_program = self.shader_manager.lighting_shader_program
         # shader_program.light.Position = (0, 0, 100, 1)
         shader_program.bind()
         self.object_vertex_array.draw()

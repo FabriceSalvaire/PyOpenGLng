@@ -9,7 +9,7 @@
 in VertexAttributes
 {
   vec3 front_colour;
-  vec3 back_colour;
+  // vec3 back_colour;
 } vertex;
 
 /* *********************************************************************************************** */
@@ -20,10 +20,13 @@ layout( location = 0 ) out vec4 fragment_colour;
 
 void main()
 {
+  /*
   if (gl_FrontFacing)
     fragment_colour = vec4(vertex.front_colour, 1.);
   else
     fragment_colour = vec4(vertex.back_colour, 1.);
+  */
+  fragment_colour = vec4(vertex.front_colour, 1.);
 }
 
 /* *********************************************************************************************** *

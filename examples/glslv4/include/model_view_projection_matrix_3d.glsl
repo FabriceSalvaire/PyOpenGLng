@@ -1,10 +1,10 @@
 /* *********************************************************************************************** */
 
-layout(std140) uniform viewport {
-  mat4 model_view_projection_matrix;
+layout(std140) uniform viewport
+{
   mat4 model_view_matrix;
-  mat3 normal_matrix;
-  mat4 projection_matrix;
+  mat4 normal_matrix; // fixme: mat3 
+  mat4 model_view_projection_matrix;
 };
 
 /* *********************************************************************************************** *
