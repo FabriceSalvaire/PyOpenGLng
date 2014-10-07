@@ -39,8 +39,10 @@ uniform MaterialInfo material = MaterialInfo(vec3(.3),
 
 out VertexAttributes
 {
-  vec3 front_colour;
+  // vec3 front_colour;
   // vec3 back_colour;
+  vec3 transformed_normal;
+  vec4 eye_coordinates;
 } vertex;
 
 /* *********************************************************************************************** */
@@ -75,10 +77,12 @@ void main()
   vec3 transformed_normal = normalize(normal_matrix * vec4(normal, 0)).xyz;
   vec4 eye_coordinates = model_view_matrix * vec4(position, 1.);
   
-  vertex.front_colour = phong_model(eye_coordinates, transformed_normal);
+  // vertex.front_colour = phong_model(eye_coordinates, transformed_normal);
   // vertex.back_colour = phong_model(eye_coordinates, -transformed_normal);
 
   // vertex.front_colour = normal * vec3(0.5) + vec3(0.5);
+  vertex.transformed_normal = transformed_normal;
+  vertex.eye_coordinates = eye_coordinates;
 
   gl_Position = model_view_projection_matrix * vec4(position, 1);
 }
