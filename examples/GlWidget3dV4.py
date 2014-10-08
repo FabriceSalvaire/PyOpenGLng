@@ -35,6 +35,8 @@ class GlWidget(GlWidgetBase3D):
         self.logger.debug('Initialise GlWidget')
         super(GlWidget, self).__init__(parent)
 
+        self._scale = 1.
+
     ##############################################
 
     def initializeGL(self):
@@ -64,19 +66,40 @@ class GlWidget(GlWidgetBase3D):
 
     ##############################################
 
+    def wheelEvent(self, event):
+
+        self.logger.debug('Wheel Event')
+
+        return self.wheel_zoom(event)
+    ##############################################
+
+    def wheel_zoom(self, event):
+
+        # self._logger.debug('Wheel Zoom')
+        delta = int(event.delta())
+        if delta == 120:
+            self._scale *= 1.1
+        else:
+            self._scale /= 1.1
+        self.update()
+
+    ##############################################
+
     def update_model_view_projection_matrix(self):
 
         self.logger.debug('Update Model View Projection Matrix')
 
         model_matrix = identity()
+        scale_factor = self._scale
+        scale(model_matrix, scale_factor, scale_factor, scale_factor)
         rotate_x(model_matrix, self.rotation_x)
         rotate_y(model_matrix, self.rotation_y)
-        model_view_matrix = look_at(model_matrix, (0, 0, 2), (0, 0, 0), (0, 1, 0))
+        model_view_matrix = look_at(model_matrix, (0, 0, 50), (0, 0, 0), (0, 1, 0))
         # model_view_matrix = model_matrix
         # Fixme: mat3 doesn't work
         normal_matrix = np.zeros((4, 4), dtype=np.float32)
         normal_matrix[:3,:3] = model_view_matrix[:3,:3] # without translation
-        w = 3
+        w = 100
         projection_matrix = ortho(-w, w, -w, w, -w, w)
         # projection_matrix = frustum(-2, 2, -2, 2, 1, 3)
         # projection_matrix = perspective(60, 16/9., 1, 3)
@@ -109,7 +132,10 @@ class GlWidget(GlWidgetBase3D):
         # self.object_vertex_array = torus(1)
 
         # stl_path = 'cube.stl'
-        stl_path = 'cardan.stl'
+        # stl_path = 'cardan.stl'
+        # stl_path = 'teapot.stl'
+        stl_path = 'cow.stl'
+        # stl_path = 'wild-cow.stl'
         stl_parser = StlParser(stl_path)
         self.object_vertex_array = stl_parser.to_vertex_array()
         self.object_vertex_array.bind_to_shader(self.basic_shader_interface.attributes)
