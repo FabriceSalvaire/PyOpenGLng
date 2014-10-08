@@ -20,6 +20,9 @@
 
 ####################################################################################################
 
+import mmap
+import struct
+
 import numpy as np
 
 ####################################################################################################
@@ -38,12 +41,18 @@ class StlParser(object):
 
     def __init__(self, path):
 
-        with(open(path, 'r')) as f:
-            self._read(f)
+        with(open(path, 'r')) as file_handle:
+            stream = mmap.mmap(file_handle.fileno(), length=0, access=mmap.ACCESS_READ)
+            text_stl = stream.read(6) == 'solid '
+            stream.seek(0)
+            if text_stl:
+                self._read_text(file_handle)
+            else:
+                self._read_binary(file_handle, stream)
 
     ##############################################
 
-    def _read(self, file_handle):
+    def _read_text(self, file_handle):
 
         # solid OpenSCAD_Model
         #   facet normal -1 0 0
@@ -80,26 +89,62 @@ class StlParser(object):
                 state = states.in_facet
             elif (state == states.in_facet and line.startswith('endfacet')):
                 state = states.in_solide
-                for i in xrange(3):
-                    normals.append(normal)
+                normals.append(normal)
             elif (state == states.in_solide and line.startswith('endsolid')):
                 state = states.stop
             else:
                 raise NameError("Bad STL file")
 
         self.positions = np.array(vertexes, dtype=np.float32)
-        self.positions /= 3
-        self.normals = np.array(normals, dtype=np.float32)
+        self.normals = np.zeros(self.positions.shape, dtype=np.float32)
+        normals = np.array(normals, dtype=np.float32)
+        self.normals[0::3] = normals
+        self.normals[1::3] = normals
+        self.normals[2::3] = normals
 
-        colour = (1, 0, 0, 1)
-        self.colours = np.zeros((self.positions.shape[0], 4), dtype=np.float32)
-        self.colours[...] = colour
+    ##############################################
+
+    def _read_binary(self, file_handle, stream):
+
+        header = stream.read(80)
+        number_of_triangles = struct.unpack('<I', stream.read(4))[0]
+        print number_of_triangles
+
+        positions = np.zeros((3*number_of_triangles, 3), dtype=np.float32)
+        normals = np.zeros(positions.shape, dtype=np.float32)
+
+        for i in xrange(number_of_triangles):
+            j = 3*i
+            normals[j:j+3] = struct.unpack('<fff', stream.read(12))
+            for k in xrange(3):
+                positions[j+k] = struct.unpack('<fff', stream.read(12))
+            stream.read(2)
+            # struct.unpack('<H', stream.read(2))
+        # stream.seek(84)
+
+        # Center the solid
+        for i in xrange(3):
+            positions[:,i] -= .5*(positions[:,i].max() + positions[:,i].min())
+        print positions[:,0].min(), positions[:,1].min(), positions[:,2].min()
+        print positions[:,0].max(), positions[:,1].max(), positions[:,2].max()
+
+        # normal, 3 vertex
+        # dtype = np.dtype('12<f4, <u2')
+        # data = np.memmap(file_handle, mode='r', dtype=dtype, shape=number_of_triangles)
+        # print data[0]
+
+        self.positions = positions
+        self.normals = normals
 
     ##############################################
 
     def to_vertex_array(self):
 
         # Fixme: here ?
+
+        colour = (1, 0, 0, 1)
+        self.colours = np.zeros((self.positions.shape[0], 4), dtype=np.float32)
+        self.colours[...] = colour
 
         return TriangleVertexArray((self.positions, self.normals, self.colours))
 
