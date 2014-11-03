@@ -1687,11 +1687,16 @@ class GlSpecParser(object):
         feature = Feature(**kwargs)
         self.feature_list.append(feature)
         for interface_node in feature_node:
+            # print '|'+interface_node.tag+'|'
+            if interface_node.tag == etree.Comment:
+                continue
             kwargs = dict(interface_node.attrib)
             if interface_node.tag == 'require':
                 interface = RequiredInterface(**kwargs)
             elif interface_node.tag == 'remove':
                 interface = RemovedInterface(**kwargs)
+            else:
+                raise NameError('Unknown tag\n' + str(inteinterface_node.tagrface_node))
             self._parse_interface(interface_node, interface)
             feature.append(interface)
 
