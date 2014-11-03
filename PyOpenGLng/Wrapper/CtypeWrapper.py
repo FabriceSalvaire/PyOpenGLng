@@ -204,7 +204,7 @@ import numpy as np
 
 ####################################################################################################
 
-from PythonicWrapper import PythonicWrapper
+from .PythonicWrapper import PythonicWrapper
 import PyOpenGLng.Config as Config
 
 ####################################################################################################
@@ -921,7 +921,7 @@ class CtypeWrapper(object):
             except NotImplementedError:
                 self._logger.warn("Command %s is not supported by the wrapper", str(command))
             except CommandNotAvailable:
-                self._logger.warn("Command %s is not implemented", str(command))
+                self._logger.warn("Command %s is not implemented by the vendor", str(command))
         self.commands = gl_commands
 
     ##############################################
