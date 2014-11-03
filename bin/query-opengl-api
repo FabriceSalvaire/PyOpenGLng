@@ -12,6 +12,8 @@
 
 ####################################################################################################
 
+from __future__ import print_function
+
 import logging    
 
 ####################################################################################################
@@ -21,7 +23,8 @@ import logging
 
 logging.basicConfig(
     format='\033[1;32m%(asctime)s\033[0m - \033[1;34m%(name)s.%(funcName)s\033[0m - \033[1;31m%(levelname)s\033[0m - %(message)s',
-    level=logging.INFO,
+    # level=logging.INFO,
+    level=logging.ERROR,
     )
 
 ####################################################################################################
@@ -65,9 +68,13 @@ for action, help_message in (
     ('summary', 'summary'),
     ('list-enums', 'list enums'),
     ('list-commands', 'list commands'),
+    ('list-command-prototypes', "list command's prototypes"),
+    ('list-pointer-commands', 'list commands having a pointer parameter'),
     ('list-multi-referenced-pointer-commands', 'list commands having size parameter used by more than one pointer parameter'),
     ('list-computed-size-commands', 'list commands having a computed size parameter'),
-    ('list-multi-pointer-commands', 'list commands having a multi-pointer parameter '),
+    ('list-multi-pointer-commands', 'list commands having a multi-pointer parameter'),
+    ('list-parameter-types', "list parameter's types"),
+    ('list-output-types', "list output types"),
     ):
     argument_parser.add_argument('--' + action, default=False, action='store_true', help=help_message)
 
@@ -96,9 +103,31 @@ else:
 
 gl_spec = GlSpecParser(default_api_path('gl'), schema_file_path)
 
-api_enums, api_commands = gl_spec.generate_api(args.api, ApiNumber(args.api_number), args.profile)
+api_number = ApiNumber(args.api_number)
+api_enums, api_commands = gl_spec.generate_api(args.api, api_number, args.profile)
+
+def glfw_error_callback(error, description):
+    raise NameError("{} {}".format(error, description))
 
 if args.build_wrapper:
+    # Create a window-less OpenGL context
+    import sys
+    import PyGlfwCffi as glfw
+    if not glfw.init():
+        print('GLFW initialisation failed', file=sys.stderr)
+        sys.exit()
+    glfw.set_error_callback(glfw_error_callback)
+    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, api_number.major)
+    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, api_number.minor)
+    glfw.window_hint(glfw.CLIENT_API, glfw.OPENGL_API) # assume we are running on desktop 
+    glfw.window_hint(glfw.VISIBLE, False)
+    window = glfw.create_window()
+    if not window:
+        print('Failed to create context: check your OpenGL vendor implements the {} API'.format(api_number),
+              file=sys.stderr)
+        glfw.terminate()
+        sys.exit()
+
     # Fixme: perform generate_api twice
     GL = GlWrapper.init(api_number=args.api_number, profile=args.profile, check_api_number=False)
 else:
@@ -106,68 +135,121 @@ else:
 
 ####################################################################################################
 
-if args.summary:
-    print """
-OpenGL API %s %s profile: %s
-  - Number of Enums:    %5u
-  - Number of Commands: %5u
-""" % (args.api, args.api_number, args.profile,
-       len(api_enums), len(api_commands))
-
-if args.list_enums:
-    for enum in api_enums.iter_sorted():
-        print repr(enum)
-
-if args.list_commands:
-    for command in api_commands.iter_sorted():
-        print command.name
-
-if args.enum is not None:
-    enum = api_enums[args.enum]
-    print enum.long_repr()
+def show_command(command):
+    if GL is not None:
+        try:
+            command_wrapper = getattr(GL, str(command))
+            command_wrapper.help()
+        except AttributeError:
+            pass
+    print()
+    if args.translate_type:
+        print(command.prototype())
+    else:
+        print(repr(command))
+    # print(tuple(command.argument_types()), '->', command.return_type.c_type)
 
 ####################################################################################################
 
-def show_command(command):
-    if GL is not None:
-        command_wrapper = getattr(GL, str(command))
-        command_wrapper.help()
-    print
-    if args.translate_type:
-        print command.prototype()
-    else:
-        print repr(command)
-    # print tuple(command.argument_types()), '->', command.return_type.c_type
+def show_filtered_commands(filter_function=None):
+    for command in api_commands.iter_sorted():
+        if filter_function is not None:
+            show = filter_function(command)
+        else:
+            show = True
+        if show:
+            show_command(command)
+
+def show_filtered_commands_on_parameter(parameter_filter):
+    def filter_function(command):
+        for parameter in command.parameters:
+            if parameter_filter(parameter):
+                return True
+        return False
+    show_filtered_commands(filter_function)
+
+####################################################################################################
+
+def list_parameter_types(output=False):
+
+    fundamental_types = {}
+    pointer_types = {}
+    for command in api_commands.iter_sorted():
+        if output:
+            parameters = (command.return_type,)
+        else:
+            parameters = command.parameters
+        for parameter in parameters:
+            parameter_type = parameter.format_gl_type(with_size=False)
+            if parameter.pointer:
+                types = pointer_types
+            else:
+                types = fundamental_types
+            if parameter_type in types:
+                types[parameter_type] += 1
+            else:
+                types[parameter_type] = 1
+    for title, types in (('Fundamental types:', fundamental_types),
+                         ('Pointer types:', pointer_types)):
+        print('\n', title)
+        for parameter_type in sorted(types):
+            print(' ', parameter_type, types[parameter_type])
+
+####################################################################################################
+
+if args.summary:
+    print("""
+OpenGL API {} {} profile: {}
+  - Number of Enums:    {}
+  - Number of Commands: {}
+""".format(args.api, args.api_number, args.profile,
+           len(api_enums), len(api_commands)))
+
+if args.list_enums:
+    for enum in api_enums.iter_sorted():
+        print(repr(enum))
+
+if args.list_commands:
+    for command in api_commands.iter_sorted():
+        print(command.name)
+
+if args.enum is not None:
+    enum = api_enums[args.enum]
+    print(enum.long_repr())
 
 if args.command is not None:
     command = api_commands[args.command]
     show_command(command)
 
-####################################################################################################
+if args.list_command_prototypes:
+    show_filtered_commands()
 
-def show_filtered_commands(filter_function):
-    for command in api_commands.iter_sorted():
-        for parameter in command.parameters:
-            if filter_function(parameter):
-                show = True
-                break
-        else:
-            show = False
-        if show:
-            show_command(command)
+if args.list_pointer_commands:
+    show_filtered_commands_on_parameter(lambda parameter: len(parameter.pointer_parameters) >= 1)
 
 if args.list_multi_referenced_pointer_commands:
-    show_filtered_commands(lambda parameter: len(parameter.pointer_parameters) > 1)
+    show_filtered_commands_on_parameter(lambda parameter: len(parameter.pointer_parameters) > 1)
 
 if args.list_computed_size_commands:
-    show_filtered_commands(lambda parameter: parameter.computed_size)
+    show_filtered_commands_on_parameter(lambda parameter: parameter.computed_size)
 
 if args.list_multi_pointer_commands:
-    show_filtered_commands(lambda parameter: parameter.pointer > 1)
+    show_filtered_commands_on_parameter(lambda parameter: parameter.pointer > 1)
+
+if args.list_parameter_types:
+    list_parameter_types()
+
+if args.list_output_types:
+    list_parameter_types(output=True)
 
 if args.man:
     command_wrapper = getattr(GL, args.man)
     command_wrapper.manual(local=True)
+
+####################################################################################################
+
+if args.build_wrapper:
+    glfw.terminate()
 
 ####################################################################################################
 # 
