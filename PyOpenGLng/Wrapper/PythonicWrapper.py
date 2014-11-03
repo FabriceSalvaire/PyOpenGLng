@@ -105,6 +105,8 @@ class PythonicWrapper(object):
     
     def glGetProgramiv(self, program, pname):
 
+        # Fixme: pname => size and type
+        # Fixme: overhead versus ctype pointer, -> func
         data = np.zeros(1, dtype=np.int32)
         self.commands.glGetProgramiv(program, pname, data)
         return int(data[0])
@@ -113,7 +115,8 @@ class PythonicWrapper(object):
 
     def glGetShaderiv(self, program, pname):
 
-        data = np.zeros(1, dtype=np.int32) # Fixme: overhead versus ctype pointer, -> func
+        # Fixme: cf. infra
+        data = np.zeros(1, dtype=np.int32)
         self.commands.glGetShaderiv(program, pname, data)
         return int(data[0])
 
