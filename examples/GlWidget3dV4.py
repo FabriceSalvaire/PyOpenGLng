@@ -8,6 +8,7 @@
 ####################################################################################################
 
 import logging
+import os
 
 from PyQt4.QtCore import Qt
 
@@ -136,7 +137,7 @@ class GlWidget(GlWidgetBase3D):
         # stl_path = 'teapot.stl'
         stl_path = 'cow.stl'
         # stl_path = 'wild-cow.stl'
-        stl_parser = StlParser(stl_path)
+        stl_parser = StlParser(os.path.join(os.path.dirname(__file__), 'stl', stl_path))
         self.object_vertex_array = stl_parser.to_vertex_array()
         self.object_vertex_array.bind_to_shader(self.basic_shader_interface.attributes)
 
