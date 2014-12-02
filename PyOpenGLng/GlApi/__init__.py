@@ -77,7 +77,7 @@ def default_api_path(file_name):
     concatened to the file name.
     """
     api_path = os.path.join(os.path.dirname(os.path.realpath(__file__)))
-    return os.path.join(api_path, file_name)
+    return os.path.join(api_path, file_name + '.xml')
 
 ####################################################################################################
 

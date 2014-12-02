@@ -91,7 +91,7 @@ def init(wrapper='ctypes', api='gl', api_number=None, profile='core', check_api_
     with TimerContextManager(_module_logger, 'GlSpecParser'):
         # gl_spec_class = GlSpecParser
         gl_spec_class = CachedGlSpecParser
-        gl_spec = gl_spec_class(default_api_path('gl.xml')) # 0.456692 s
+        gl_spec = gl_spec_class(default_api_path('gl')) # 0.456692 s
 
     with TimerContextManager(_module_logger, 'Load Manual'):
         manuals = Manual.load()
