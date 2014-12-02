@@ -29,8 +29,9 @@ logging.basicConfig(
 
 ####################################################################################################
 
-from PyOpenGLng.GlApi import GlSpecParser, default_api_path
+from PyOpenGLng.GlApi import CachedGlSpecParser, default_api_path
 from PyOpenGLng.GlApi.ApiNumber import ApiNumber
+from PyOpenGLng.Tools.Timer import TimerContextManager
 import PyOpenGLng.Wrapper as GlWrapper
 
 ####################################################################################################
@@ -101,7 +102,10 @@ if args.validate:
 else:
     schema_file_path = None
 
-gl_spec = GlSpecParser(default_api_path('gl'), schema_file_path)
+with TimerContextManager(logging, 'GlSpecParser'):
+    # gl_spec_class = GlSpecParser
+    gl_spec_class = CachedGlSpecParser
+    gl_spec = gl_spec_class(default_api_path('gl.xml'))
 
 api_number = ApiNumber(args.api_number)
 api_enums, api_commands = gl_spec.generate_api(args.api, api_number, args.profile)
