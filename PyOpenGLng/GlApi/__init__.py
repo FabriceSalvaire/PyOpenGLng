@@ -41,6 +41,7 @@ the OpenGL API. You could look at its source code to learn how to use this modul
 
 ####################################################################################################
 
+import cPickle as pickle
 import os
 import logging
 
@@ -49,6 +50,7 @@ from lxml import etree
 ####################################################################################################
 
 from .ApiNumber import ApiNumber
+from ..Tools.Timer import TimerContextManager
 
 ####################################################################################################
 
@@ -61,7 +63,7 @@ def default_api_path(file_name):
     concatened to the file name.
     """
     api_path = os.path.join(os.path.dirname(os.path.realpath(__file__)))
-    return os.path.join(api_path, file_name + '.xml')
+    return os.path.join(api_path, file_name)
 
 ####################################################################################################
 
@@ -1429,6 +1431,7 @@ class GlSpecParser(object):
 
     def __init__(self, xml_file_path, schema_file_path=None):
 
+        self._xml_file_path = xml_file_path
         self._tree = etree.parse(xml_file_path)
 
         if schema_file_path is not None:
@@ -1441,7 +1444,25 @@ class GlSpecParser(object):
         self.feature_list = []
         self.extension_list = []
 
-        self._parse()
+        with TimerContextManager(self._logger, 'XML Registry Parsing'):
+            self._parse()
+
+    ##############################################
+
+    @staticmethod
+    def load_pickle(pickle_file_path):
+
+        with open(pickle_file_path) as f:
+            obj = pickle.load(f)
+        return obj
+
+    ##############################################
+
+    def dump_pickle(self): # pickle_file_path
+
+        pickle_file_path = os.path.splitext(self._xml_file_path)[0] + '.pickle'
+        with open(pickle_file_path, 'w') as f:
+            pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
 
     ##############################################
 
@@ -1758,6 +1779,16 @@ class GlSpecParser(object):
                 api_commands.register(self.commands[item.name])
 
         return api_enums, api_commands
+
+    ##############################################
+
+    def dump_pickle_api(self, api, api_number, profile=None): # pickle_file_path
+
+        api_enums, api_commands = self.generate_api(api, api_number, profile)
+
+        pickle_file_path = os.path.splitext(self._xml_file_path)[0] + '{}-{}-{}.pickle'.format(api, api_number, profile)
+        with open(pickle_file_path, 'w') as f:
+            pickle.dump((api_enums, api_commands), f, pickle.HIGHEST_PROTOCOL)
 
 ####################################################################################################
 #

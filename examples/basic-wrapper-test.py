@@ -35,6 +35,7 @@ import sys
 import PyGlfwCffi as glfw
 import PyOpenGLng.Wrapper as GlWrapper
 from PyOpenGLng.GlApi import ApiNumber
+from PyOpenGLng.Tools.Timer import TimerContextManager
 
 ####################################################################################################
 
@@ -74,9 +75,12 @@ if not window:
     sys.exit()
 
 # Create the OpenGL wrapper
-gl = GlWrapper.init(api_number=str(api_number), profile='compat',
-                    check_api_number=False,
-                    wrapper='ctypes') # or cffi
+with TimerContextManager(logging, "GlWrapper.init"):
+    # orig: 0.618096 s
+    # best: 0.123589 s
+    gl = GlWrapper.init(api_number=str(api_number), profile='compat',
+                        check_api_number=False,
+                        wrapper='ctypes') # or cffi
 
 # Make the window's context current
 glfw.make_context_current(window)

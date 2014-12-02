@@ -206,6 +206,7 @@ import numpy as np
 
 from .PythonicWrapper import PythonicWrapper
 import PyOpenGLng.Config as Config
+from PyOpenGLng.Tools.Timer import TimerContextManager
 
 ####################################################################################################
 
@@ -876,11 +877,16 @@ class CtypeWrapper(object):
 
     def __init__(self, gl_spec, api, api_number, profile=None, manuals=None):
 
-        self._gl_spec = gl_spec
+        # self._gl_spec = gl_spec
         self.api_number = api_number
         self._manuals = manuals
 
-        api_enums, api_commands = self._gl_spec.generate_api(api, api_number, profile)
+        with TimerContextManager(self._logger, 'generate_api'):
+            api_enums, api_commands = gl_spec.generate_api(api, api_number, profile) # 0.080288 s
+            # gl_spec.dump_pickle_api(api, api_number, profile)
+            # import cPickle as pickle
+            # with open('PyOpenGLng/GlApi/glgl-2.1-compat.pickle') as f: # 0.055538 s
+            #     api_enums, api_commands = pickle.load(f)
         self._init_enums(api_enums)
         self._init_commands(api_commands)
 

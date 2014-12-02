@@ -26,6 +26,7 @@ import sys
 
 from ..GlApi.ApiNumber import ApiNumber
 from ..GlApi.ManualParser import Manual
+from ..Tools.Timer import TimerContextManager
 
 ####################################################################################################
 
@@ -64,7 +65,8 @@ def init(wrapper='ctypes', api='gl', api_number=None, profile='core', check_api_
 
     # Fixme: store ApiNumber in CtypeWrapper
     # Fixme: called before context for example ???
-    version_string = Wrapper.load_library(libGL_name)
+    with TimerContextManager(_module_logger, 'Load GL library'):
+        version_string = Wrapper.load_library(libGL_name)
 
     if check_api_number:
         if version_string is None:
@@ -86,11 +88,17 @@ def init(wrapper='ctypes', api='gl', api_number=None, profile='core', check_api_
         api_number = __api_number__
 
     from ..GlApi import GlSpecParser, default_api_path
-    gl_spec = GlSpecParser(default_api_path('gl'))
+    with TimerContextManager(_module_logger, 'GlSpecParser'):
+        gl_spec = GlSpecParser(default_api_path('gl.xml')) # 0.456692 s
+        # gl_spec.dump_pickle()
+        # gl_spec = GlSpecParser.load_pickle(default_api_path('gl.pickle')) # 0.333667 s
+        # gl_spec = None
 
-    manuals = Manual.load()
+    with TimerContextManager(_module_logger, 'Load Manual'):
+        manuals = Manual.load()
 
-    GL = Wrapper(gl_spec, api, api_number, profile, manuals)
+    with TimerContextManager(_module_logger, 'Wrapper'):
+        GL = Wrapper(gl_spec, api, api_number, profile, manuals)
         
     return GL
 
