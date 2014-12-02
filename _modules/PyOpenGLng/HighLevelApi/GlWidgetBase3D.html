@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyOpenGLng.HighLevelApi.GlWidgetBase3D &mdash; PyOpenGLng 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../static/PyOpenGLng.css" type="text/css" />
+    <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for PyOpenGLng.HighLevelApi.GlWidgetBase3D</h1><div class="highlight"><pre>
+<span class="c">####################################################################################################</span>
+<span class="c"># </span>
+<span class="c"># PyOpenGLng - An OpenGL Python Wrapper with a High Level API.</span>
+<span class="c"># Copyright (C) 2014 Fabrice Salvaire</span>
+<span class="c">#</span>
+<span class="c"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c"># it under the terms of the GNU General Public License as published by</span>
+<span class="c"># the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c"># (at your option) any later version.</span>
+<span class="c"># </span>
+<span class="c"># This program is distributed in the hope that it will be useful,</span>
+<span class="c"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c"># GNU General Public License for more details.</span>
+<span class="c"># </span>
+<span class="c"># You should have received a copy of the GNU General Public License</span>
+<span class="c"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c"># </span>
+<span class="c">####################################################################################################</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtOpenGL</span>
+<span class="kn">from</span> <span class="nn">PyQt4.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">GL</span>
+<span class="kn">from</span> <span class="nn">.GlFeatures</span> <span class="kn">import</span> <span class="n">GlVersion</span><span class="p">,</span> <span class="n">GlFeatures</span>
+
+<span class="c">####################################################################################################</span>
+
+<div class="viewcode-block" id="GlWidgetBase3D"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/GlWidgetBase3D.html#PyOpenGLng.HighLevelApi.GlWidgetBase3D.GlWidgetBase3D">[docs]</a><span class="k">class</span> <span class="nc">GlWidgetBase3D</span><span class="p">(</span><span class="n">QtOpenGL</span><span class="o">.</span><span class="n">QGLWidget</span><span class="p">):</span>
+
+    <span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Initialise GlWidgetBase&#39;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">GlWidgetBase3D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">()</span><span class="o">.</span><span class="n">directRendering</span><span class="p">():</span>
+            <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span>
+                                       <span class="s">&#39;Error&#39;</span><span class="p">,</span>
+                                       <span class="s">&quot;The Image Viewer requires an OpenGL direct rendering&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s">&#39;Indirect Rendering&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_position</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotation_x</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rotation_y</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAutoFillBackground</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+        <span class="c"># self.setAutoBufferSwap(False)</span>
+ 
+    <span class="c">##############################################</span>
+
+<div class="viewcode-block" id="GlWidgetBase3D.initializeGL"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/GlWidgetBase3D.html#PyOpenGLng.HighLevelApi.GlWidgetBase3D.GlWidgetBase3D.initializeGL">[docs]</a>    <span class="k">def</span> <span class="nf">initializeGL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Initialise any required resources</span>
+<span class="sd">        </span>
+<span class="sd">        It is called just once before paintGL.</span>
+<span class="sd">        &quot;&quot;&quot;</span>    
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Initialise GL - Super&#39;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">gl_version</span> <span class="o">=</span> <span class="n">GlVersion</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gl_features</span> <span class="o">=</span> <span class="n">GlFeatures</span><span class="p">()</span>
+        <span class="c"># print self.gl_version</span>
+        <span class="k">for</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;GL_EXT_texture_integer&#39;</span><span class="p">,</span>
+                          <span class="c">#&#39;GL_NV_texture_shader&#39;,</span>
+                          <span class="p">):</span>
+            <span class="k">if</span> <span class="n">extension</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gl_features</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s">&quot;Doesn&#39;t have GL extension </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">extension</span><span class="p">))</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="GlWidgetBase3D.resizeGL"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/GlWidgetBase3D.html#PyOpenGLng.HighLevelApi.GlWidgetBase3D.GlWidgetBase3D.resizeGL">[docs]</a>    <span class="k">def</span> <span class="nf">resizeGL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Set up the projection and viewport</span>
+<span class="sd">        </span>
+<span class="sd">        Resize Event</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Resize viewport to (</span><span class="si">%u</span><span class="s">, </span><span class="si">%u</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
+
+        <span class="c"># viewport corresponds to the window lower left corner x, y and viewport width, height</span>
+        <span class="n">GL</span><span class="o">.</span><span class="n">glViewport</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="GlWidgetBase3D.size"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/GlWidgetBase3D.html#PyOpenGLng.HighLevelApi.GlWidgetBase3D.GlWidgetBase3D.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c"># reimplement method to return np.array instead of PyQt4.QtCore.QSize(width, height)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    <span class="c">#</span>
+    <span class="c"># updateGL [virtual slot] : Updates the widget by calling glDraw()</span>
+    <span class="c">#</span>
+
+    <span class="c">##############################################</span>
+    <span class="c">#</span>
+    <span class="c"># glDraw [virtual protected]</span>
+    <span class="c">#</span>
+    <span class="c"># Executes the virtual function paintGL().</span>
+    <span class="c">#</span>
+    <span class="c"># The widget&#39;s rendering context will become the current context and initializeGL() will be called if</span>
+    <span class="c"># it hasn&#39;t already been called.</span>
+    <span class="c">#</span>
+        
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="GlWidgetBase3D.paintGL"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/GlWidgetBase3D.html#PyOpenGLng.HighLevelApi.GlWidgetBase3D.GlWidgetBase3D.paintGL">[docs]</a>    <span class="k">def</span> <span class="nf">paintGL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Perform the OpenGL calls needed to render the scene.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Paint OpenGL Scene&#39;</span><span class="p">)</span>
+
+        <span class="n">GL</span><span class="o">.</span><span class="n">glEnable</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_DEPTH_TEST</span><span class="p">)</span>
+        <span class="n">GL</span><span class="o">.</span><span class="n">glDepthFunc</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_LESS</span><span class="p">)</span>
+        <span class="n">GL</span><span class="o">.</span><span class="n">glClearColor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">GL</span><span class="o">.</span><span class="n">glClear</span><span class="p">(</span><span class="n">GL</span><span class="o">.</span><span class="n">GL_COLOR_BUFFER_BIT</span> <span class="o">|</span> <span class="n">GL</span><span class="o">.</span><span class="n">GL_DEPTH_BUFFER_BIT</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">paint</span><span class="p">()</span>
+        
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="GlWidgetBase3D.update"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/GlWidgetBase3D.html#PyOpenGLng.HighLevelApi.GlWidgetBase3D.GlWidgetBase3D.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_model_view_projection_matrix</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateGL</span><span class="p">()</span>
+
+    <span class="c">##############################################</span>
+
+    <span class="c"># def mousePressEvent(self, event):</span>
+
+    <span class="c">#     self._logger.info(&quot;Mouse press event&quot;)</span>
+    <span class="c">#     if event.buttons() &amp; Qt.LeftButton:</span>
+    <span class="c">#         self._logger.info(&quot;left button&quot;)</span>
+    <span class="c">#     else:</span>
+    <span class="c">#         self.parent().mousePressEvent(event)</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="GlWidgetBase3D.mouseMoveEvent"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/GlWidgetBase3D.html#PyOpenGLng.HighLevelApi.GlWidgetBase3D.GlWidgetBase3D.mouseMoveEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mouseMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">buttons</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">Qt</span><span class="o">.</span><span class="n">LeftButton</span><span class="p">:</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">posF</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">delta</span> <span class="o">=</span> <span class="n">position</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_position</span>
+                <span class="n">px_to_degree</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rotation_x</span> <span class="o">+=</span> <span class="n">delta</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">*</span> <span class="n">px_to_degree</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rotation_y</span> <span class="o">+=</span> <span class="n">delta</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">*</span> <span class="n">px_to_degree</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rotation_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation_x</span> <span class="o">%</span> <span class="mi">360</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rotation_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation_y</span> <span class="o">%</span> <span class="mi">360</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Rotate scene {} {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rotation_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation_y</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_old_position</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">mouseMoveEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c">#</span>
+<span class="c"># End</span>
+<span class="c">#</span>
+<span class="c">####################################################################################################</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

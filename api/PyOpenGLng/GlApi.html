@@ -80,9 +80,63 @@ requested API.</p>
 the OpenGL API. You could look at its source code to learn how to use this module. See the
 <a class="reference internal" href="../../tools.html#tools-page"><em>tools section</em></a>.</p>
 <dl class="class">
+<dt id="PyOpenGLng.GlApi.CachedGlSpecParser">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">CachedGlSpecParser</tt><big>(</big><em>xml_file_path</em><big>)</big><a class="headerlink" href="#PyOpenGLng.GlApi.CachedGlSpecParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>This class implements a cached GlSpecParser using Pickle files.</p>
+<p>Pickle files are stored in the HOME directory.</p>
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.CachedGlSpecParser._generate_and_pickle_api">
+<tt class="descname">_generate_and_pickle_api</tt><big>(</big><em>gl_spec</em>, <em>api</em>, <em>api_number</em>, <em>profile</em><big>)</big><a class="headerlink" href="#PyOpenGLng.GlApi.CachedGlSpecParser._generate_and_pickle_api" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate and pickle an API.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.CachedGlSpecParser._load_api">
+<tt class="descname">_load_api</tt><big>(</big><em>api</em>, <em>api_number</em>, <em>profile=None</em><big>)</big><a class="headerlink" href="#PyOpenGLng.GlApi.CachedGlSpecParser._load_api" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unpickle an API.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.CachedGlSpecParser._load_from_pickle">
+<tt class="descname">_load_from_pickle</tt><big>(</big><big>)</big><a class="headerlink" href="#PyOpenGLng.GlApi.CachedGlSpecParser._load_from_pickle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unpickle a :class:&#8217;GlSpecParser&#8217;.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.GlApi.CachedGlSpecParser._logger">
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x410f0d0&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.CachedGlSpecParser._logger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.CachedGlSpecParser._pickle">
+<tt class="descname">_pickle</tt><big>(</big><em>gl_spec</em><big>)</big><a class="headerlink" href="#PyOpenGLng.GlApi.CachedGlSpecParser._pickle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pickle the <a class="reference internal" href="#PyOpenGLng.GlApi.GlSpecParser" title="PyOpenGLng.GlApi.GlSpecParser"><tt class="xref py py-class docutils literal"><span class="pre">GlSpecParser</span></tt></a> instance.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="PyOpenGLng.GlApi.CachedGlSpecParser._pickle_api_file_path">
+<em class="property">static </em><tt class="descname">_pickle_api_file_path</tt><big>(</big><em>api</em>, <em>api_number</em>, <em>profile</em><big>)</big><a class="headerlink" href="#PyOpenGLng.GlApi.CachedGlSpecParser._pickle_api_file_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the file path for the pickled API.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.CachedGlSpecParser._pickle_file_path">
+<tt class="descname">_pickle_file_path</tt><big>(</big><big>)</big><a class="headerlink" href="#PyOpenGLng.GlApi.CachedGlSpecParser._pickle_file_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the file path for the pickled XML Registry (<a class="reference internal" href="#PyOpenGLng.GlApi.GlSpecParser" title="PyOpenGLng.GlApi.GlSpecParser"><tt class="xref py py-class docutils literal"><span class="pre">GlSpecParser</span></tt></a>).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.GlApi.CachedGlSpecParser.generate_api">
+<tt class="descname">generate_api</tt><big>(</big><em>api</em>, <em>api_number</em>, <em>profile=None</em><big>)</big><a class="headerlink" href="#PyOpenGLng.GlApi.CachedGlSpecParser.generate_api" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="PyOpenGLng.GlApi.Command">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Command</tt><big>(</big><em>name</em>, <em>return_type</em>, <em>parameters=()</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Command" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines an OpenGL command.</p>
 <p>Public Attributes:</p>
 <blockquote>
@@ -206,7 +260,7 @@ readability).</div></blockquote>
 <dl class="class">
 <dt id="PyOpenGLng.GlApi.Enum">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Enum</tt><big>(</big><em>name</em>, <em>value</em>, <em>type_=None</em>, <em>alias=None</em>, <em>comment=None</em>, <em>api=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Enum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Enum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines an enumerant.</p>
 <p>The name of an enumerant can be retrieved using <tt class="docutils literal"><span class="pre">str(enumerant)</span></tt> and its value using
 <tt class="docutils literal"><span class="pre">int(enumerant)</span></tt>.</p>
@@ -271,7 +325,7 @@ attributes.</div></blockquote>
 <dl class="class">
 <dt id="PyOpenGLng.GlApi.Enums">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Enums</tt><big>(</big><em>namespace</em>, <em>group=None</em>, <em>type_=None</em>, <em>start=None</em>, <em>end=None</em>, <em>vendor=None</em>, <em>comment=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Enums"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Enums" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines a list of enumerants.</p>
 <p>Public Attributes:</p>
 <blockquote>
@@ -346,7 +400,7 @@ reference is set.</p>
 <dl class="class">
 <dt id="PyOpenGLng.GlApi.Extension">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Extension</tt><big>(</big><em>name</em>, <em>supported</em>, <em>protect=None</em>, <em>comment=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Extension" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines the features of an extension.</p>
 <p>Features are provided as a list of required or removed interfaces (commands, enumerants and
 types).</p>
@@ -403,7 +457,7 @@ from, this extension, as described below.</div></blockquote>
 <dl class="class">
 <dt id="PyOpenGLng.GlApi.Feature">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Feature</tt><big>(</big><em>api</em>, <em>name</em>, <em>number</em>, <em>protect=None</em>, <em>comment=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Feature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Feature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines the features of an API.</p>
 <p>Features are provided as a list of required or removed interfaces (commands, enumerants and
 types).</p>
@@ -455,7 +509,7 @@ from, this feature, as described below.</div></blockquote>
 <dl class="class">
 <dt id="PyOpenGLng.GlApi.GlSpecParser">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">GlSpecParser</tt><big>(</big><em>xml_file_path</em>, <em>schema_file_path=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#GlSpecParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class implements the OpenGL Registry XML file parser and the Oriented Object interface.</p>
 <p>Public Attributes:</p>
 <blockquote>
@@ -501,7 +555,7 @@ destination keys.</p>
 
 <dl class="attribute">
 <dt id="PyOpenGLng.GlApi.GlSpecParser._logger">
-<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x2954850&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._logger" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x4124ed0&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.GlSpecParser._logger" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -584,7 +638,7 @@ destination keys.</p>
 <dl class="class">
 <dt id="PyOpenGLng.GlApi.Group">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Group</tt><big>(</big><em>name</em>, <em>enum_name_list</em>, <em>comment=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Group" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines an Enumerant Group, e.g. <em>TextureMagFilter</em> regroups the relevant
 enumerant for texture magnification filter</p>
 <p>Public Attributes:</p>
@@ -660,10 +714,16 @@ annotations used for return and parameter types.</p>
 
 </dd></dl>
 
+<dl class="exception">
+<dt id="PyOpenGLng.GlApi.NotInCacheException">
+<em class="property">exception </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">NotInCacheException</tt><a class="headerlink" href="#PyOpenGLng.GlApi.NotInCacheException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></tt></p>
+</dd></dl>
+
 <dl class="class">
 <dt id="PyOpenGLng.GlApi.Parameter">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Parameter</tt><big>(</big><em>gl_types</em>, <em>location</em>, <em>name</em>, <em>ptype=None</em>, <em>group=None</em>, <em>length=None</em>, <em>const=False</em>, <em>pointer=0</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Parameter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Parameter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines a command parameter.</p>
 <p>Public Attributes:</p>
 <blockquote>
@@ -781,7 +841,7 @@ in <tt class="docutils literal"><span class="pre">&lt;ptype&gt;</span></tt> tags
 <dl class="class">
 <dt id="PyOpenGLng.GlApi.RequiredInterface">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">RequiredInterface</tt><big>(</big><em>profile=None</em>, <em>comment=None</em>, <em>api=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#RequiredInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredInterface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines a required interface.</p>
 <p>Public Attributes:</p>
 <blockquote>
@@ -864,7 +924,7 @@ no content, but contains elements:</p>
 </div></blockquote>
 <dl class="attribute">
 <dt id="PyOpenGLng.GlApi.RequiredInterface._logger">
-<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x29546d0&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredInterface._logger" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x4124d50&gt;</em><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredInterface._logger" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -889,7 +949,7 @@ no content, but contains elements:</p>
 <dl class="class">
 <dt id="PyOpenGLng.GlApi.RequiredItem">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">RequiredItem</tt><big>(</big><em>type_</em>, <em>name</em>, <em>comment=None</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#RequiredItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.RequiredItem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class represents a required command, enumerant or type for an interface.</p>
 <p>Public Attributes:</p>
 <blockquote>
@@ -905,7 +965,7 @@ no content, but contains elements:</p>
 <dl class="class">
 <dt id="PyOpenGLng.GlApi.Type">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Type</tt><big>(</big><em>name</em>, <em>c_declaration_head=None</em>, <em>c_declaration_tail=''</em>, <em>requires=None</em>, <em>api=None</em>, <em>comment=None</em>, <em>api_entry=False</em><big>)</big><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines an OpenGL type.</p>
 <p>Public Attributes:</p>
 <blockquote>
@@ -975,7 +1035,7 @@ mostly for function pointer types.</dd>
 <dl class="class">
 <dt id="PyOpenGLng.GlApi.Types">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.</tt><tt class="descname">Types</tt><a class="reference internal" href="../../_modules/PyOpenGLng/GlApi.html#Types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.Types" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class registers the API types.</p>
 <p>Public Attributes:</p>
 <blockquote>

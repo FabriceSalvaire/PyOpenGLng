@@ -9,6 +9,7 @@
   Tools/Math
   Tools/RevisionVersion
   Tools/Singleton
+  Tools/Timer
 
 .. automodule:: PyOpenGLng.Tools
    :members:

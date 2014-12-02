@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4.1.2.1. ApiNumber &mdash; PyOpenGLng 0.1.0 documentation</title>
+    <title>4.1.3.11. STL &mdash; PyOpenGLng 0.1.0 documentation</title>
     
     <link rel="stylesheet" href="../../../static/PyOpenGLng.css" type="text/css" />
     <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
@@ -26,9 +26,9 @@
     <script type="text/javascript" src="../../../static/underscore.js"></script>
     <script type="text/javascript" src="../../../static/doctools.js"></script>
     <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="../../../index.html" />
-    <link rel="up" title="4.1.2. GlApi" href="../GlApi.html" />
-    <link rel="next" title="4.1.2.2. ManualParser" href="ManualParser.html" />
-    <link rel="prev" title="4.1.2. GlApi" href="../GlApi.html" /> 
+    <link rel="up" title="4.1.3. HighLevelApi" href="../HighLevelApi.html" />
+    <link rel="next" title="4.1.3.12. Shader" href="Shader.html" />
+    <link rel="prev" title="4.1.3.10. RandomTexture" href="RandomTexture.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,15 +41,15 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ManualParser.html" title="4.1.2.2. ManualParser"
+          <a href="Shader.html" title="4.1.3.12. Shader"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../GlApi.html" title="4.1.2. GlApi"
+          <a href="RandomTexture.html" title="4.1.3.10. RandomTexture"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
           <li><a href="../../../reference-manual.html" >4. API Documentation</a> &raquo;</li>
           <li><a href="../../PyOpenGLng.html" >4.1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li>
-          <li><a href="../GlApi.html" accesskey="U">4.1.2. <tt class="docutils literal"><span class="pre">GlApi</span></tt></a> &raquo;</li> 
+          <li><a href="../HighLevelApi.html" accesskey="U">4.1.3. <tt class="docutils literal"><span class="pre">HighLevelApi</span></tt></a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,24 +58,33 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-PyOpenGLng.GlApi.ApiNumber">
-<span id="apinumber"></span><h1>4.1.2.1. <tt class="xref py py-mod docutils literal"><span class="pre">ApiNumber</span></tt><a class="headerlink" href="#module-PyOpenGLng.GlApi.ApiNumber" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-PyOpenGLng.HighLevelApi.STL">
+<span id="stl"></span><h1>4.1.3.11. <tt class="xref py py-mod docutils literal"><span class="pre">STL</span></tt><a class="headerlink" href="#module-PyOpenGLng.HighLevelApi.STL" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="PyOpenGLng.GlApi.ApiNumber.ApiNumber">
-<em class="property">class </em><tt class="descclassname">PyOpenGLng.GlApi.ApiNumber.</tt><tt class="descname">ApiNumber</tt><big>(</big><em>number</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/GlApi/ApiNumber.html#ApiNumber"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.GlApi.ApiNumber.ApiNumber" title="Permalink to this definition">¶</a></dt>
+<dt id="PyOpenGLng.HighLevelApi.STL.StlParser">
+<em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.STL.</tt><tt class="descname">StlParser</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/STL.html#StlParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.STL.StlParser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
-<p>This class implements a basic API number suitable for OpenGL.</p>
-<p>Use case:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">api_number</span> <span class="o">=</span> <span class="n">ApiNumber</span><span class="p">(</span><span class="s">&#39;4.4&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">api_number</span><span class="p">)</span>
-<span class="go">&#39;4.4&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ApiNumber</span><span class="p">(</span><span class="s">&#39;4.0&#39;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ApiNumber</span><span class="p">(</span><span class="s">&#39;4.1&#39;</span><span class="p">)</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ApiNumber</span><span class="p">(</span><span class="s">&#39;4.0&#39;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">ApiNumber</span><span class="p">(</span><span class="s">&#39;4.0&#39;</span><span class="p">)</span>
-<span class="go">True</span>
-</pre></div>
-</div>
-<p>The argument <em>number</em> must be of the form &#8220;x.y&#8221;.</p>
+<dl class="method">
+<dt id="PyOpenGLng.HighLevelApi.STL.StlParser._read_binary">
+<tt class="descname">_read_binary</tt><big>(</big><em>file_handle</em>, <em>stream</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/STL.html#StlParser._read_binary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.STL.StlParser._read_binary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.HighLevelApi.STL.StlParser._read_text">
+<tt class="descname">_read_text</tt><big>(</big><em>file_handle</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/STL.html#StlParser._read_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.STL.StlParser._read_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="PyOpenGLng.HighLevelApi.STL.StlParser.stl_parser_state">
+<tt class="descname">stl_parser_state</tt><a class="headerlink" href="#PyOpenGLng.HighLevelApi.STL.StlParser.stl_parser_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">StlParserState</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="PyOpenGLng.HighLevelApi.STL.StlParser.to_vertex_array">
+<tt class="descname">to_vertex_array</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/STL.html#StlParser.to_vertex_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.STL.StlParser.to_vertex_array" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>
@@ -87,14 +96,14 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../GlApi.html"
-                        title="previous chapter">4.1.2. <tt class="docutils literal"><span class="pre">GlApi</span></tt></a></p>
+  <p class="topless"><a href="RandomTexture.html"
+                        title="previous chapter">4.1.3.10. <tt class="docutils literal"><span class="pre">RandomTexture</span></tt></a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="ManualParser.html"
-                        title="next chapter">4.1.2.2. <tt class="docutils literal"><span class="pre">ManualParser</span></tt></a></p>
+  <p class="topless"><a href="Shader.html"
+                        title="next chapter">4.1.3.12. <tt class="docutils literal"><span class="pre">Shader</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../../../_sources/api/PyOpenGLng/GlApi/ApiNumber.txt"
+    <li><a href="../../../_sources/api/PyOpenGLng/HighLevelApi/STL.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -124,15 +133,15 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="ManualParser.html" title="4.1.2.2. ManualParser"
+          <a href="Shader.html" title="4.1.3.12. Shader"
              >next</a> |</li>
         <li class="right" >
-          <a href="../GlApi.html" title="4.1.2. GlApi"
+          <a href="RandomTexture.html" title="4.1.3.10. RandomTexture"
              >previous</a> |</li>
         <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
           <li><a href="../../../reference-manual.html" >4. API Documentation</a> &raquo;</li>
           <li><a href="../../PyOpenGLng.html" >4.1. <tt class="docutils literal"><span class="pre">PyOpenGLng</span></tt></a> &raquo;</li>
-          <li><a href="../GlApi.html" >4.1.2. <tt class="docutils literal"><span class="pre">GlApi</span></tt></a> &raquo;</li> 
+          <li><a href="../HighLevelApi.html" >4.1.3. <tt class="docutils literal"><span class="pre">HighLevelApi</span></tt></a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4.1.3.10. Shader &mdash; PyOpenGLng 0.1.0 documentation</title>
+    <title>4.1.3.12. Shader &mdash; PyOpenGLng 0.1.0 documentation</title>
     
     <link rel="stylesheet" href="../../../static/PyOpenGLng.css" type="text/css" />
     <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
@@ -27,8 +27,8 @@
     <script type="text/javascript" src="../../../static/doctools.js"></script>
     <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="../../../index.html" />
     <link rel="up" title="4.1.3. HighLevelApi" href="../HighLevelApi.html" />
-    <link rel="next" title="4.1.3.11. StippleTexture" href="StippleTexture.html" />
-    <link rel="prev" title="4.1.3.9. RandomTexture" href="RandomTexture.html" /> 
+    <link rel="next" title="4.1.3.13. Solids" href="Solids.html" />
+    <link rel="prev" title="4.1.3.11. STL" href="STL.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,10 +41,10 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="StippleTexture.html" title="4.1.3.11. StippleTexture"
+          <a href="Solids.html" title="4.1.3.13. Solids"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="RandomTexture.html" title="4.1.3.9. RandomTexture"
+          <a href="STL.html" title="4.1.3.11. STL"
              accesskey="P">previous</a> |</li>
         <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
           <li><a href="../../../reference-manual.html" >4. API Documentation</a> &raquo;</li>
@@ -59,15 +59,15 @@
           <div class="body">
             
   <div class="section" id="module-PyOpenGLng.HighLevelApi.Shader">
-<span id="shader"></span><h1>4.1.3.10. <tt class="xref py py-mod docutils literal"><span class="pre">Shader</span></tt><a class="headerlink" href="#module-PyOpenGLng.HighLevelApi.Shader" title="Permalink to this headline">¶</a></h1>
+<span id="shader"></span><h1>4.1.3.12. <tt class="xref py py-mod docutils literal"><span class="pre">Shader</span></tt><a class="headerlink" href="#module-PyOpenGLng.HighLevelApi.Shader" title="Permalink to this headline">¶</a></h1>
 <p>This modules provides classes to manager OpenGL Shader.</p>
 <dl class="class">
 <dt id="PyOpenGLng.HighLevelApi.Shader.GlShader">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.Shader.</tt><tt class="descname">GlShader</tt><big>(</big><em>shader_type=None</em>, <em>file_name=None</em>, <em>source_code=None</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Shader.html#GlShader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Shader.GlShader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines a shader source code.</p>
 <p>Instances have an internal source code buffer to accumulate the source code before to compile
-it.  We can get the content of this buffer using the <a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><tt class="xref py py-func docutils literal"><span class="pre">str()</span></tt></a>.  And we can test if the shader
+it.  We can get the content of this buffer using the <tt class="xref py py-func docutils literal"><span class="pre">str()</span></tt>.  And we can test if the shader
 is compiled using a Boolean evaluation of the instance.</p>
 <p>The shader type can be passed to the constructor or retrieved from a source file, where a
 comment line with the following pattern must be present:</p>
@@ -107,7 +107,7 @@ comment line with the following pattern must be present:</p>
 
 <dl class="attribute">
 <dt id="PyOpenGLng.HighLevelApi.Shader.GlShader._logger">
-<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x7df8810&gt;</em><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Shader.GlShader._logger" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x841cbd0&gt;</em><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Shader.GlShader._logger" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -158,7 +158,7 @@ the internal buffer. The shader type is determined from the source.</p>
 <dl class="class">
 <dt id="PyOpenGLng.HighLevelApi.Shader.GlShaderManager">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.Shader.</tt><tt class="descname">GlShaderManager</tt><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Shader.html#GlShaderManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Shader.GlShaderManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class provides a shader manager where each shader or program are identified by a name
 and the shader sources are loaded from files.</p>
 <p>The shaders or programs can be accessed using an attribute or a dictionary interface. For
@@ -204,7 +204,7 @@ shader_manager.['fixed_fragment']</pre>
 <dl class="class">
 <dt id="PyOpenGLng.HighLevelApi.Shader.GlShaderProgram">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.Shader.</tt><tt class="descname">GlShaderProgram</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Shader.html#GlShaderProgram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Shader.GlShaderProgram" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines a shader program.</p>
 <p>We can access the uniforms and vertex attributes defined in the shader program using the two
 class attributes: <em>uniforms</em> and <em>attributes</em>, respectively.  Both act as class that has an
@@ -238,7 +238,7 @@ attribute for each uniform and vertex attribute.</p>
 </div>
 <dl class="attribute">
 <dt id="PyOpenGLng.HighLevelApi.Shader.GlShaderProgram._logger">
-<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x7e06090&gt;</em><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Shader.GlShaderProgram._logger" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">_logger</tt><em class="property"> = &lt;logging.Logger object at 0x8417d50&gt;</em><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Shader.GlShaderProgram._logger" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -301,7 +301,7 @@ attribute for each uniform and vertex attribute.</p>
 <dl class="class">
 <dt id="PyOpenGLng.HighLevelApi.Shader.GlShaderProgramInterface">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.Shader.</tt><tt class="descname">GlShaderProgramInterface</tt><big>(</big><em>uniform_blocks</em>, <em>attributes</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Shader.html#GlShaderProgramInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Shader.GlShaderProgramInterface" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines a programming interface for a program.</p>
 <dl class="method">
 <dt id="PyOpenGLng.HighLevelApi.Shader.GlShaderProgramInterface._init_attributes">
@@ -318,7 +318,7 @@ attribute for each uniform and vertex attribute.</p>
 <dl class="class">
 <dt id="PyOpenGLng.HighLevelApi.Shader.GlShaderProgramInterfaceAttribute">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.Shader.</tt><tt class="descname">GlShaderProgramInterfaceAttribute</tt><big>(</big><em>name</em>, <em>location</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Shader.html#GlShaderProgramInterfaceAttribute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Shader.GlShaderProgramInterfaceAttribute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines a programming interface for an attribute as a pair (name, location)</p>
 <dl class="method">
 <dt id="PyOpenGLng.HighLevelApi.Shader.GlShaderProgramInterfaceAttribute.bind_to_buffer">
@@ -331,7 +331,7 @@ attribute for each uniform and vertex attribute.</p>
 <dl class="class">
 <dt id="PyOpenGLng.HighLevelApi.Shader.GlShaderProgramInterfaceUniformBlock">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.Shader.</tt><tt class="descname">GlShaderProgramInterfaceUniformBlock</tt><big>(</big><em>name</em>, <em>binding_point</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Shader.html#GlShaderProgramInterfaceUniformBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Shader.GlShaderProgramInterfaceUniformBlock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class defines a programming interface for an uniform block as a pair (name,
 binding_point)</p>
 </dd></dl>
@@ -471,7 +471,7 @@ the OpenGL data type and <em>size</em> is the number of elements of the uniform.
 <dl class="class">
 <dt id="PyOpenGLng.HighLevelApi.Shader.GlVariable">
 <em class="property">class </em><tt class="descclassname">PyOpenGLng.HighLevelApi.Shader.</tt><tt class="descname">GlVariable</tt><big>(</big><em>shader_program</em>, <em>name</em>, <em>location</em>, <em>gl_type</em>, <em>size</em>, <em>within_uniform_block=False</em>, <em>offset=-1</em><big>)</big><a class="reference internal" href="../../../_modules/PyOpenGLng/HighLevelApi/Shader.html#GlVariable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#PyOpenGLng.HighLevelApi.Shader.GlVariable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
 <p>This class is a base class for Attributes and Uniforms.</p>
 <p>The argument <em>shader_program</em> is the <a class="reference internal" href="#PyOpenGLng.HighLevelApi.Shader.GlShaderProgram" title="PyOpenGLng.HighLevelApi.Shader.GlShaderProgram"><tt class="xref py py-class docutils literal"><span class="pre">GlShaderProgram</span></tt></a> instance, <em>name</em> is the
 name of the uniform in the source code, <em>location</em> is the location of the uniform, <em>gl_type</em>
@@ -524,11 +524,11 @@ the OpenGL data type and <em>size</em> is the number of elements of the uniform.
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="RandomTexture.html"
-                        title="previous chapter">4.1.3.9. <tt class="docutils literal"><span class="pre">RandomTexture</span></tt></a></p>
+  <p class="topless"><a href="STL.html"
+                        title="previous chapter">4.1.3.11. <tt class="docutils literal"><span class="pre">STL</span></tt></a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="StippleTexture.html"
-                        title="next chapter">4.1.3.11. <tt class="docutils literal"><span class="pre">StippleTexture</span></tt></a></p>
+  <p class="topless"><a href="Solids.html"
+                        title="next chapter">4.1.3.13. <tt class="docutils literal"><span class="pre">Solids</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../../_sources/api/PyOpenGLng/HighLevelApi/Shader.txt"
@@ -561,10 +561,10 @@ the OpenGL data type and <em>size</em> is the number of elements of the uniform.
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="StippleTexture.html" title="4.1.3.11. StippleTexture"
+          <a href="Solids.html" title="4.1.3.13. Solids"
              >next</a> |</li>
         <li class="right" >
-          <a href="RandomTexture.html" title="4.1.3.9. RandomTexture"
+          <a href="STL.html" title="4.1.3.11. STL"
              >previous</a> |</li>
         <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
           <li><a href="../../../reference-manual.html" >4. API Documentation</a> &raquo;</li>

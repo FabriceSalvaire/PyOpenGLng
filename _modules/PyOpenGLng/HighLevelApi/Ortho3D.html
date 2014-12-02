@@ -1,0 +1,638 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PyOpenGLng.HighLevelApi.Ortho3D &mdash; PyOpenGLng 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../static/PyOpenGLng.css" type="text/css" />
+    <link rel="stylesheet" href="../../../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../static/jquery.js"></script>
+    <script type="text/javascript" src="../../../static/underscore.js"></script>
+    <script type="text/javascript" src="../../../static/doctools.js"></script>
+    <link rel="top" title="PyOpenGLng 0.1.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for PyOpenGLng.HighLevelApi.Ortho3D</h1><div class="highlight"><pre>
+<span class="c">####################################################################################################</span>
+<span class="c"># </span>
+<span class="c"># PyOpenGLng - An OpenGL Python Wrapper with a High Level API.</span>
+<span class="c"># Copyright (C) 2014 Fabrice Salvaire</span>
+<span class="c">#</span>
+<span class="c"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c"># it under the terms of the GNU General Public License as published by</span>
+<span class="c"># the Free Software Foundation, either version 3 of the License, or</span>
+<span class="c"># (at your option) any later version.</span>
+<span class="c"># </span>
+<span class="c"># This program is distributed in the hope that it will be useful,</span>
+<span class="c"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c"># GNU General Public License for more details.</span>
+<span class="c"># </span>
+<span class="c"># You should have received a copy of the GNU General Public License</span>
+<span class="c"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c"># </span>
+<span class="c">####################################################################################################</span>
+
+<span class="sd">&quot;&quot;&quot; This module implements an Orthographic Projection. &quot;&quot;&quot;</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="kn">from</span> <span class="nn">..Tools.Interval</span> <span class="kn">import</span> <span class="n">Interval</span><span class="p">,</span> <span class="n">Interval2D</span>
+
+<span class="c">####################################################################################################</span>
+
+<span class="n">XAXIS</span><span class="p">,</span> <span class="n">YAXIS</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c">####################################################################################################</span>
+
+<div class="viewcode-block" id="interval2d_from_center_and_size"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.interval2d_from_center_and_size">[docs]</a><span class="k">def</span> <span class="nf">interval2d_from_center_and_size</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; Return an :class:`Tools.Interval.Interval2D` instance.  The parameter *center* is a</span>
+<span class="sd">    2-tuple that defines the center of the interval and the parameter *size* the 2-tuple (width,</span>
+<span class="sd">    height).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">point_inf</span> <span class="o">=</span> <span class="n">center</span> <span class="o">-</span> <span class="n">size</span> <span class="o">*</span> <span class="o">.</span><span class="mi">5</span>
+    <span class="n">point_sup</span> <span class="o">=</span> <span class="n">point_inf</span> <span class="o">+</span> <span class="n">size</span>
+
+    <span class="k">return</span> <span class="n">Interval2D</span><span class="p">((</span><span class="n">point_inf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">point_sup</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                      <span class="p">(</span><span class="n">point_inf</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">point_sup</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="c">####################################################################################################</span>
+</div>
+<div class="viewcode-block" id="ViewportArea"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.ViewportArea">[docs]</a><span class="k">class</span> <span class="nc">ViewportArea</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class defines a viewport area.</span>
+<span class="sd"> </span>
+<span class="sd">    It implements an interval arithmetic using the class :class:`Tools.Interval.Interval2D`.</span>
+
+<span class="sd">    Public Attributes:</span>
+
+<span class="sd">      :attr:`ref_point`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_area</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; The parameter *max_area* must be an :class:`Tools.Interval.Interval2D` instance</span>
+<span class="sd">        that defines the maximum area allowed for the viewport.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_area</span> <span class="o">=</span> <span class="n">max_area</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_area</span> <span class="o">=</span> <span class="n">max_area</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_reference_point</span><span class="p">()</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+
+    <span class="c"># Fixme: mutable argument, return ?</span>
+
+<div class="viewcode-block" id="ViewportArea._check_axis_interval"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.ViewportArea._check_axis_interval">[docs]</a>    <span class="k">def</span> <span class="nf">_check_axis_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis_interval</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Check the axis interval and return a new one that is included in the max area. &quot;&quot;&quot;</span>
+
+        <span class="c"># Fixme: don&#39;t report all error checks</span>
+
+        <span class="n">max_axis_interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_area</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+
+        <span class="n">inferior</span> <span class="o">=</span> <span class="n">axis_interval</span><span class="o">.</span><span class="n">inf</span> <span class="o">&lt;</span> <span class="n">max_axis_interval</span><span class="o">.</span><span class="n">inf</span>
+        <span class="n">superior</span> <span class="o">=</span> <span class="n">max_axis_interval</span><span class="o">.</span><span class="n">sup</span> <span class="o">&lt;</span> <span class="n">axis_interval</span><span class="o">.</span><span class="n">sup</span>
+
+        <span class="k">if</span> <span class="n">inferior</span> <span class="ow">and</span> <span class="n">superior</span><span class="p">:</span>
+            <span class="c"># Report error via exception</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;out of axis area&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">inferior</span><span class="p">:</span>
+            <span class="c"># Fix interval but don&#39;t report</span>
+            <span class="k">return</span> <span class="n">Interval</span><span class="p">(</span><span class="n">max_axis_interval</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+                            <span class="n">max_axis_interval</span><span class="o">.</span><span class="n">inf</span> <span class="o">+</span> <span class="n">axis_interval</span><span class="o">.</span><span class="n">length</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="n">superior</span><span class="p">:</span>
+            <span class="c"># Fix interval but don&#39;t report</span>
+            <span class="k">return</span> <span class="n">Interval</span><span class="p">(</span><span class="n">max_axis_interval</span><span class="o">.</span><span class="n">sup</span> <span class="o">-</span> <span class="n">axis_interval</span><span class="o">.</span><span class="n">length</span><span class="p">(),</span>
+                            <span class="n">max_axis_interval</span><span class="o">.</span><span class="n">sup</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Interval</span><span class="p">(</span><span class="n">axis_interval</span><span class="p">)</span> <span class="c"># Fixme: copy ?</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="ViewportArea._check_area"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.ViewportArea._check_area">[docs]</a>    <span class="k">def</span> <span class="nf">_check_area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">area</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Check the interval *area* is included in the the max area. &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">area</span><span class="o">.</span><span class="n">is_included_in</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_area</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    </div>
+<div class="viewcode-block" id="ViewportArea._set_reference_point"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.ViewportArea._set_reference_point">[docs]</a>    <span class="k">def</span> <span class="nf">_set_reference_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Set the reference point of the viewport defined as the left-bottom corner. &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ref_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">sup</span><span class="p">],</span>
+                                  <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="ViewportArea.center"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.ViewportArea.center">[docs]</a>    <span class="k">def</span> <span class="nf">center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Return the viewport center as an Numpy array. &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="o">.</span><span class="n">middle</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="ViewportArea.size"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.ViewportArea.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Return the viewport size as an Numpy array. &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_area</span>
+
+    <span class="c">##############################################</span>
+
+    <span class="nd">@area.setter</span>
+<div class="viewcode-block" id="ViewportArea.area"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.ViewportArea.area">[docs]</a>    <span class="k">def</span> <span class="nf">area</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">area</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Set the area. &quot;&quot;&quot;</span>
+
+        <span class="c"># Fixme: compution intersection and return True/False if changed</span>
+
+        <span class="n">string_format</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;set_area:</span>
+<span class="s">   </span><span class="si">%s</span><span class="s"></span>
+<span class="s">  -&gt;</span>
+<span class="s">   </span><span class="si">%s</span><span class="s"></span>
+<span class="s"> / </span><span class="si">%s</span><span class="s">&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">string_format</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_area</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_area</span><span class="p">(</span><span class="n">area</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_area</span> <span class="o">=</span> <span class="n">area</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c"># Fixme: better coding ?</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_reference_point</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">intersection</span> <span class="o">=</span> <span class="n">area</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_area</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">intersection</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">XAXIS</span><span class="p">,</span> <span class="n">YAXIS</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_axis_interval</span><span class="p">(</span><span class="n">area</span><span class="p">[</span><span class="n">axis</span><span class="p">],</span> <span class="n">axis</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_reference_point</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># Report error via exception</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Out of area&#39;</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="ViewportArea.max_area"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.ViewportArea.max_area">[docs]</a>    <span class="k">def</span> <span class="nf">max_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_area</span>
+
+    <span class="c">##############################################</span>
+    </div>
+<div class="viewcode-block" id="ViewportArea.translate"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.ViewportArea.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Translate the viewport of *dx* in the *axis* direction. &quot;&quot;&quot;</span>
+
+        <span class="c"># Fixme: don&#39;t report all error checks</span>
+
+        <span class="n">old_axis_interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+
+        <span class="n">axis_interval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+        <span class="n">axis_interval</span> <span class="o">+=</span> <span class="n">dx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_axis_interval</span><span class="p">(</span><span class="n">axis_interval</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+        
+        <span class="n">string_format</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;translate</span>
+<span class="s">   </span><span class="si">%s</span><span class="s"></span>
+<span class="s">  -&gt;</span>
+<span class="s">   (</span><span class="si">%s</span><span class="s">)</span>
+<span class="s">  -&gt;</span>
+<span class="s">   </span><span class="si">%s</span><span class="s"></span>
+<span class="s"> / </span><span class="si">%s</span><span class="s">&quot;&quot;&quot;</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">string_format</span> <span class="o">%</span> <span class="p">(</span><span class="n">old_axis_interval</span><span class="p">,</span> <span class="n">axis_interval</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_area</span><span class="p">[</span><span class="n">axis</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_area</span><span class="p">[</span><span class="n">axis</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_reference_point</span><span class="p">()</span>
+
+<span class="c">####################################################################################################</span>
+</div></div>
+<div class="viewcode-block" id="ZoomManagerAbc"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.ZoomManagerAbc">[docs]</a><span class="k">class</span> <span class="nc">ZoomManagerAbc</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class implements a basic zoom manager.</span>
+
+<span class="sd">    Public Attributes:</span>
+
+<span class="sd">      :attr:`zoom_factor`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; The initial zoom factor is set to one. &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom_factor</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c">##############################################</span>
+    
+<div class="viewcode-block" id="ZoomManagerAbc.check_zoom"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.ZoomManagerAbc.check_zoom">[docs]</a>    <span class="k">def</span> <span class="nf">check_zoom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zoom_factor</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Basic implementation to check a zoom factor, return the 2-tuple (True, zoom_factor). &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom_factor</span> <span class="o">=</span> <span class="n">zoom_factor</span>
+
+        <span class="k">return</span> <span class="bp">True</span><span class="p">,</span> <span class="n">zoom_factor</span>
+
+<span class="c">####################################################################################################</span>
+</div></div>
+<div class="viewcode-block" id="Ortho3D"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D">[docs]</a><span class="k">class</span> <span class="nc">Ortho3D</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot; This class implements an Orthographic Projection.</span>
+
+<span class="sd">    Public Attributes:</span>
+
+<span class="sd">      :attr:`display_scale`</span>
+
+<span class="sd">      :attr:`gl_to_window_parity`</span>
+
+<span class="sd">      :attr:`inverse_parity_display_scale`</span>
+
+<span class="sd">      :attr:`parity_display_scale`</span>
+
+<span class="sd">      :attr:`viewport_area`</span>
+
+<span class="sd">      :attr:`window`</span>
+
+<span class="sd">      :attr:`zoom_manager`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+    <span class="n">gl_to_window_parity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_area</span><span class="p">,</span> <span class="n">zoom_manager</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; The parameter *max_area* must be an :class:`Tools.Interval.Interval2D` instance</span>
+<span class="sd">        that defines the maximum area allowed for the viewport.</span>
+
+<span class="sd">        The parameter *zoom_manager* must be an :class:`ZoomManager` instance.</span>
+
+<span class="sd">        The parameter *window* must implement a Window Trait, that defines a method :meth:`size`</span>
+<span class="sd">        returning the 2-tuple (width, height).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span> <span class="o">=</span> <span class="n">ViewportArea</span><span class="p">(</span><span class="n">max_area</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom_manager</span> <span class="o">=</span> <span class="n">zoom_manager</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">window</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom_at_with_scale</span><span class="p">(</span><span class="n">max_area</span><span class="o">.</span><span class="n">middle</span><span class="p">(),</span> <span class="n">zoom_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">string_format</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Ortho2D:</span>
+<span class="s"> - max area: </span><span class="si">%s</span><span class="s"></span>
+<span class="s"> - area: </span><span class="si">%s</span><span class="s"></span>
+<span class="s"> - window: </span><span class="si">%s</span><span class="s"></span>
+<span class="s"> - zoom factor: </span><span class="si">%g</span><span class="s"></span>
+<span class="s"> - matrix:</span>
+<span class="si">%s</span><span class="s"></span>
+<span class="s">&quot;&quot;&quot;</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="n">string_format</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span><span class="o">.</span><span class="n">_max_area</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">zoom_manager</span><span class="o">.</span><span class="n">zoom_factor</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">view_matrix</span><span class="p">(),</span>
+                                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">text</span>
+
+    <span class="c">##############################################</span>
+
+<div class="viewcode-block" id="Ortho3D._compute_display_scale"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D._compute_display_scale">[docs]</a>    <span class="k">def</span> <span class="nf">_compute_display_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Compute the display scale. &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parity_display_scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">gl_to_window_parity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inverse_parity_display_scale</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">parity_display_scale</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.window_to_gl_coordinate"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.window_to_gl_coordinate">[docs]</a>    <span class="k">def</span> <span class="nf">window_to_gl_coordinate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_point</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Return the scene coordinate from the window coordinate.  The parameter *window_point*</span>
+<span class="sd">        must be an Numpy array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span><span class="o">.</span><span class="n">ref_point</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">parity_display_scale</span> <span class="o">*</span> <span class="n">window_point</span>
+
+   <span class="c">###############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.gl_to_window_coordinate"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.gl_to_window_coordinate">[docs]</a>    <span class="k">def</span> <span class="nf">gl_to_window_coordinate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gl_point</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Return the window coordinate from the scene coordinate.  The parameter *gl_point*</span>
+<span class="sd">        must be an Numpy array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">window_point</span> <span class="o">=</span> <span class="p">(</span><span class="n">gl_point</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span><span class="o">.</span><span class="n">ref_point</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse_parity_display_scale</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">window_point</span><span class="p">)</span>
+
+   <span class="c">###############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.window_to_gl_distance"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.window_to_gl_distance">[docs]</a>    <span class="k">def</span> <span class="nf">window_to_gl_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_window</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parity_display_scale</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">x_window</span>
+
+    <span class="c">##############################################</span>
+    </div>
+<div class="viewcode-block" id="Ortho3D.translate"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.translate">[docs]</a>    <span class="k">def</span> <span class="nf">translate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Translate the viewport of *dx* in the *axis* direction. &quot;&quot;&quot;</span>        
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D._compute_zoom_to_fit_axis"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D._compute_zoom_to_fit_axis">[docs]</a>    <span class="k">def</span> <span class="nf">_compute_zoom_to_fit_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Compute the zoom to fit an axis size. &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;compute_zoom_to_fit_axis </span><span class="si">%u</span><span class="s"> </span><span class="si">%u</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">axis</span><span class="p">))</span>
+
+        <span class="c"># Fixme: window.size[axis] ?</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="n">axis</span><span class="p">]</span> <span class="o">/</span> <span class="n">length</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D._compute_zoom_to_fit_interval"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D._compute_zoom_to_fit_interval">[docs]</a>    <span class="k">def</span> <span class="nf">_compute_zoom_to_fit_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+       
+        <span class="sd">&quot;&quot;&quot; Compute the zoom to fit an interval.  The parameter *interval* must be an</span>
+<span class="sd">        :class:`Tools.Interval.Interval2D` instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">axis_scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">axis_scale</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+        <span class="n">zoom_factor</span> <span class="o">=</span> <span class="n">axis_scale</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">axis</span><span class="p">,</span> <span class="n">zoom_factor</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.zoom_at_with_scale"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.zoom_at_with_scale">[docs]</a>    <span class="k">def</span> <span class="nf">zoom_at_with_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">zoom_factor</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Zoom the viewport centered on a point.  The parameter *point* must be an Numpy array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;zoom_at_with_scale </span><span class="si">%s</span><span class="s"> </span><span class="si">%g</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">point</span><span class="p">),</span> <span class="n">zoom_factor</span><span class="p">))</span>
+
+        <span class="c"># zoom_changed unused</span>
+        <span class="n">zoom_changed</span><span class="p">,</span> <span class="n">zoom_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom_manager</span><span class="o">.</span><span class="n">check_zoom</span><span class="p">(</span><span class="n">zoom_factor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Check Zoom: changed </span><span class="si">%s</span><span class="s">, zoom </span><span class="si">%6.1f</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">zoom_changed</span><span class="p">,</span> <span class="n">zoom_factor</span><span class="p">))</span>
+
+        <span class="n">new_area_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">/</span> <span class="n">zoom_factor</span>
+        <span class="n">new_area</span> <span class="o">=</span> <span class="n">interval2d_from_center_and_size</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">new_area_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">new_area</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compute_display_scale</span><span class="p">()</span>
+
+    <span class="c">##############################################</span>
+    </div>
+<div class="viewcode-block" id="Ortho3D.zoom_at"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.zoom_at">[docs]</a>    <span class="k">def</span> <span class="nf">zoom_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">center</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Zoom the viewport centered on the point *center*.  The parameter *center* must be an</span>
+<span class="sd">        Numpy array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom_at_with_scale</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zoom_manager</span><span class="o">.</span><span class="n">zoom_factor</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+    </div>
+<div class="viewcode-block" id="Ortho3D.zoom_at_center"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.zoom_at_center">[docs]</a>    <span class="k">def</span> <span class="nf">zoom_at_center</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zoom_factor</span><span class="p">):</span>
+        
+        <span class="sd">&quot;&quot;&quot; Zoom on the viewport center. &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom_at_with_scale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="n">zoom_factor</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.zoom_interval"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.zoom_interval">[docs]</a>    <span class="k">def</span> <span class="nf">zoom_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Zoom to an interval.  The parameter *interval* must be an</span>
+<span class="sd">        :class:`Tools.Interval.Interval2D` instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Fixme: name ?</span>
+
+        <span class="c"># axis unused</span>
+        <span class="n">axis</span><span class="p">,</span> <span class="n">zoom_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_zoom_to_fit_interval</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom_at_with_scale</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">middle</span><span class="p">(),</span> <span class="n">zoom_factor</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.fit_axis"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.fit_axis">[docs]</a>    <span class="k">def</span> <span class="nf">fit_axis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">axis</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Set the zoom so as to fit an axis size. &quot;&quot;&quot;</span>
+
+        <span class="n">zoom_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_zoom_to_fit_axis</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom_at_center</span><span class="p">(</span><span class="n">zoom_factor</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.resize"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Resize the viewport for the new window size. &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom_at_center</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zoom_manager</span><span class="o">.</span><span class="n">zoom_factor</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.viewport_scale"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.viewport_scale">[docs]</a>    <span class="k">def</span> <span class="nf">viewport_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_size</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Return the viewport scale. &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">window_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s">&#39;f&#39;</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.view_matrix"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.view_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">view_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Return the view matrix. &quot;&quot;&quot;</span>
+
+        <span class="c"># offset = self.viewport_area.center() * -1.</span>
+        <span class="c"># scale = 2. / self.viewport_area.size()</span>
+        <span class="c"># offset *= scale</span>
+
+        <span class="n">l</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>
+        <span class="n">b</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>
+
+        <span class="n">vertex1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">l</span><span class="p">],</span> <span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="p">[</span><span class="n">f</span><span class="p">]])</span>
+        <span class="n">vertex2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">r</span><span class="p">],</span> <span class="p">[</span><span class="n">t</span><span class="p">],</span> <span class="p">[</span><span class="n">n</span><span class="p">]])</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="mf">2.</span><span class="o">/</span><span class="p">(</span><span class="n">vertex2</span> <span class="o">-</span> <span class="n">vertex1</span><span class="p">)</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="p">(</span><span class="n">vertex2</span> <span class="o">+</span> <span class="n">vertex1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">vertex2</span> <span class="o">-</span> <span class="n">vertex1</span><span class="p">)</span>
+        
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="n">scale</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">0.</span><span class="p">,</span>       <span class="mf">0.</span><span class="p">,</span>       <span class="o">-</span><span class="n">offset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">],</span>
+                           <span class="p">[</span> <span class="mf">0.</span><span class="p">,</span>       <span class="n">scale</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mf">0.</span><span class="p">,</span>       <span class="o">-</span><span class="n">offset</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">],</span>
+                           <span class="p">[</span> <span class="mf">0.</span><span class="p">,</span>       <span class="mf">0.</span><span class="p">,</span>       <span class="n">scale</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>  <span class="n">offset</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">],</span>
+                           <span class="p">[</span> <span class="mf">0.</span><span class="p">,</span>       <span class="mf">0.</span><span class="p">,</span>       <span class="mf">0.</span><span class="p">,</span>       <span class="mf">1.</span> <span class="p">]],</span>
+                          <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">matrix</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.viewport_uniform_buffer_data"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.viewport_uniform_buffer_data">[docs]</a>    <span class="k">def</span> <span class="nf">viewport_uniform_buffer_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_size</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Return the viewport uniform buffer data. &quot;&quot;&quot;</span>
+
+        <span class="n">matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view_matrix</span><span class="p">()</span>
+        <span class="n">viewport_scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport_scale</span><span class="p">(</span><span class="n">window_size</span><span class="p">)</span>
+
+        <span class="n">viewport_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span> <span class="o">+</span>
+                                  <span class="nb">list</span><span class="p">(</span><span class="n">viewport_scale</span><span class="p">)</span> <span class="o">+</span>
+                                  <span class="nb">list</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">viewport_scale</span><span class="p">),</span>
+                                  <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">viewport_array</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.ortho2d_bounding_box"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.ortho2d_bounding_box">[docs]</a>    <span class="k">def</span> <span class="nf">ortho2d_bounding_box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">area</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span><span class="o">.</span><span class="n">area</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">area</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">area</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">sup</span><span class="p">,</span> <span class="n">area</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">area</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">sup</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.row_bounding_box"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.row_bounding_box">[docs]</a>    <span class="k">def</span> <span class="nf">row_bounding_box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span><span class="o">.</span><span class="n">area</span><span class="o">.</span><span class="n">bounding_box</span><span class="p">()</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span><span class="o">.</span><span class="n">max_area</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">sup</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span><span class="p">)</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.get_state"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.get_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Get the viewport state. &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport_area</span><span class="o">.</span><span class="n">area</span>
+
+    <span class="c">##############################################</span>
+</div>
+<div class="viewcode-block" id="Ortho3D.set_state"><a class="viewcode-back" href="../../../api/PyOpenGLng/HighLevelApi/Ortho3D.html#PyOpenGLng.HighLevelApi.Ortho3D.Ortho3D.set_state">[docs]</a>    <span class="k">def</span> <span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot; Set the viewport state. &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">zoom_interval</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+<span class="c">####################################################################################################</span>
+<span class="c">#</span>
+<span class="c"># End</span>
+<span class="c">#</span>
+<span class="c">####################################################################################################</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">PyOpenGLng 0.1.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fabrice Salvaire.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
