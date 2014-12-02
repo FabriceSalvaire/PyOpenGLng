@@ -59,7 +59,7 @@ _module_logger = logging.getLogger(__name__)
 ####################################################################################################
 
 if os.name in 'posix':
-    local_path = os.path.expanduser(os.path.join('~', '.local'))
+    local_path = os.path.expanduser(os.path.join('~', '.cache'))
     if not os.path.exists(local_path):
         raise OSError("Directory {} don't exist".format(local_path))
     cache_path = os.path.join(local_path, 'PyOpenGLng')
