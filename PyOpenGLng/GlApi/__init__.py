@@ -58,6 +58,20 @@ _module_logger = logging.getLogger(__name__)
 
 ####################################################################################################
 
+if os.name in 'posix':
+    local_path = os.path.expanduser(os.path.join('~', '.local'))
+    if not os.path.exists(local_path):
+        raise OSError("Directory {} don't exist".format(local_path))
+    cache_path = os.path.join(local_path, 'PyOpenGLng')
+    if not os.path.exists(cache_path):
+        os.mkdir(cache_path)
+elif os.name in 'nt':
+    raise RuntimeError('fix cache path for Windows')
+else:
+    raise RuntimeError('unknown platform')
+
+####################################################################################################
+
 def default_api_path(file_name):
     """ Return the path to the file stored in the module directory. The ".xml" extension is
     concatened to the file name.
@@ -1449,23 +1463,6 @@ class GlSpecParser(object):
 
     ##############################################
 
-    @staticmethod
-    def load_pickle(pickle_file_path):
-
-        with open(pickle_file_path) as f:
-            obj = pickle.load(f)
-        return obj
-
-    ##############################################
-
-    def dump_pickle(self): # pickle_file_path
-
-        pickle_file_path = os.path.splitext(self._xml_file_path)[0] + '.pickle'
-        with open(pickle_file_path, 'w') as f:
-            pickle.dump(self, f, pickle.HIGHEST_PROTOCOL)
-
-    ##############################################
-
     def _validate(self, relax_ng_file_path):
 
         """ Validate the XML file using the given RelaxNG schema. """
@@ -1780,15 +1777,117 @@ class GlSpecParser(object):
 
         return api_enums, api_commands
 
+####################################################################################################
+
+class NotInCacheException(Exception):
+    pass
+
+####################################################################################################
+
+class CachedGlSpecParser(object):
+
+    """ This class implements a cached GlSpecParser using Pickle files.
+
+    Pickle files are stored in the HOME directory.
+    """
+
+    _logger = _module_logger.getChild('CachedGlSpecParser')
+
     ##############################################
 
-    def dump_pickle_api(self, api, api_number, profile=None): # pickle_file_path
+    def __init__(self, xml_file_path):
 
-        api_enums, api_commands = self.generate_api(api, api_number, profile)
+        self._xml_file_path = xml_file_path
 
-        pickle_file_path = os.path.splitext(self._xml_file_path)[0] + '{}-{}-{}.pickle'.format(api, api_number, profile)
-        with open(pickle_file_path, 'w') as f:
-            pickle.dump((api_enums, api_commands), f, pickle.HIGHEST_PROTOCOL)
+    ##############################################
+
+    def _pickle_file_path(self):
+
+        """ Return the file path for the pickled XML Registry (:class:`GlSpecParser`). """
+
+        return os.path.join(cache_path,
+                            os.path.splitext(os.path.basename(self._xml_file_path))[0] + '.pickle')
+
+    ##############################################
+
+    def _pickle(self, gl_spec):
+
+        """ Pickle the :class:`GlSpecParser` instance. """
+
+        self._logger.info('Pickle XML Registry')
+        with open(self._pickle_file_path(), 'w') as f:
+            pickle.dump(gl_spec, f, pickle.HIGHEST_PROTOCOL)
+
+    ##############################################
+
+    def _load_from_pickle(self):
+
+        """ Unpickle a :class:'GlSpecParser'. """
+
+        with open(self._pickle_file_path()) as f:
+            self._logger.info('Load pickled XML Registry')
+            obj = pickle.load(f)
+        return obj
+
+    ##############################################
+
+    @staticmethod
+    def _pickle_api_file_path(api, api_number, profile):
+
+        """ Return the file path for the pickled API. """
+
+        if profile is not None:
+            profile = '-' + profile
+        else:
+            profile = ''
+            
+        return os.path.join(cache_path,
+                            '{}-{}{}.pickle'.format(api, api_number, profile))
+
+    ##############################################
+
+    def _generate_and_pickle_api(self, gl_spec, api, api_number, profile):
+
+        """ Generate and pickle an API. """
+
+        enums_commands = gl_spec.generate_api(api, api_number, profile)
+
+        self._logger.info('Pickle API')
+        with open(self._pickle_api_file_path(api, api_number, profile), 'w') as f:
+            pickle.dump(enums_commands, f, pickle.HIGHEST_PROTOCOL)
+
+        return enums_commands
+
+    ##############################################
+
+    def _load_api(self, api, api_number, profile=None):
+
+        """ Unpickle an API. """
+
+        pickle_api_file_path = self._pickle_api_file_path(api, api_number, profile)
+        if os.path.exists(pickle_api_file_path):
+            self._logger.info('Load pickled API')
+            with open(pickle_api_file_path) as f:
+                obj = pickle.load(f)
+            return obj
+        else:
+            raise NotInCacheException()
+
+    ##############################################
+
+    def generate_api(self, api, api_number, profile=None):
+
+        try:
+            return self._load_api(api, api_number, profile)
+        except NotInCacheException:
+            pickle_file_path = self._pickle_file_path()
+            if os.path.exists(pickle_file_path):
+                gl_spec = self._load_from_pickle()
+            else:
+                self._logger.info('Create GlSpecParser instance')
+                gl_spec = GlSpecParser(self._xml_file_path)
+                self._pickle(gl_spec)
+            return self._generate_and_pickle_api(gl_spec, api, api_number, profile)
 
 ####################################################################################################
 #

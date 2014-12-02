@@ -41,7 +41,7 @@ from PyOpenGLng.Tools.Timer import TimerContextManager
 
 logging.basicConfig(
     format='\033[1;32m%(asctime)s\033[0m - \033[1;34m%(name)s.%(funcName)s\033[0m - \033[1;31m%(levelname)s\033[0m - %(message)s',
-    level=logging.WARNING,
+    level=logging.INFO,
 )
 
 ####################################################################################################

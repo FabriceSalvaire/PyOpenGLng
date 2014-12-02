@@ -87,12 +87,11 @@ def init(wrapper='ctypes', api='gl', api_number=None, profile='core', check_api_
     else:
         api_number = __api_number__
 
-    from ..GlApi import GlSpecParser, default_api_path
+    from ..GlApi import GlSpecParser, CachedGlSpecParser, default_api_path
     with TimerContextManager(_module_logger, 'GlSpecParser'):
-        gl_spec = GlSpecParser(default_api_path('gl.xml')) # 0.456692 s
-        # gl_spec.dump_pickle()
-        # gl_spec = GlSpecParser.load_pickle(default_api_path('gl.pickle')) # 0.333667 s
-        # gl_spec = None
+        # gl_spec_class = GlSpecParser
+        gl_spec_class = CachedGlSpecParser
+        gl_spec = gl_spec_class(default_api_path('gl.xml')) # 0.456692 s
 
     with TimerContextManager(_module_logger, 'Load Manual'):
         manuals = Manual.load()

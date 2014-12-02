@@ -719,11 +719,11 @@ class GlCommandWrapper(object):
         self._call_counter += 1
 
         if len(self._parameter_wrappers) != len(args):
-            self._logger.warning("%s requires %u arguments, but %u was given\n  %s\n  %s",
-                                 str(self._command), len(self._parameter_wrappers), len(args),
-                                 self._command.prototype(),
-                                 str([parameter_wrapper.__class__.__name__
-                                      for parameter_wrapper in self._parameter_wrappers]))
+            self._logger.warn("%s requires %u arguments, but %u was given\n  %s\n  %s",
+                              str(self._command), len(self._parameter_wrappers), len(args),
+                              self._command.prototype(),
+                              str([parameter_wrapper.__class__.__name__
+                                   for parameter_wrapper in self._parameter_wrappers]))
 
         # Initialise the input/output parameter array
         c_parameters = [None]*self._number_of_parameters
@@ -740,7 +740,7 @@ class GlCommandWrapper(object):
             if to_python_converter is not None:
                 to_python_converters.append(to_python_converter)
 
-        self._logger.info('Call\n'
+        self._logger.debug('Call\n'
                           '  ' + self._command.prototype() + '\n'
                           '  ' + str([parameter_wrapper.__class__.__name__
                                       for parameter_wrapper in self._parameter_wrappers]) + '\n'
@@ -883,10 +883,6 @@ class CtypeWrapper(object):
 
         with TimerContextManager(self._logger, 'generate_api'):
             api_enums, api_commands = gl_spec.generate_api(api, api_number, profile) # 0.080288 s
-            # gl_spec.dump_pickle_api(api, api_number, profile)
-            # import cPickle as pickle
-            # with open('PyOpenGLng/GlApi/glgl-2.1-compat.pickle') as f: # 0.055538 s
-            #     api_enums, api_commands = pickle.load(f)
         self._init_enums(api_enums)
         self._init_commands(api_commands)
 
