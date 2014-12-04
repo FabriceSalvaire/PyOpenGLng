@@ -20,7 +20,12 @@
 
 ####################################################################################################
 
+import logging
 import numpy as np
+
+####################################################################################################
+
+_module_logger = logging.getLogger(__name__)
 
 ####################################################################################################
 
@@ -33,6 +38,8 @@ import numpy as np
 ####################################################################################################
 
 class PythonicWrapper(object):
+
+    _logger = _module_logger.getChild('PythonicWrapper')
 
     ##############################################
 
@@ -105,11 +112,21 @@ class PythonicWrapper(object):
     
     def glGetProgramiv(self, program, pname):
 
-        # Fixme: pname => size and type
-        # Fixme: overhead versus ctype pointer, -> func
-        data = np.zeros(1, dtype=np.int32)
-        self.commands.glGetProgramiv(program, pname, data)
-        return int(data[0])
+        self._logger.info("Use commands_dict")
+
+        command_wrapper = self.commands.glGetProgramiv
+        # dtype is imposed by command
+        # size is COMPSIZE
+        # can we accelerate wrapper ??? overhead versus ctype pointer
+        #  pass size
+        dtype, size = command_wrapper._getter[pname]
+        data = np.zeros(size, dtype=dtype)
+        command_wrapper(program, pname, data)
+        data = data.tolist()
+        if size == 1:
+            return data[0]
+        else:
+            return data
 
     ##############################################    
 

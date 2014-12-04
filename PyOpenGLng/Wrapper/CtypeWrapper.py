@@ -205,8 +205,9 @@ import numpy as np
 ####################################################################################################
 
 from .PythonicWrapper import PythonicWrapper
-import PyOpenGLng.Config as Config
 from PyOpenGLng.Tools.Timer import TimerContextManager
+import PyOpenGLng.Config as Config
+import PyOpenGLng.GlApi.Getter as Getter
 
 ####################################################################################################
 
@@ -703,6 +704,17 @@ class GlCommandWrapper(object):
         else:
             self._function.restype = None
             self._return_void = True # Fixme: required or doublon?
+
+        # Getter
+        if command.name in Getter.commands_dict:
+            command_dict = Getter.commands_dict[command.name]
+            self._getter = {}
+            for enum, type_and_size in command_dict.iteritems():
+                try:
+                    enum_value = getattr(wrapper.enums, enum)
+                    self._getter[enum_value] = type_and_size
+                except AttributeError:
+                    self._logger.warn("Enum {} not found".format(enum))
 
         manual_page = self._manual_page()
         if manual_page is not None:
