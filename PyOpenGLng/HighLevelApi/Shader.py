@@ -39,6 +39,10 @@
 
 ####################################################################################################
 
+from six.moves import xrange
+
+####################################################################################################
+
 import logging
 import os
 import re
@@ -48,9 +52,9 @@ import numpy as np
 ####################################################################################################
 
 from . import GL
+from . import Type as GlType
 from ..Tools.AttributeDictionaryInterface import (AttributeDictionaryInterface, AttributeDictionaryInterfaceDescriptor)
 from ..Tools.Singleton import SingletonMetaClass
-import Type as GlType
 
 ####################################################################################################
 
@@ -289,10 +293,10 @@ Log:
 ####################################################################################################
 
 def sorted_by_location(a_list):
-    return sorted(a_list, cmp=lambda a, b: cmp(a._location, b._location))
+    return sorted(a_list, key=lambda a: a._location)
 
 def sorted_by_offset(a_list):
-    return sorted(a_list, cmp=lambda a, b: cmp(a._offset, b._offset))
+    return sorted(a_list, key=lambda a: a._offset)
 
 ####################################################################################################
 

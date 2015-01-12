@@ -20,6 +20,10 @@
 
 ####################################################################################################
 
+import six
+
+####################################################################################################
+
 import logging
 import numpy as np
 
@@ -163,6 +167,17 @@ class PythonicWrapper(object):
         data = np.zeros(1, dtype=np.int32)
         self.commands.glGetShaderiv(program, pname, data)
         return int(data[0])
+
+    ##############################################
+
+    def glGetString(self, *args, **kwargs):
+
+        # Fixme:
+        value = self.commands.glGetString(*args, **kwargs)
+        if value is not None:
+            return value.decode('ascii')
+        else:
+            return value
 
 ####################################################################################################
 # 

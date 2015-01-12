@@ -20,6 +20,10 @@
 
 ####################################################################################################
 
+import six
+
+####################################################################################################
+
 import logging
 import sys
 
@@ -72,27 +76,27 @@ class GlWidget(GlWidgetBase):
 
     def _test_wrapper(self, GL):
 
-        print 'GL_VERSION:', GL.glGetString(GL.GL_VERSION)
-        # print GL.glGetString(GL.GL_EXTENSIONS) # works
-        print 'GL_EXTENSIONS[1]:', GL.glGetStringi(GL.GL_EXTENSIONS, 1)
+        six.print_('GL_VERSION:', GL.glGetString(GL.GL_VERSION))
+        # six.print_(GL.glGetString(GL.GL_EXTENSIONS)) # works
+        six.print_('GL_EXTENSIONS[1]:', GL.glGetStringi(GL.GL_EXTENSIONS, 1))
 
-        # print GL._error_code_message(GL.glGetError())
+        # six.print_(GL._error_code_message(GL.glGetError())
 
         GL.glGetString(0)
-        print 'Error:', GL._error_code_message(GL.glGetError())
+        six.print_('Error:', GL._error_code_message(GL.glGetError()))
 
         GL.glGetString(0, check_error=False)
 
         try:
             GL.glGetString(0, check_error=True)
         except Exception as e:
-            print 'Error:', e.message
+            six.print_('Error:', e.message)
 
         with GL.error_checker():
-            print 'Buffers ID:', GL.glGenBuffers(10)
+            six.print_('Buffers ID:', GL.glGenBuffers(10))
             data = np.zeros(10, dtype=np.uint32)
             GL.glGenBuffers(data)
-            print 'Buffers ID:', data
+            six.print_('Buffers ID:', data)
 
         with GL.error_checker():
             N = 10
@@ -103,7 +107,7 @@ class GlWidget(GlWidgetBase):
             GL.glBufferData(GL.GL_ARRAY_BUFFER, data, GL.GL_STATIC_DRAW)
             # data_back = GL.glGetBufferSubData(GL.GL_ARRAY_BUFFER, 0, data.nbytes) # void * has no type
             GL.glGetBufferSubData(GL.GL_ARRAY_BUFFER, 0, data_back)
-            print 'glBufferData:', data, data_back
+            six.print_('glBufferData:', data, data_back)
 
         with GL.error_checker():
             texture_id = GL.glGenTextures(1)
@@ -136,12 +140,12 @@ class GlWidget(GlWidgetBase):
             #   <param len="count">const <ptype>GLint</ptype> *<name>length</name></param>
             GL.glShaderSource(shader_id, "uniform vec2 x;")
             log, length = GL.glGetShaderSource(shader_id, 1000)
-            print 'length:', length, '  source:', log
+            six.print_('length:', length, '  source:', log)
             GL.glShaderSource(shader_id, ("uniform vec23 x;",))
             GL.glCompileShader(shader_id)
             log, length = GL.glGetShaderInfoLog(shader_id, 1000)
-            print 'length:', length, '  message:', log
-            print GL.glGetShaderInfoLog.__doc__
+            six.print_('length:', length, '  message:', log)
+            six.print_(GL.glGetShaderInfoLog.__doc__)
 
         # Open manual
         # GL.glShaderSource.manual()

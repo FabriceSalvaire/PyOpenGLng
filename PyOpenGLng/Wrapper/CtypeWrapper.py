@@ -25,6 +25,11 @@ API :class:`PyOpenGLng.GlApi`.
 
 ####################################################################################################
 
+import six
+from six.moves import xrange
+
+####################################################################################################
+
 import collections
 import ctypes
 import logging
@@ -117,7 +122,7 @@ class GlEnums(object):
 
     def __iter__(self):
 
-        for attribute in sorted(self.__dict__.iterkeys()):
+        for attribute in sorted(six.iterkeys(self.__dict__)):
             if attribute.startswith('GL_'):
                 yield attribute
 
@@ -133,7 +138,7 @@ class GlCommands(object):
         #     if attribute.startswith('gl'):
         #         yield value
 
-        for attribute in sorted(self.__dict__.iterkeys()):
+        for attribute in sorted(six.iterkeys(self.__dict__)):
             if attribute.startswith('gl'):
                 yield getattr(self, attribute)
 
@@ -215,7 +220,9 @@ class PointerWrapper(ParameterWrapperBase):
 
         if self._type == ctypes.c_char and self._parameter.const: # const char *
             self._logger.debug('const char *')
-            ctypes_parameter = ctypes.c_char_p(str(parameter))
+            if not isinstance(parameter, bytes):
+                parameter = six.b(parameter)
+            ctypes_parameter = ctypes.c_char_p(parameter)
         elif isinstance(parameter, np.ndarray):
             self._logger.debug('ndarray')
             if self._type != ctypes.c_void_p:
@@ -340,7 +347,7 @@ class OutputArrayWrapper(ArrayWrapper):
             c_parameters[self._size_location] = self._size_type(size_parameter)
             ctypes_parameter = ctypes.create_string_buffer(size_parameter)
             c_parameters[self._pointer_location] = ctypes_parameter
-            to_python_converter = ValueConverter(ctypes_parameter)
+            to_python_converter = StringConverter(ctypes_parameter)
             return to_python_converter
         elif isinstance(parameter, np.ndarray):
             self._logger.debug('ndarray')
@@ -389,7 +396,7 @@ class InputArrayWrapper(ArrayWrapper):
                     self._logger.debug('string -> const char **')
                     size_parameter = 1
                     string_array_type = ctypes.c_char_p * 1
-                    string_array = string_array_type(ctypes.c_char_p(array))
+                    string_array = string_array_type(ctypes.c_char_p(six.b(array)))
                 else:
                     self._logger.debug('string array -> const char **')
                     size_parameter = len(array)
@@ -450,6 +457,15 @@ class ValueConverter(ToPythonConverter):
     """ Get the Python value of the ctype object. """
     def __call__(self):
         return self._c_object.value
+
+class StringConverter(ToPythonConverter):
+    """ Get the Python value of the ctype object. """
+    def __call__(self):
+        value = self._c_object.value
+        if value is not None:
+            return value.decode('ascii')
+        else:
+            return None
 
 ####################################################################################################
 
@@ -542,7 +558,7 @@ class GlCommandWrapper(object):
         if command.name in Getter.commands_dict:
             command_dict = Getter.commands_dict[command.name]
             self._getter = {}
-            for enum, type_and_size in command_dict.iteritems():
+            for enum, type_and_size in six.iteritems(command_dict):
                 try:
                     enum_value = getattr(wrapper.enums, enum)
                     self._getter[enum_value] = type_and_size
@@ -685,7 +701,7 @@ class GlCommandWrapper(object):
     def help(self):
 
         # Fixme: help(instance)
-        print self.__doc__
+        six.print_(self.__doc__)
 
     ##############################################
 
@@ -715,6 +731,8 @@ class CtypeWrapper(object):
         cls.libGL.glGetString.restype = ctypes.c_char_p
         GL_VERSION = int('0x1F02', 16)
         version_string = cls.libGL.glGetString(GL_VERSION)
+        if version_string is not None:
+            version_string = version_string.decode('ascii')
 
         return version_string
 
@@ -755,14 +773,17 @@ class CtypeWrapper(object):
     def _init_commands(self, api_commands):
 
         gl_commands = GlCommands()
-        for command in api_commands.itervalues():
+        for command in six.itervalues(api_commands):
             try:
                 command_name = str(command)
                 command_wrapper = GlCommandWrapper(self, command)
                 # store enumerants and commands at the same level
                 if hasattr(PythonicWrapper, command_name):
                     method = getattr(PythonicWrapper, command_name)
-                    rebinded_method = types.MethodType(method.im_func, self, self.__class__)
+                    if six.PY3:
+                        rebinded_method = types.MethodType(method, self)
+                    else:
+                        rebinded_method = types.MethodType(method.im_func, self, self.__class__)
                     setattr(self, command_name, rebinded_method)
                 else:
                     setattr(self, command_name, command_wrapper)

@@ -22,9 +22,19 @@
 
 ####################################################################################################
 
-import cPickle as pickle
+####################################################################################################
+
+import six
+
+####################################################################################################
+
 import glob
 import os
+
+if six.PY3:
+    import pickle
+else:
+    import cPickle as pickle
 
 from lxml import etree
 
@@ -52,8 +62,14 @@ class Manual(dict):
         """
 
         manuals = {}
-        for pickle_file in glob.glob(os.path.join(os.path.dirname(__file__), 'man*.pickle')):
-            with open(pickle_file, 'r') as f:
+        pattern = 'man*.pickle'
+        if six.PY3:
+            # pattern += '3'
+            mode = 'rb'
+        else:
+            mode = 'r'
+        for pickle_file in glob.glob(os.path.join(os.path.dirname(__file__), pattern)):
+            with open(pickle_file, mode) as f:
                 manual = pickle.load(f)
                 manuals[manual.name] = manual
 
@@ -138,8 +154,8 @@ class ManualParser(object):
                            'PartialD', 'DoubleVerticalBar', 'Prime', 'LeftFloor', 'RightFloor',
                            'LeftCeiling', 'RightCeiling', 'VerticalBar'):
                 xml_source = xml_source.replace('&' + entity + ';', '')
-
-        root = etree.fromstring(xml_source)
+                
+        root = etree.fromstring(xml_source.encode('utf-8'))
         functions = [node.text for node in root.findall('refnamediv/refname')]
         purpose = root.find('refnamediv/refpurpose').text
         for function in functions:

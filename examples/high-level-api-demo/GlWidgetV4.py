@@ -20,6 +20,11 @@
 
 ####################################################################################################
 
+import six
+from six.moves import xrange
+
+####################################################################################################
+
 import logging
 
 from PyQt4 import QtCore
@@ -172,7 +177,7 @@ class GlWidget(GlWidgetBase):
     def create_path(self):
 
         self.path_object = nvpath.glGenPathsNV(1)
-        # print self.path_object
+        # six.print_(self.path_object)
         start_ps_path = """ 100 180 moveto 40 10 lineto 190 120 lineto 10 120 lineto 160 10 lineto closepath   """
         nvpath.glPathStringNV(self.path_object, nvpath.GL_PATH_FORMAT_PS_NV, len(start_ps_path), start_ps_path)
         nvpath.glPathParameteriNV(self.path_object, nvpath.GL_PATH_JOIN_STYLE_NV, nvpath.GL_ROUND_NV)
@@ -269,7 +274,7 @@ class GlWidget(GlWidgetBase):
         for c in xrange(width):
             data[:,c,:] = int((float(c+1) / width) * intensity_max)
         # data[...] = intensity_max
-        # print data
+        # six.print_(data)
         self.image = data
 
         self.texture_vertex_array1 = GlTextureVertexArray(position=Point(0, 0), dimension=Offset(width, height), image=data,
@@ -277,7 +282,11 @@ class GlWidget(GlWidgetBase):
         self.texture_vertex_array1.bind_to_shader(self.shader_manager.texture_shader_program.interface.attributes)
         
         self.texture_vertex_array2 = GlTextureVertexArray(position=Point(-5, -5), dimension=Offset(width, height))
-        self.texture_vertex_array2.set(image=data/2, integer_internal_format=integer_internal_format)
+        if six.PY3:
+            data = data // 2
+        else:
+            data = data / 2
+        self.texture_vertex_array2.set(data, integer_internal_format=integer_internal_format)
         self.texture_vertex_array2.bind_to_shader(self.shader_manager.texture_shader_program.interface.attributes)
 
         height, width = 50, 50
@@ -328,12 +337,12 @@ class GlWidget(GlWidgetBase):
         self.paint_lines()
         self.paint_text()
 
-        print '\n', '='*100
+        six.print_('\n', '='*100)
         for command in GL.called_commands():
-            print '\n', '-'*50
-            # print str(command)
-            print command._command.prototype()
-            print command.help()
+            six.print_('\n', '-'*50)
+            # six.print_(str(command))
+            six.print_(command._command.prototype())
+            six.print_(command.help())
 
     ##############################################
 
@@ -409,7 +418,7 @@ class GlWidget(GlWidgetBase):
         
         GL.glLineWidth(2.)
         shader_program.uniforms.colour = (1., 0., 0.)
-        # print 'colour', shader_program.uniforms.colour
+        # six.print_('colour', shader_program.uniforms.colour)
         self.segment_vertex_array3.draw()
         
         shader_program = self.shader_manager.rectangle_shader_program

@@ -39,10 +39,9 @@ import logging
 
 import numpy as np
 
-import OpenGL.GL as GL
-
 ####################################################################################################
 
+from . import GL
 from .TextureFont import from_64th_point
 from .Buffer import GlArrayBuffer
 from .VertexArrayObject import GlVertexArrayObject

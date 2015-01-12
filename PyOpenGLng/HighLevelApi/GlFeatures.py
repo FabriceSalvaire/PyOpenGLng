@@ -23,6 +23,10 @@
 
 ####################################################################################################
 
+import six
+
+####################################################################################################
+
 import re
 
 ####################################################################################################
@@ -62,7 +66,7 @@ class GlVersion(object):
     @staticmethod
     def _version_from_match(match):
         kwargs = {key:int(value)
-                  for key, value in match.groupdict().iteritems()
+                  for key, value in six.iteritems(match.groupdict())
                   if value is not None}
 
         return RevisionVersion(kwargs)

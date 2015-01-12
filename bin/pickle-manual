@@ -13,8 +13,16 @@
 
 ####################################################################################################
 
+import six
+
+####################################################################################################
+
 import argparse
-import cPickle as pickle
+
+if six.PY3:
+    import pickle
+else:
+    import cPickle as pickle
 
 ####################################################################################################
 
@@ -43,7 +51,11 @@ args = argument_parser.parse_args()
 ####################################################################################################
 
 manual = make_manual(args.manual_path)
-with open(args.pickle_file, 'w') as f:
+if six.PY3:
+    mode = 'wb'
+else:
+    mode = 'w'
+with open(args.pickle_file, mode) as f:
     pickle.dump(manual, f, pickle.HIGHEST_PROTOCOL)
 
 ####################################################################################################

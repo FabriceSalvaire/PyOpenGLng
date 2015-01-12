@@ -86,6 +86,10 @@ Correspondence of command suffix type descriptors to GL argument types:
 
 ####################################################################################################
 
+import six
+
+####################################################################################################
+
 import logging
 
 import numpy as np
@@ -112,20 +116,20 @@ gl_data_type = EnumFactory('GlDataType',
 
 #: OpenGL to Numpy data type
 gl_to_numpy_data_type = {
-    gl_data_type.bool: np.uint32, # np.bool ?
-    gl_data_type.unsigned_int: np.uint32,
-    gl_data_type.int: np.int32,
-    gl_data_type.float: np.float32,
-    gl_data_type.double: np.float64,
+    int(gl_data_type.bool): np.uint32, # np.bool ?
+    int(gl_data_type.unsigned_int): np.uint32,
+    int(gl_data_type.int): np.int32,
+    int(gl_data_type.float): np.float32,
+    int(gl_data_type.double): np.float64,
     }
 
 #! OpenGL data type to the prototype letter
 gl_data_type_to_prototype_letter =  {
-    gl_data_type.bool: 'ui', # should be 'b'
-    gl_data_type.unsigned_int: 'ui',
-    gl_data_type.int: 'i',
-    gl_data_type.float: 'f',
-    gl_data_type.double: 'd',
+    int(gl_data_type.bool): 'ui', # should be 'b'
+    int(gl_data_type.unsigned_int): 'ui',
+    int(gl_data_type.int): 'i',
+    int(gl_data_type.float): 'f',
+    int(gl_data_type.double): 'd',
     }
 
 ####################################################################################################
@@ -199,7 +203,7 @@ class GlType(object):
         else:
             self.uniform_set = None
 
-        self.dtype = gl_to_numpy_data_type[data_type]
+        self.dtype = gl_to_numpy_data_type[int(data_type)]
 
     ##############################################
     
@@ -222,7 +226,7 @@ type %(token_name)s
   dtype                 %(dtype)s
 """
 
-        print template % self.__dict__
+        six.print_(template % self.__dict__)
 
 ####################################################################################################
 
@@ -239,7 +243,8 @@ class GlVariableType(GlType):
 
         keyword = str(data_type)
         token_name = keyword.upper()
-        uniform_get = gl_data_type_to_prototype_letter[data_type]
+
+        uniform_get = gl_data_type_to_prototype_letter[int(data_type)]
         uniform_set = '1' + uniform_get
 
         super(GlVariableType, self).__init__(token_name, keyword, data_type, uniform_get, uniform_set)
@@ -256,7 +261,7 @@ class GlVectorType(GlType):
     
     def __init__(self, data_type, size):
 
-        letter = gl_data_type_to_prototype_letter[data_type]
+        letter = gl_data_type_to_prototype_letter[int(data_type)]
         suffix = 'vec' + str(size)
         token_name = (str(data_type) + '_' + suffix).upper()
         if data_type == gl_data_type.bool:
@@ -310,7 +315,7 @@ class GlSamplerType(GlType):
 
         if data_type != gl_data_type.float:
             token_name = (str(data_type) + '_' + token_name).upper()
-            keyword = gl_data_type_to_prototype_letter[data_type] + keyword
+            keyword = gl_data_type_to_prototype_letter[int(data_type)] + keyword
         # A sampler corresponds to an unsigned integer.
         # Fixme: why i instead of ui
         uniform_data_type = gl_data_type.int

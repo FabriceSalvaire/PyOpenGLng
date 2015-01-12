@@ -162,9 +162,10 @@ class TextureAtlas:
             A newly allocated region as (x,y,width,height) or (-1,-1,0,0)
         """
 
-        best_height = sys.maxint
+        max_int = 2**32 # sys.maxint
+        best_height = max_int
         best_index = -1
-        best_width = sys.maxint
+        best_width = max_int
         region = 0, 0, width, height
 
         for i in range(len(self._nodes)):

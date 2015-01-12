@@ -20,6 +20,11 @@
 
 ####################################################################################################
 
+import six
+from six.moves import xrange
+
+####################################################################################################
+
 import mmap
 import struct
 
@@ -108,7 +113,7 @@ class StlParser(object):
 
         header = stream.read(80)
         number_of_triangles = struct.unpack('<I', stream.read(4))[0]
-        print number_of_triangles
+        six.print_(number_of_triangles)
 
         positions = np.zeros((3*number_of_triangles, 3), dtype=np.float32)
         normals = np.zeros(positions.shape, dtype=np.float32)
@@ -125,13 +130,13 @@ class StlParser(object):
         # Center the solid
         for i in xrange(3):
             positions[:,i] -= .5*(positions[:,i].max() + positions[:,i].min())
-        print positions[:,0].min(), positions[:,1].min(), positions[:,2].min()
-        print positions[:,0].max(), positions[:,1].max(), positions[:,2].max()
+        six.print_(positions[:,0].min(), positions[:,1].min(), positions[:,2].min())
+        six.print_(positions[:,0].max(), positions[:,1].max(), positions[:,2].max())
 
         # normal, 3 vertex
         # dtype = np.dtype('12<f4, <u2')
         # data = np.memmap(file_handle, mode='r', dtype=dtype, shape=number_of_triangles)
-        # print data[0]
+        # six.print_(data[0])
 
         self.positions = positions
         self.normals = normals

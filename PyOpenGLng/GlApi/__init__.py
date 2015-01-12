@@ -41,9 +41,24 @@ the OpenGL API. You could look at its source code to learn how to use this modul
 
 ####################################################################################################
 
-import cPickle as pickle
-import os
+import six
+
+if six.PY3:
+    read_mode = 'rb'
+    write_mode = 'wb'
+else:
+    read_mode = 'r'
+    write_mode = 'w'
+
+####################################################################################################
+
 import logging
+import os
+
+if six.PY3:
+    import pickle
+else:
+    import cPickle as pickle
 
 from lxml import etree
 
@@ -112,7 +127,7 @@ class NameDict(dict):
 
         # Fixme: iter(), sorted dict?
         # OrderedDict(sorted(d.items(), key=lambda t: t[0]))
-        return sorted(self.itervalues(), cmp=lambda a, b: cmp(a.name, b.name))
+        return sorted(six.itervalues(self), key=lambda a: a.name)
 
 ####################################################################################################
 
@@ -489,7 +504,7 @@ class Enums(object):
 
         """ Return an iterator over the enumerant instances. """
 
-        return self._enum_name_dict.itervalues()
+        return six.itervalues(self._enum_name_dict)
 
     ##############################################
 
@@ -498,7 +513,7 @@ class Enums(object):
         """ """
 
         # Fixme: iter(), sorted dict?
-        return sorted(self._enum_name_dict.itervalues(), cmp=lambda a, b: cmp(a.name, b.name))
+        return sorted(six.itervalues(self._enum_name_dict), key=lambda a: a.name)
 
     ##############################################
 
@@ -562,7 +577,7 @@ class Enums(object):
 
         """ Add the enumerants from *enums* that match *api*. """
 
-        for enum in enums._enum_name_dict.itervalues():
+        for enum in six.itervalues(enums._enum_name_dict):
             if enum.api is None or enum.api == api:
                 self.register(enum, primary_registration=False)
 
@@ -1483,7 +1498,7 @@ class GlSpecParser(object):
         """
         
         new_dict = {}
-        for key, value in source_dict.iteritems():
+        for key, value in six.iteritems(source_dict):
             if renaming is not None and key in renaming:
                 key = renaming[key]
             new_dict[key] = value
@@ -1815,7 +1830,7 @@ class CachedGlSpecParser(object):
         """ Pickle the :class:`GlSpecParser` instance. """
 
         self._logger.info('Pickle XML Registry')
-        with open(self._pickle_file_path(), 'w') as f:
+        with open(self._pickle_file_path(), write_mode) as f:
             pickle.dump(gl_spec, f, pickle.HIGHEST_PROTOCOL)
 
     ##############################################
@@ -1824,7 +1839,7 @@ class CachedGlSpecParser(object):
 
         """ Unpickle a :class:'GlSpecParser'. """
 
-        with open(self._pickle_file_path()) as f:
+        with open(self._pickle_file_path(), read_mode) as f:
             self._logger.info('Load pickled XML Registry')
             obj = pickle.load(f)
         return obj
@@ -1853,7 +1868,7 @@ class CachedGlSpecParser(object):
         enums_commands = gl_spec.generate_api(api, api_number, profile)
 
         self._logger.info('Pickle API')
-        with open(self._pickle_api_file_path(api, api_number, profile), 'w') as f:
+        with open(self._pickle_api_file_path(api, api_number, profile), write_mode) as f:
             pickle.dump(enums_commands, f, pickle.HIGHEST_PROTOCOL)
 
         return enums_commands
@@ -1867,7 +1882,7 @@ class CachedGlSpecParser(object):
         pickle_api_file_path = self._pickle_api_file_path(api, api_number, profile)
         if os.path.exists(pickle_api_file_path):
             self._logger.info('Load pickled API')
-            with open(pickle_api_file_path) as f:
+            with open(pickle_api_file_path, read_mode) as f:
                 obj = pickle.load(f)
             return obj
         else:

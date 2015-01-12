@@ -20,6 +20,11 @@
 
 ####################################################################################################
 
+import six
+from six.moves import xrange
+
+####################################################################################################
+
 import logging
 
 from PyQt4 import QtCore, QtGui
@@ -193,12 +198,12 @@ class GlWidget(GlWidgetBase):
         self.paint_grid()
         self.paint_textures()
 
-        print '\n', '='*100
+        six.print_('\n', '='*100)
         for command in GL.called_commands():
-            print '\n', '-'*50
-            # print str(command)
-            print command._command.prototype()
-            print command.help()
+            six.print_('\n', '-'*50)
+            # six.print_(str(command))
+            six.print_(command._command.prototype())
+            six.print_(command.help())
 
     ##############################################
 

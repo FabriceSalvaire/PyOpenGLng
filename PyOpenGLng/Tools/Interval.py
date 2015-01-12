@@ -143,15 +143,6 @@ class Interval(object):
             return '[%g, %g]' % (self.inf, self.sup)
 
     ##############################################
-    
-    def print_object(self):
-
-        """ Print the interval
-        """
-
-        print str(self)
-
-    ##############################################
 
     def is_empty(self):
 
@@ -303,7 +294,10 @@ class Interval(object):
         """ Is *x* in the interval?
         """
 
-        return self.inf <= x and x <= self.sup
+        if x is None:
+            return False
+        else:
+            return self.inf <= x and x <= self.sup
                 
     ##############################################
 
@@ -617,15 +611,6 @@ class Interval2D(object):
     def __repr__(self):
 
         return str(self.__class__) + ' ' + str(self)
-
-    ##############################################
-
-    def print_object(self):
-
-        """ Print the interval
-        """
-
-        print str(self)
 
     ##############################################
 

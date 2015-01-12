@@ -54,6 +54,10 @@
 
 ####################################################################################################
 
+import six
+
+####################################################################################################
+
 import ctypes
 import json
 import logging
@@ -123,8 +127,8 @@ for enums in gl_spec.enums_list:
         enum_dict[enum.name] = enum
 
 # Update types
-for command in commands_dict.itervalues():
-    for enum in command.itervalues():
+for command in six.itervalues(commands_dict):
+    for enum in six.itervalues(command):
         enum[0] = _letter_to_ctypes[enum[0]]
 
 ####################################################################################################

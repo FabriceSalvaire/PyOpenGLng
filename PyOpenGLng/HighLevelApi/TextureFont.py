@@ -52,6 +52,10 @@
 
 ####################################################################################################
 
+import six
+
+####################################################################################################
+
 import logging
 import string
 import unicodedata
@@ -156,7 +160,7 @@ is fixed width:      %s
 is scalable:         %s
 """
 
-        print string_template % (
+        six.print_(string_template % (
             face.postscript_name,
             face.family_name,
             face.style_name,
@@ -181,15 +185,15 @@ is scalable:         %s
             face.has_kerning,
             face.is_fixed_width,
             face.is_scalable,
-            )
+            ))
 
-        print "Glyph Table:"
+        six.print_("Glyph Table:")
         charcode, glyph_index = face.get_first_char()
         while glyph_index:
-            print "  [%d] 0x%04lx %s %s" % (glyph_index,
-                                            charcode,
-                                            unichr(charcode),
-                                            unicodedata.name(unichr(charcode)))
+            six.print_("  [%d] 0x%04lx %s %s" % (glyph_index,
+                                                 charcode,
+                                                 unichr(charcode),
+                                                 unicodedata.name(unichr(charcode))))
             # face.get_glyph_name(glyph_index) # is not available
             charcode, glyph_index = face.get_next_char(charcode, glyph_index)
 
@@ -238,7 +242,7 @@ class TextureFontSize(object):
         face = self._font._face
         charcode, glyph_index = face.get_first_char()
         while glyph_index:
-            self.load_glyph(unichr(charcode))
+            self.load_glyph(six.unichr(charcode))
             charcode, glyph_index = face.get_next_char(charcode, glyph_index)
 
     ##############################################
@@ -259,7 +263,7 @@ class TextureFontSize(object):
                            horizontal_scale*resolution, resolution)
         # Matrix cooeficients are expressed in 16.16 fixed-point units.
         # 2**16 = 0x10000L = 65536
-        matrix = freetype.Matrix(2**16/horizontal_scale, 0,
+        matrix = freetype.Matrix(int(2**16/horizontal_scale), 0,
                                  0, 2**16)
         # The vector coordinates are expressed in 1/64th of a pixel
         # (also known as 26.6 fixed-point numbers).

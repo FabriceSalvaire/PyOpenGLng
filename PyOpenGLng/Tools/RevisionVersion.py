@@ -80,7 +80,7 @@ class RevisionVersion(object):
             else:
                 raise ValueError('Bad version string %s' % (version))
         elif isinstance(version, dict): # dict is iterable
-            self.major, self.minor, self.revision = [version.get(key, 0) for key in 'major', 'minor', 'revision']
+            self.major, self.minor, self.revision = [version.get(key, 0) for key in ('major', 'minor', 'revision')]
             self.suffix = version.get('suffix', None)
         elif isinstance(version, collections.Iterable):
             self.major = version[0]

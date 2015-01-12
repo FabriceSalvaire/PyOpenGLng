@@ -160,12 +160,12 @@ class GlWidget(GlWidgetBase3D):
 
         self.paint_object()
 
-        # print '\n', '='*100
+        # six.print_('\n', '='*100)
         # for command in GL.called_commands():
-        #     print '\n', '-'*50
-        #     # print str(command)
-        #     print command._command.prototype()
-        #     print command.help()
+        #     six.print_('\n', '-'*50)
+        #     # six.print_(str(command))
+        #     six.print_(command._command.prototype())
+        #     six.print_(command.help())
 
     ##############################################
 

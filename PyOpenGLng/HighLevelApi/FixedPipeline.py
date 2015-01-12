@@ -20,6 +20,10 @@
 
 ####################################################################################################
 
+import six
+
+####################################################################################################
+
 from . import GL
 from ..Tools.Math import epsilon_float
 
@@ -47,7 +51,8 @@ def set_dashed_line_style():
 def set_dotted_line_style():
 
     GL.glEnable(GL.GL_LINE_STIPPLE)
-    GL.glLineStipple(1, 00101)
+    # pattern = 0o101 = 00101
+    GL.glLineStipple(1, 65)
 
 def set_dash_dotted_line_style():
 
