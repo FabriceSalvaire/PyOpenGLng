@@ -172,14 +172,14 @@ class GlWidgetBase(QtOpenGL.QGLWidget):
 
     ##############################################
 
-    def window_to_gl_coordinate(self, event):
+    def window_to_gl_coordinate(self, event, round_to_integer=False):
 
         """ Convert mouse coordinate
         """
 
         position = np.array((event.x(), event.y()), dtype=np.uint)
 
-        return self.glortho2d.window_to_gl_coordinate(position)
+        return self.glortho2d.window_to_gl_coordinate(position, round_to_integer)
 
     ##############################################
 

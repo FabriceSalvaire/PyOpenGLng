@@ -346,13 +346,17 @@ class Ortho2D(object):
 
     ##############################################
 
-    def window_to_gl_coordinate(self, window_point):
+    def window_to_gl_coordinate(self, window_point, round_to_integer=False):
 
         """ Return the scene coordinate from the window coordinate.  The parameter *window_point*
         must be an Numpy array.
         """
 
-        return self.viewport_area.ref_point + self.parity_display_scale * window_point
+        coordinate = self.viewport_area.ref_point + self.parity_display_scale * window_point
+        if round_to_integer:
+            return np.rint(coordinate)
+        else:
+            return coordinate
 
    ###############################################
 
