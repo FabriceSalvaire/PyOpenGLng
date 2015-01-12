@@ -114,6 +114,14 @@ getter_json_path = os.path.join(os.path.join(os.path.dirname(os.path.realpath(__
 with open(getter_json_path) as f:
     commands_dict = json.load(f)
 
+from PyOpenGLng.GlApi import GlSpecParser, default_api_path
+gl_spec = GlSpecParser(default_api_path('gl'))
+
+enum_dict = {}
+for enums in gl_spec.enums_list:
+    for enum in enums:
+        enum_dict[enum.name] = enum
+
 # Update types
 for command in commands_dict.itervalues():
     for enum in command.itervalues():

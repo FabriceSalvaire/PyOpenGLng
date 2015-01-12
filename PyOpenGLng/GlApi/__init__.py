@@ -1454,7 +1454,7 @@ class GlSpecParser(object):
         self.types = Types()
         self.groups = Groups()
         self.commands = Commands()
-        self.enums_list = []
+        self.enums_list = [] # list of list of enums
         self.feature_list = []
         self.extension_list = []
 

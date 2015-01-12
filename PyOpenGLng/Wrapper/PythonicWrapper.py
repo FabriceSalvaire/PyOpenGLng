@@ -25,6 +25,10 @@ import numpy as np
 
 ####################################################################################################
 
+import PyOpenGLng.GlApi.Getter as Getter
+
+####################################################################################################
+
 _module_logger = logging.getLogger(__name__)
 
 ####################################################################################################
@@ -107,6 +111,29 @@ class PythonicWrapper(object):
             return list(params)
         else:
             return params[0]
+
+    ##############################################    
+    
+    def glGetProgram(self, program, pname):
+
+        self._logger.info("Use commands_dict")
+
+        dtype, size = Getter.commands_dict['glGetProgram'][pname]
+
+        command_wrapper = self.commands.glGetProgramiv
+
+        # dtype is imposed by command
+        # size is COMPSIZE
+        # can we accelerate wrapper ??? overhead versus ctype pointer
+        #  pass size
+        dtype, size = command_wrapper._getter[pname]
+        data = np.zeros(size, dtype=dtype)
+        command_wrapper(program, pname, data)
+        data = data.tolist()
+        if size == 1:
+            return data[0]
+        else:
+            return data
 
     ##############################################    
     

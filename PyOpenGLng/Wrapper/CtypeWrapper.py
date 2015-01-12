@@ -738,6 +738,7 @@ class CtypeWrapper(object):
     def _init_enums(self, api_enums):
 
         gl_enums = GlEnums()
+        reverse_enums = {}
         for enum in api_enums:
             # We don't provide more information on enumerants, use GlAPI instead
             enum_name, enum_value = str(enum), int(enum)
@@ -745,7 +746,9 @@ class CtypeWrapper(object):
             setattr(self, enum_name, enum_value)
             # store enumerants in a dedicated place
             setattr(gl_enums, enum_name, enum_value)
+            reverse_enums[enum_value] = enum_name
         self.enums = gl_enums
+        self.reverse_enums = reverse_enums
 
     ##############################################
 
