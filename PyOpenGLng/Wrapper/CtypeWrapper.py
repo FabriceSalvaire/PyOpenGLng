@@ -418,7 +418,13 @@ class InputArrayWrapper(ArrayWrapper):
         elif isinstance(array, collections.Iterable):
             size_parameter = len(array)
             array_type = self._pointer_type * size_parameter
-            ctypes_parameter = array_type(array)
+            if six.PY3:
+                if size_parameter > 1:
+                    ctypes_parameter = array_type(array)
+                else:
+                    ctypes_parameter = array_type(array[0])
+            else:
+                ctypes_parameter = array_type(array)
         else:
             raise ValueError(str(array))
 

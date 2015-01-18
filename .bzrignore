@@ -14,3 +14,4 @@ doc/registry-api
 PyOpenGLng/GlApi/gl.xml
 glx-tools/gl-version
 examples/atlas.png
+__pycache__
