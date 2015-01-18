@@ -27,8 +27,6 @@ from six.moves import xrange
 
 import logging
 
-from PyQt4 import QtCore, QtGui
-
 import numpy as np
 
 #!# import OpenGL.GL as GL3
@@ -88,7 +86,7 @@ class GlWidget(GlWidgetBase):
         GL.glEnable(GL.GL_POINT_SMOOTH)
         GL.glEnable(GL.GL_LINE_SMOOTH)
         
-        self.qglClearColor(QtCore.Qt.black)
+        # self.qglClearColor(QtCore.Qt.black)
         # GL.glPointSize(5.)
         # GL.glLineWidth(3.)
 

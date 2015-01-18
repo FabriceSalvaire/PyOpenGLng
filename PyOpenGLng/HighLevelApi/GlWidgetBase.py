@@ -24,7 +24,15 @@ import logging
 
 import numpy as np
 
-from PyQt4 import QtCore, QtOpenGL
+try:
+    from PyQt5 import QtCore
+    from PyQt5.QtWidgets import QMessageBox, QOpenGLWidget
+    IS_PYQT5 = True
+except ImportError:
+    from PyQt4 import QtCore
+    from PyQt4.QtGui import QMessageBox
+    from PyQt4.QtOpenGL import QGLWidget as QOpenGLWidget
+    IS_PYQT5 = False
 
 ####################################################################################################
 
@@ -35,7 +43,7 @@ from .Ortho2D import Ortho2D, XAXIS, YAXIS, ZoomManagerAbc
 
 ####################################################################################################
 
-class GlWidgetBase(QtOpenGL.QGLWidget):
+class GlWidgetBase(QOpenGLWidget):
 
     _logger = logging.getLogger(__name__)
 
@@ -47,11 +55,12 @@ class GlWidgetBase(QtOpenGL.QGLWidget):
 
         super(GlWidgetBase, self).__init__(parent)
 
-        if not self.format().directRendering():
-            QtGui.QMessageBox.critical(None,
-                                       'Error',
-                                       "The Image Viewer requires an OpenGL direct rendering")
-            raise NameError('Indirect Rendering')
+        if not IS_PYQT5:
+            if not self.format().directRendering():
+                QMessageBox.critical(None,
+                                     'Error',
+                                     "The Image Viewer requires an OpenGL direct rendering")
+                raise NameError('Indirect Rendering')
 
         self.glortho2d = None
 
@@ -59,7 +68,7 @@ class GlWidgetBase(QtOpenGL.QGLWidget):
         self.y_step = 10
         self.zoom_step = 2. # must be float
 
-        self.setAutoFillBackground(False)
+        # self.setAutoFillBackground(False)
         # self.setAutoBufferSwap(False)
  
     ##############################################
@@ -73,6 +82,18 @@ class GlWidgetBase(QtOpenGL.QGLWidget):
 
         self._logger.debug('Initialise GL - Super')
         
+        # if IS_PYQT5:
+            # self.initializeOpenGLFunctions()
+            # surface_format = Qt.QSurfaceFormat()
+            # surface_format.setVersion(4, 0)
+            # surface_format.setProfile(Qt.QSurfaceFormat.CoreProfile)
+            # surface_format.setSwapBehavior(Qt.QSurfaceFormat.DoubleBuffer)
+            # surface_format.setDepthBufferSize(32);
+            # self.setFormat(surface_format)
+            # surface_format = self.format()
+            # print(surface_format.version())
+            # print(surface_format.profile())
+
         self.gl_version = GlVersion()
         self.gl_features = GlFeatures()
         # print self.gl_version
@@ -160,7 +181,7 @@ class GlWidgetBase(QtOpenGL.QGLWidget):
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT)
         
         self.paint()
-        
+
     ##############################################
 
     def update(self):
@@ -168,7 +189,10 @@ class GlWidgetBase(QtOpenGL.QGLWidget):
         self._logger.debug('')
 
         self.update_model_view_projection_matrix()
-        self.updateGL()
+        if IS_PYQT5:
+            QOpenGLWidget.update(self)
+        else:
+            self.updateGL()
 
     ##############################################
 
@@ -297,7 +321,10 @@ class GlWidgetBase(QtOpenGL.QGLWidget):
         position = self.window_to_gl_coordinate(event)
         zoom_factor = self.glortho2d.zoom_manager.zoom_factor
 
-        delta = int(event.delta())
+        if IS_PYQT5:
+            delta = event.angleDelta().y()
+        else:
+            delta = int(event.delta())
         if delta == 120:
             zoom_factor *= self.zoom_step
         else:

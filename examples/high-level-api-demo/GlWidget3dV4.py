@@ -23,15 +23,13 @@
 import logging
 import os
 
-from PyQt4.QtCore import Qt
-
 import numpy as np
 
 ####################################################################################################
 
 from PyOpenGLng.HighLevelApi import GL
 from PyOpenGLng.HighLevelApi.Buffer import GlUniformBuffer
-from PyOpenGLng.HighLevelApi.GlWidgetBase3D import GlWidgetBase3D
+from PyOpenGLng.HighLevelApi.GlWidgetBase3D import GlWidgetBase3D, IS_PYQT5
 from PyOpenGLng.HighLevelApi.Solids import cube, sphere, torus
 from PyOpenGLng.HighLevelApi.Transforms import *
 from PyOpenGLng.HighLevelApi.STL import StlParser
@@ -58,7 +56,7 @@ class GlWidget(GlWidgetBase3D):
         self.logger.debug('Initialise GL')
         super(GlWidget, self).initializeGL()
 
-        self.qglClearColor(Qt.black)
+        # self.qglClearColor(Qt.black)
 
         self._init_shader()
         self.create_vertex_array_objects()
@@ -90,7 +88,10 @@ class GlWidget(GlWidgetBase3D):
     def wheel_zoom(self, event):
 
         # self._logger.debug('Wheel Zoom')
-        delta = int(event.delta())
+        if IS_PYQT5:
+            delta = event.angleDelta().y()
+        else:
+            delta = int(event.delta())
         if delta == 120:
             self._scale *= 1.1
         else:

@@ -24,8 +24,17 @@ import logging
 
 import numpy as np
 
-from PyQt4 import QtCore, QtOpenGL
-from PyQt4.QtCore import Qt
+try:
+    from PyQt5 import QtCore
+    from PyQt5.QtCore import Qt
+    from PyQt5.QtWidgets import QMessageBox, QOpenGLWidget
+    IS_PYQT5 = True
+except ImportError:
+    from PyQt4 import QtCore
+    from PyQt4.QtCore import Qt
+    from PyQt4.QtGui import QMessageBox
+    from PyQt4.QtOpenGL import QGLWidget as QOpenGLWidget
+    IS_PYQT5 = False
 
 ####################################################################################################
 
@@ -34,7 +43,7 @@ from .GlFeatures import GlVersion, GlFeatures
 
 ####################################################################################################
 
-class GlWidgetBase3D(QtOpenGL.QGLWidget):
+class GlWidgetBase3D(QOpenGLWidget):
 
     _logger = logging.getLogger(__name__)
 
@@ -46,17 +55,18 @@ class GlWidgetBase3D(QtOpenGL.QGLWidget):
 
         super(GlWidgetBase3D, self).__init__(parent)
 
-        if not self.format().directRendering():
-            QtGui.QMessageBox.critical(None,
-                                       'Error',
-                                       "The Image Viewer requires an OpenGL direct rendering")
-            raise NameError('Indirect Rendering')
+        if not IS_PYQT5:
+            if not self.format().directRendering():
+                QMessageBox.critical(None,
+                                     'Error',
+                                     "The Image Viewer requires an OpenGL direct rendering")
+                raise NameError('Indirect Rendering')
 
         self._old_position = None
         self.rotation_x = 0
         self.rotation_y = 0
 
-        self.setAutoFillBackground(False)
+        # self.setAutoFillBackground(False)
         # self.setAutoBufferSwap(False)
  
     ##############################################
@@ -141,7 +151,10 @@ class GlWidgetBase3D(QtOpenGL.QGLWidget):
         self._logger.debug('')
 
         self.update_model_view_projection_matrix()
-        self.updateGL()
+        if IS_PYQT5:
+            QOpenGLWidget.update(self)
+        else:
+            self.updateGL()
 
     ##############################################
 
@@ -159,7 +172,10 @@ class GlWidgetBase3D(QtOpenGL.QGLWidget):
 
         self._logger.info('')
         if event.buttons() & Qt.LeftButton:
-            position = event.posF()
+            if IS_PYQT5:
+                position = event.screenPos()
+            else:
+                position = event.posF()
             if self._old_position is not None:
                 delta = position - self._old_position
                 px_to_degree = 1./1

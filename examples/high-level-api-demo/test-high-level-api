@@ -27,7 +27,14 @@ import argparse
 import logging
 import sys
 
-from PyQt4 import QtCore, QtGui
+try:
+    from PyQt5 import QtCore
+    from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout
+    IS_PYQT5 = True
+except ImportError:
+    from PyQt4 import QtCore
+    from PyQt4.QtGui import QApplication, QMainWindow, QWidget, QHBoxLayout
+    IS_PYQT5 = False
 
 ####################################################################################################
 #
@@ -101,7 +108,7 @@ else:
 
 ####################################################################################################
 
-class MainWindow(QtGui.QMainWindow):
+class MainWindow(QMainWindow):
     
     def __init__ (self):
         
@@ -109,8 +116,8 @@ class MainWindow(QtGui.QMainWindow):
 
         self.resize(1000, 800)
 
-        self.central_widget = QtGui.QWidget(self)
-        self.horizontal_layout = QtGui.QHBoxLayout(self.central_widget)
+        self.central_widget = QWidget(self)
+        self.horizontal_layout = QHBoxLayout(self.central_widget)
 
         self.graphics_view = GlWidget(self.central_widget)
         self.graphics_view.setFocusPolicy(QtCore.Qt.ClickFocus)
@@ -120,7 +127,7 @@ class MainWindow(QtGui.QMainWindow):
 
 ####################################################################################################
 
-class Application(QtGui.QApplication):
+class Application(QApplication):
     
     def __init__(self):
         
