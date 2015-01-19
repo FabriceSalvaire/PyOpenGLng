@@ -7,6 +7,7 @@
 /* *********************************************************************************************** */
 
 uniform usampler2D texture0;
+uniform float scale;
 
 /* *********************************************************************************************** */
 
@@ -24,7 +25,7 @@ out vec4 fragment_colour;
 void main()
 {
   uvec4 texel = texture(texture0, vertex.uv);
-  vec4 normalised_texel = vec4(texel) / 65535;
+  vec4 normalised_texel = vec4(texel) / scale;
   fragment_colour = normalised_texel;
 }
 

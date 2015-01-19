@@ -20,6 +20,8 @@
 
 ####################################################################################################
 
+from __future__ import division
+
 import six
 from six.moves import xrange
 
@@ -54,6 +56,10 @@ from PyOpenGLng.HighLevelApi.TextureFont import TextureFont
 from PyOpenGLng.HighLevelApi.TextureVertexArray import GlTextureVertexArray
 from PyOpenGLng.Tools.Interval import IntervalInt2D
 import PyOpenGLng.HighLevelApi.FixedPipeline as GlFixedPipeline
+
+####################################################################################################
+
+LOG_GL_CALL = False
 
 ####################################################################################################
 
@@ -95,13 +101,10 @@ class GlWidget(GlWidgetBase):
 
         super(GlWidget, self).initializeGL()
 
-        GL.glEnable(GL.GL_POINT_SMOOTH) #compat# 
-        GL.glEnable(GL.GL_LINE_SMOOTH) #compat# 
+        # Require compatibility profile
+        GL.glEnable(GL.GL_POINT_SMOOTH)
+        GL.glEnable(GL.GL_LINE_SMOOTH)
         
-        # self.qglClearColor(QtCore.Qt.black)
-        # GL.glPointSize(5.)
-        # GL.glLineWidth(3.)
-
         self._init_shader()
         self.create_vertex_array_objects()
 
@@ -279,12 +282,15 @@ class GlWidget(GlWidgetBase):
                                                           integer_internal_format=integer_internal_format)
         self.texture_vertex_array1.bind_to_shader(self.shader_manager.texture_shader_program.interface.attributes)
         
-        self.texture_vertex_array2 = GlTextureVertexArray(position=Point(-5, -5), dimension=Offset(width, height))
-        if six.PY3:
-            data = data // 2
-        else:
-            data = data / 2
-        self.texture_vertex_array2.set(data, integer_internal_format=integer_internal_format)
+        # self.texture_vertex_array2 = GlTextureVertexArray(position=Point(-5, -5), dimension=Offset(width, height))
+        # self.texture_vertex_array2.set(image=data//2, integer_internal_format=integer_internal_format)
+        # self.texture_vertex_array2.bind_to_shader(self.shader_manager.texture_shader_program.interface.attributes)
+
+        from PIL import Image
+        image = Image.open('flower.png')
+        data = np.asarray(image, dtype=np.uint8)
+        self.texture_vertex_array2 = GlTextureVertexArray(position=Point(-10, -10), dimension=Offset(width, height))
+        self.texture_vertex_array2.set(image=data, integer_internal_format=integer_internal_format)
         self.texture_vertex_array2.bind_to_shader(self.shader_manager.texture_shader_program.interface.attributes)
 
         height, width = 50, 50
@@ -335,12 +341,13 @@ class GlWidget(GlWidgetBase):
         self.paint_lines()
         self.paint_text()
 
-        six.print_('\n', '='*100)
-        for command in GL.called_commands():
-            six.print_('\n', '-'*50)
-            # six.print_(str(command))
-            six.print_(command._command.prototype())
-            six.print_(command.help())
+        if LOG_GL_CALL:
+            six.print_('\n', '='*100)
+            for command in GL.called_commands():
+                six.print_('\n', '-'*50)
+                # six.print_(str(command))
+                six.print_(command._command.prototype())
+                six.print_(command.help())
 
     ##############################################
 
@@ -454,7 +461,9 @@ class GlWidget(GlWidgetBase):
 
         shader_program = self.shader_manager.texture_shader_program
         shader_program.bind()
+        shader_program.uniforms.scale = float(2**16 - 1)
         self.texture_vertex_array1.draw()
+        shader_program.uniforms.scale = float(2**8 - 1)
         self.texture_vertex_array2.draw()
         shader_program.unbind()
 

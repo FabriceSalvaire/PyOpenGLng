@@ -20,6 +20,8 @@
 
 ####################################################################################################
 
+from __future__ import division
+
 import six
 from six.moves import xrange
 
@@ -42,6 +44,10 @@ from PyOpenGLng.HighLevelApi.PrimitiveVertexArray import GlSegmentVertexArray
 from PyOpenGLng.HighLevelApi.TextureVertexArray import GlTextureVertexArray
 from PyOpenGLng.Tools.Interval import IntervalInt2D
 import PyOpenGLng.HighLevelApi.FixedPipeline as GlFixedPipeline
+
+####################################################################################################
+
+LOG_GL_CALL = False
 
 ####################################################################################################
 
@@ -184,9 +190,17 @@ class GlWidget(GlWidgetBase):
         self.texture_vertex_array1 = GlTextureVertexArray(position=Point(0, 0), dimension=Offset(width, height), image=data,
                                                           integer_internal_format=integer_internal_format)
         self.texture_vertex_array1.bind_to_shader(self.shader_manager.texture_shader_program.interface.attributes)
-        
+
+        # self.texture_vertex_array2 = GlTextureVertexArray(position=Point(-5, -5), dimension=Offset(width, height))
+        # self.texture_vertex_array2.set(image=data//2, integer_internal_format=integer_internal_format)
+        # self.texture_vertex_array2.bind_to_shader(self.shader_manager.texture_shader_program.interface.attributes)
+
+        from PIL import Image
+        image = Image.open('flower.png')
+        data = np.asarray(image, dtype=np.uint8)
+        print(data.shape)
         self.texture_vertex_array2 = GlTextureVertexArray(position=Point(-5, -5), dimension=Offset(width, height))
-        self.texture_vertex_array2.set(image=data/2, integer_internal_format=integer_internal_format)
+        self.texture_vertex_array2.set(image=data)
         self.texture_vertex_array2.bind_to_shader(self.shader_manager.texture_shader_program.interface.attributes)
 
     ##############################################
@@ -196,12 +210,13 @@ class GlWidget(GlWidgetBase):
         self.paint_grid()
         self.paint_textures()
 
-        six.print_('\n', '='*100)
-        for command in GL.called_commands():
-            six.print_('\n', '-'*50)
-            # six.print_(str(command))
-            six.print_(command._command.prototype())
-            six.print_(command.help())
+        if LOG_GL_CALL:
+            six.print_('\n', '='*100)
+            for command in GL.called_commands():
+                six.print_('\n', '-'*50)
+                # six.print_(str(command))
+                six.print_(command._command.prototype())
+                six.print_(command.help())
 
     ##############################################
 
