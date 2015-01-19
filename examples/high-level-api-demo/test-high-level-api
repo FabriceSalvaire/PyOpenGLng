@@ -114,16 +114,11 @@ class MainWindow(QMainWindow):
         
         super(MainWindow, self).__init__()
 
-        self.resize(1000, 800)
+        self.gl_widget = GlWidget(self)
+        self.gl_widget.setFocusPolicy(QtCore.Qt.ClickFocus)
+        self.setCentralWidget(self.gl_widget)
 
-        self.central_widget = QWidget(self)
-        self.horizontal_layout = QHBoxLayout(self.central_widget)
-
-        self.graphics_view = GlWidget(self.central_widget)
-        self.graphics_view.setFocusPolicy(QtCore.Qt.ClickFocus)
-
-        self.horizontal_layout.addWidget(self.graphics_view)
-        self.setCentralWidget(self.central_widget)
+        self.resize(800, 800)
 
 ####################################################################################################
 
