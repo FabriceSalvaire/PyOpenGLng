@@ -26,13 +26,20 @@ import numpy as np
 
 try:
     from PyQt5 import QtCore
-    from PyQt5.QtWidgets import QMessageBox, QOpenGLWidget
-    IS_PYQT5 = True
+    from PyQt5.QtWidgets import QMessageBox
+    IS_PyQt5 = True
+    IS_QOpenGLWidget = True
+    if IS_QOpenGLWidget:
+        from PyQt5.QtWidgets import QOpenGLWidget
+    else:
+        from PyQt5.QtOpenGL import QGLWidget as QOpenGLWidget
+        from PyQt5.QtOpenGL import QGLContext, QGLFormat
 except ImportError:
     from PyQt4 import QtCore
     from PyQt4.QtGui import QMessageBox
     from PyQt4.QtOpenGL import QGLWidget as QOpenGLWidget
-    IS_PYQT5 = False
+    IS_PyQt5 = False
+    IS_QOpenGLWidget = False
 
 ####################################################################################################
 
@@ -55,7 +62,7 @@ class GlWidgetBase(QOpenGLWidget):
 
         super(GlWidgetBase, self).__init__(parent)
 
-        if not IS_PYQT5:
+        if not IS_QOpenGLWidget:
             if not self.format().directRendering():
                 QMessageBox.critical(None,
                                      'Error',
@@ -81,18 +88,6 @@ class GlWidgetBase(QOpenGLWidget):
         """    
 
         self._logger.debug('Initialise GL - Super')
-        
-        # if IS_PYQT5:
-            # self.initializeOpenGLFunctions()
-            # surface_format = Qt.QSurfaceFormat()
-            # surface_format.setVersion(4, 0)
-            # surface_format.setProfile(Qt.QSurfaceFormat.CoreProfile)
-            # surface_format.setSwapBehavior(Qt.QSurfaceFormat.DoubleBuffer)
-            # surface_format.setDepthBufferSize(32);
-            # self.setFormat(surface_format)
-            # surface_format = self.format()
-            # print(surface_format.version())
-            # print(surface_format.profile())
 
         self.gl_version = GlVersion()
         self.gl_features = GlFeatures()
@@ -113,6 +108,9 @@ class GlWidgetBase(QOpenGLWidget):
         """
 
         self._logger.debug('Resize viewport to (%u, %u)' % (width, height))
+
+        if not width or not height:
+            raise NameError("Bad GL Widget size")
 
         # viewport corresponds to the window lower left corner x, y and viewport width, height
         GL.glViewport(0, 0, width, height)
@@ -174,11 +172,12 @@ class GlWidgetBase(QOpenGLWidget):
 
         self._logger.debug('Paint OpenGL Scene')
 
-        GL.glClearStencil(0)
         GL.glClearColor(0,0,0,0)
-        # GL.glClear(GL.GL_COLOR_BUFFER_BIT)
-        GL.glStencilMask(~0)
-        GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT)
+        GL.glClear(GL.GL_COLOR_BUFFER_BIT)
+
+        # GL.glClearStencil(0)
+        # GL.glStencilMask(~0)
+        # GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT)
         
         self.paint()
 
@@ -188,8 +187,10 @@ class GlWidgetBase(QOpenGLWidget):
 
         self._logger.debug('')
 
+        if IS_QOpenGLWidget:
+            self.makeCurrent()
         self.update_model_view_projection_matrix()
-        if IS_PYQT5:
+        if IS_QOpenGLWidget:
             QOpenGLWidget.update(self)
         else:
             self.updateGL()
@@ -321,7 +322,7 @@ class GlWidgetBase(QOpenGLWidget):
         position = self.window_to_gl_coordinate(event)
         zoom_factor = self.glortho2d.zoom_manager.zoom_factor
 
-        if IS_PYQT5:
+        if IS_PyQt5:
             delta = event.angleDelta().y()
         else:
             delta = int(event.delta())
