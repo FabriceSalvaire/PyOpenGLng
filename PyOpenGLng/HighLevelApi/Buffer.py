@@ -83,6 +83,8 @@ class GlBuffer(object):
         self._gl_id = GL.glGenBuffers(1)
 
         self.size = 0
+        self._dtype = None
+        self._dtype_nbytes = None
         self.type = None
 
         if data is not None:
@@ -131,6 +133,7 @@ class GlBuffer(object):
 
         """
 
+        self._dtype = data.dtype
         if data.dtype == np.float32:
             self.type = GL.GL_FLOAT
         elif data.dtype == np.float64:
@@ -141,6 +144,7 @@ class GlBuffer(object):
             self.type = GL.GL_UNSIGNED_INT
         else:
             raise ValueError()
+        self._dtype_nbytes = self._dtype.type(1).nbytes
 
         # Fixme: shape?
         shape = data.shape
@@ -161,6 +165,42 @@ class GlBuffer(object):
 
         raise NotImplementedError
 
+    ##############################################
+
+    def set_sub_data(self, data, offset):
+
+        """ Set buffer sub-data.
+
+        The parameter offset lies in a linear array shape.
+        """
+        
+        self.bind()
+        print(offset, self._dtype_nbytes)
+        offset = offset * self._dtype_nbytes
+        GL.glBufferSubData(self._target, offset, data)
+        self.unbind()
+
+    ##############################################
+
+    def read_sub_data(self, offset, data=None, size=None):
+
+        """ Read buffer sub-data.
+
+        The parameter offset and size lies in a linear array shape.
+        """
+        
+        if data is None:
+            if size is None:
+                raise ValueError("size must be provided when data is None")
+            data = np.zeros((size,), dtype=self._dtype)
+        
+        self.bind()
+        offset = offset * self._dtype_nbytes
+        GL.glGetBufferSubData(self._target, offset, data)
+        self.unbind()
+
+        return data
+        
 ####################################################################################################
 
 class GlUniformBuffer(GlBuffer):
