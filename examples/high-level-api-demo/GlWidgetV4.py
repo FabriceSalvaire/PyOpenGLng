@@ -46,7 +46,6 @@ nvpath = None
 
 from PyOpenGLng.HighLevelApi import GL
 from PyOpenGLng.HighLevelApi.Buffer import GlUniformBuffer
-from PyOpenGLng.HighLevelApi.Geometry import Point, Offset, Segment, Rectangle
 from PyOpenGLng.HighLevelApi.GlWidgetBase import GlWidgetBase
 from PyOpenGLng.HighLevelApi.ImageTexture import ImageTexture
 from PyOpenGLng.HighLevelApi.PrimitiveVertexArray import GlSegmentVertexArray, GlRectangleVertexArray
@@ -54,7 +53,8 @@ from PyOpenGLng.HighLevelApi.StippleTexture import GlStippleTexture
 from PyOpenGLng.HighLevelApi.TextVertexArray import TextVertexArray
 from PyOpenGLng.HighLevelApi.TextureFont import TextureFont
 from PyOpenGLng.HighLevelApi.TextureVertexArray import GlTextureVertexArray
-from PyOpenGLng.Tools.Interval import IntervalInt2D
+from PyOpenGLng.Math.Geometry import Point, Offset, Segment, Rectangle
+from PyOpenGLng.Math.Interval import IntervalInt2D
 import PyOpenGLng.HighLevelApi.FixedPipeline as GlFixedPipeline
 
 ####################################################################################################

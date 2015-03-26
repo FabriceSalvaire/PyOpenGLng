@@ -38,11 +38,11 @@ import numpy as np
 
 from PyOpenGLng.HighLevelApi import GL
 from PyOpenGLng.HighLevelApi.Buffer import GlUniformBuffer
-from PyOpenGLng.HighLevelApi.Geometry import Point, Offset, Segment
 from PyOpenGLng.HighLevelApi.GlWidgetBase import GlWidgetBase
 from PyOpenGLng.HighLevelApi.PrimitiveVertexArray import GlSegmentVertexArray
 from PyOpenGLng.HighLevelApi.TextureVertexArray import GlTextureVertexArray
-from PyOpenGLng.Tools.Interval import IntervalInt2D
+from PyOpenGLng.Math.Geometry import Point, Offset, Segment
+from PyOpenGLng.Math.Interval import IntervalInt2D
 import PyOpenGLng.HighLevelApi.FixedPipeline as GlFixedPipeline
 
 ####################################################################################################

@@ -35,7 +35,6 @@ The aim of these classes has to be used by a Geometry Shader.
 
 ####################################################################################################
 
-import six
 from six.moves import xrange
 
 ####################################################################################################
@@ -120,8 +119,8 @@ class GlSegmentVertexArray(GlLinesVertexArray):
         for i in xrange(self._number_of_objects):
             segment = segments[i]
             j = 2*i
-            vertex[j] = segment.p1.vertex
-            vertex[j+1] = segment.p2.vertex
+            vertex[j] = segment.p1
+            vertex[j+1] = segment.p2
 
         self._logger.debug(str(vertex)) # Fixme:
 
@@ -151,8 +150,8 @@ class GlRectangleVertexArray(GlLinesVertexArray):
         for i in xrange(self._number_of_objects):
             rectangle = rectangles[i]
             j = 2*i
-            vertex[j] = rectangle.point.vertex
-            vertex[j+1] = rectangle.dimension.vertex
+            vertex[j] = rectangle.point
+            vertex[j+1] = rectangle.dimension
 
         self._vertex_array_buffer.set(vertex)
 

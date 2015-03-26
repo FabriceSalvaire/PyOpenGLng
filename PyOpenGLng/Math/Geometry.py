@@ -26,8 +26,10 @@ import numpy as np
 
 ####################################################################################################
 
-class Vector(object):
+class Vector(np.ndarray):
 
+    # Fixme: ndarray is probably not efficient for a so small array
+    
     """ This class implements a vector.
 
     Public attributes:
@@ -39,28 +41,68 @@ class Vector(object):
     """
 
     ##############################################
-    
-    def __init__(self, x, y):
 
-        self.vertex = np.array([x, y], dtype='f') # dtype=np.float
+    def __new__(cls, *args, **kwargs):
+
+        dimension = 2
+        dtype = kwargs.get('dtype', np.float32)
+        
+        number_of_args = len(args)
+        if not number_of_args:
+            input_array = (0, 0)
+        elif number_of_args == 1:
+            obj = args[0]
+            if (isinstance(obj, Vector)
+                or (isinstance(obj, np.ndarray) and obj.shape == (dimension,))):
+                input_array = obj
+            # elif iterable
+            else:
+                raise ValueError("Bad argument " + str(type(obj))) # Fixme: redundant
+        elif number_of_args == 2:
+            input_array = args
+        else:
+            raise ValueError("Bad argument " + str(type(obj)))
+
+        obj = np.asarray(input_array, dtype=dtype).view(cls)
+
+        # obj = np.ndarray.__new__(cls, (dimension,), dtype,
+        #                          buffer=None, offset=0, strides=None, order=None)
+        
+        # if kwargs.get('share', False):
+        #     obj = input_array.view(cls)
+
+        return obj
+
+    ##############################################
+
+    # def __array_finalize__(self, obj):
+
+    #     if obj is None:
+    #         return
 
     ##############################################
     
     def __repr__(self):
 
-        return 'Vector ' + str(self.vertex)
+        return 'Vector ' + str(self)
 
     ##############################################
 
     @property
     def x(self):
-        return self.vertex[0]
+        return self[0]
 
-    ##############################################
- 
+    @x.setter
+    def x(self, value):
+        self[0] = value
+    
     @property
     def y(self):
-        return self.vertex[1]
+        return self[1]
+
+    @y.setter
+    def y(self, value):
+        self[1] = value
 
 ####################################################################################################
 

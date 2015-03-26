@@ -30,9 +30,9 @@ import numpy as np
 from PyOpenGLng.HighLevelApi import GL
 from PyOpenGLng.HighLevelApi.Buffer import GlUniformBuffer
 from PyOpenGLng.HighLevelApi.GlWidgetBase3D import GlWidgetBase3D, IS_PYQT5
-from PyOpenGLng.HighLevelApi.Solids import cube, sphere, torus
-from PyOpenGLng.HighLevelApi.Transforms import *
 from PyOpenGLng.HighLevelApi.STL import StlParser
+from PyOpenGLng.HighLevelApi.Solids import cube, sphere, torus
+from PyOpenGLng.Math.Transforms import *
 
 ####################################################################################################
 

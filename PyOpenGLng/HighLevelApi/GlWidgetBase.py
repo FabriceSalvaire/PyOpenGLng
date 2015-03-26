@@ -44,7 +44,7 @@ except ImportError:
 ####################################################################################################
 
 from . import GL
-from ..Tools.Interval import IntervalInt2D
+from ..Math.Interval import IntervalInt2D
 from .GlFeatures import GlVersion, GlFeatures
 from .Ortho2D import Ortho2D, XAXIS, YAXIS, XYAXIS, ZoomManagerAbc
 
