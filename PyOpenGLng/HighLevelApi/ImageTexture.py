@@ -54,7 +54,8 @@ class ImageTexture(object):
     
     def __init__(self, image):
 
-        self._create_texture()
+        self._gl_id = GL.glGenTextures(1)
+        self._setup_texture()
         self._shape = None
         self.set(image)
 
@@ -62,8 +63,14 @@ class ImageTexture(object):
     
     def __del__(self):
 
-        GL.glDeleteTextures([self._gl_textures_id])
+        GL.glDeleteTextures([self._gl_id])
 
+    ##############################################
+
+    @property
+    def id(self):
+        return self._gl_id
+        
     ##############################################
     
     def bind(self):
@@ -72,7 +79,7 @@ class ImageTexture(object):
 
         # Select the texture unit and bind it
         GL.glActiveTexture(GL.GL_TEXTURE0)
-        GL.glBindTexture(GL.GL_TEXTURE_2D, self._gl_textures_id) # [0]
+        GL.glBindTexture(GL.GL_TEXTURE_2D, self._gl_id) # [0]
 
     ##############################################
     
@@ -86,11 +93,9 @@ class ImageTexture(object):
 
     ##############################################
     
-    def _create_texture(self):
+    def _setup_texture(self):
 
-        """ Create the texture. """
-
-        self._gl_textures_id = GL.glGenTextures(1)
+        """ setup the texture. """
 
         self.bind()
 

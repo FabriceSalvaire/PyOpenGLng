@@ -32,7 +32,8 @@ DRAW_INDIRECT_BUFFER      Indirect command arguments
 ELEMENT_ARRAY_BUFFER      Vertex array indices
 PIXEL_PACK_BUFFER         Pixel read target
 PIXEL_UNPACK_BUFFER       Texture data source
-SHADER_STORAGE_BUFFER     Read=write storage for shaders
+QUERY_BUFFER              Query result buffer
+SHADER_STORAGE_BUFFER     Read-write storage for shaders
 TEXTURE_BUFFER            Texture data buffer
 TRANSFORM_FEEDBACK_BUFFER Transform feedback buffer
 UNIFORM_BUFFER            Uniform block storage
@@ -79,7 +80,7 @@ class GlBuffer(object):
     
     def __init__(self, data=None):
 
-        self._buffer_object_id = GL.glGenBuffers(1)
+        self._gl_id = GL.glGenBuffers(1)
 
         self.size = 0
         self.type = None
@@ -91,8 +92,8 @@ class GlBuffer(object):
     
     def __del__(self):
 
-        self._logger.debug("Delete Object %u" % (self._buffer_object_id))
-        GL.glDeleteBuffers([self._buffer_object_id])
+        self._logger.debug("Delete Object %u" % (self._gl_id))
+        GL.glDeleteBuffers([self._gl_id])
 
     ##############################################
     
@@ -100,7 +101,7 @@ class GlBuffer(object):
 
         """ Bind the buffer. """
 
-        GL.glBindBuffer(self._target, self._buffer_object_id)
+        GL.glBindBuffer(self._target, self._gl_id)
 
     ##############################################
     
@@ -116,13 +117,19 @@ class GlBuffer(object):
 
         """ Binds the buffer object buffer to the given binding point. """
 
-        GL.glBindBufferBase(self._target, binding_point, self._buffer_object_id)
+        GL.glBindBufferBase(self._target, binding_point, self._gl_id)
 
     ##############################################
     
     def _set(self, data, usage):
         
-        """ Set the data of the buffer. """
+        """Set the data of the buffer.
+
+        usage: Specifies the expected usage pattern of the data store. The symbolic constant must be
+        GL_STREAM_DRAW, GL_STREAM_READ, GL_STREAM_COPY, GL_STATIC_DRAW, GL_STATIC_READ,
+        GL_STATIC_COPY, GL_DYNAMIC_DRAW, GL_DYNAMIC_READ, or GL_DYNAMIC_COPY.
+
+        """
 
         if data.dtype == np.float32:
             self.type = GL.GL_FLOAT

@@ -53,14 +53,14 @@ class GlVertexArrayObject(object):
     
     def __init__(self):
 
-        self._vao_id = GL.glGenVertexArrays(1)
+        self._gl_id = GL.glGenVertexArrays(1)
 
     ##############################################
     
     def __del__(self):
 
-        self._logger.debug("Delete VAO %u" % (self._vao_id))
-        GL.glDeleteVertexArrays([self._vao_id])
+        self._logger.debug("Delete VAO %u" % (self._gl_id))
+        GL.glDeleteVertexArrays([self._gl_id])
 
     ##############################################
     
@@ -68,7 +68,7 @@ class GlVertexArrayObject(object):
 
         """ bind the vertex array object. """
 
-        GL.glBindVertexArray(self._vao_id)
+        GL.glBindVertexArray(self._gl_id)
 
     ##############################################
     
