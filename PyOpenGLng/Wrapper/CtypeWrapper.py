@@ -219,17 +219,20 @@ class PointerWrapper(ParameterWrapperBase):
     def from_python(self, parameter, c_parameters):
 
         if self._type == ctypes.c_char and self._parameter.const: # const char *
-            self._logger.debug('const char *')
+            if self._logger.isEnabledFor(logging.DEBUG):
+                self._logger.debug('const char *')
             if not isinstance(parameter, bytes):
                 parameter = six.b(parameter)
             ctypes_parameter = ctypes.c_char_p(parameter)
         elif isinstance(parameter, np.ndarray):
-            self._logger.debug('ndarray')
+            if self._logger.isEnabledFor(logging.DEBUG):
+                self._logger.debug('ndarray')
             if self._type != ctypes.c_void_p:
                 check_numpy_type(parameter, self._type)
             ctypes_parameter = parameter.ctypes.data_as(ctypes.POINTER(self._type))
         elif parameter is None:
-            self._logger.debug('None')
+            if self._logger.isEnabledFor(logging.DEBUG):
+                self._logger.debug('None')
             ctypes_parameter = None # already done
         else:
             raise NotImplementedError
@@ -329,7 +332,8 @@ class OutputArrayWrapper(ArrayWrapper):
         # print self._pointer_parameter.long_repr(), self._pointer_type, type(parameter)
 
         if self._pointer_type == ctypes.c_void_p:
-            self._logger.debug('void *')
+            if self._logger.isEnabledFor(logging.DEBUG):
+                self._logger.debug('void *')
             # Generic pointer: thus the array data type is not specified by the API
             if isinstance(parameter, np.ndarray):
                 # The output array is provided by user and the size is specified in byte
@@ -341,7 +345,8 @@ class OutputArrayWrapper(ArrayWrapper):
             else:
                 raise NotImplementedError
         elif self._pointer_type == ctypes.c_char:
-            self._logger.debug('char *')
+            if self._logger.isEnabledFor(logging.DEBUG):
+                self._logger.debug('char *')
             # The array size is provided by user
             size_parameter = parameter
             c_parameters[self._size_location] = self._size_type(size_parameter)
@@ -350,7 +355,8 @@ class OutputArrayWrapper(ArrayWrapper):
             to_python_converter = StringConverter(ctypes_parameter)
             return to_python_converter
         elif isinstance(parameter, np.ndarray):
-            self._logger.debug('ndarray')
+            if self._logger.isEnabledFor(logging.DEBUG):
+                self._logger.debug('ndarray')
             # Typed pointer
             # The output array is provided by user
             array = parameter
@@ -360,7 +366,8 @@ class OutputArrayWrapper(ArrayWrapper):
             c_parameters[self._pointer_location] = ctypes_parameter
             return None
         else:
-            self._logger.debug('else')
+            if self._logger.isEnabledFor(logging.DEBUG):
+                self._logger.debug('else')
             # Typed pointer
             # The array size is provided by user
             size_parameter = parameter
@@ -393,12 +400,14 @@ class InputArrayWrapper(ArrayWrapper):
         if self._pointer_parameter.pointer == 2:
             if self._pointer_type == ctypes.c_char: # Fixme: should be c_char_p
                 if isinstance(array, str):
-                    self._logger.debug('string -> const char **')
+                    if self._logger.isEnabledFor(logging.DEBUG):
+                        self._logger.debug('string -> const char **')
                     size_parameter = 1
                     string_array_type = ctypes.c_char_p * 1
                     string_array = string_array_type(ctypes.c_char_p(six.b(array)))
                 else:
-                    self._logger.debug('string array -> const char **')
+                    if self._logger.isEnabledFor(logging.DEBUG):
+                        self._logger.debug('string array -> const char **')
                     size_parameter = len(array)
                     string_array_type = ctypes.c_char_p * size_parameter
                     string_array = string_array_type(*[ctypes.c_char_p(x) for x in array])
@@ -406,7 +415,8 @@ class InputArrayWrapper(ArrayWrapper):
             else:
                 raise NotImplementedError
         elif isinstance(array, np.ndarray):
-            self._logger.debug('ndarray')
+            if self._logger.isEnabledFor(logging.DEBUG):
+                self._logger.debug('ndarray')
             if self._pointer_type == ctypes.c_void_p:
                 size_parameter = array.nbytes
             elif self._pointer_type == ctypes.c_float: # fixme
@@ -607,14 +617,15 @@ class GlCommandWrapper(object):
             if to_python_converter is not None:
                 to_python_converters.append(to_python_converter)
 
-        self._logger.debug('Call\n'
-                          '  ' + self._command.prototype() + '\n'
-                          '  ' + str([parameter_wrapper.__class__.__name__
-                                      for parameter_wrapper in self._parameter_wrappers]) + '\n'
-                          '  ' + str(c_parameters) + '\n'
-                          '  ' + str([to_python_converter.__class__.__name__
-                                      for to_python_converter in to_python_converters])
-                          )
+        if self._logger.isEnabledFor(logging.DEBUG):
+            self._logger.debug('Call\n'
+                               '  ' + self._command.prototype() + '\n'
+                               '  ' + str([parameter_wrapper.__class__.__name__
+                                           for parameter_wrapper in self._parameter_wrappers]) + '\n'
+                               '  ' + str(c_parameters) + '\n'
+                               '  ' + str([to_python_converter.__class__.__name__
+                                           for to_python_converter in to_python_converters])
+                              )
 
         result = self._function(*c_parameters)
 
