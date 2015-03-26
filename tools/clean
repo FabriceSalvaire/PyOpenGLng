@@ -32,9 +32,10 @@ if [ "x${root_dir}" == 'x/' ]; then
 else
   rm -rf ${root_dir}/build
   rm -rf ${root_dir}/dist
-  find ${root_dir} -name "*pyc" -exec rm {} \;
-  find ${root_dir} -name "*~" -exec rm {} \;
-  find ${root_dir} -name "*_flymake.py" -exec rm {} \;
+  find ${root_dir} -name "*pyc" -type f -exec rm {} \;
+  find ${root_dir} -name "__pycache__" -type d -exec rmdir {} \;
+  find ${root_dir} -name "*~" -type f -exec rm {} \;
+  find ${root_dir} -name "*_flymake.py" -type f -exec rm {} \;
 fi
 
 ####################################################################################################
