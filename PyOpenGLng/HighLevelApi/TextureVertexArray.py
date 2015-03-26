@@ -54,7 +54,7 @@ class GlTextureVertexArray(GlVertexArrayObject):
         if self._uv_vbo is None:
             self._create_uv_vbo()
 
-        self._create_array(position, dimension)
+        self._create_vertex(position, dimension)
         self._create_texture()
 
         if image is not None:
@@ -179,10 +179,12 @@ class GlTextureVertexArray(GlVertexArrayObject):
 
         """ Create the vertex array buffer for the UV texture coordinates. """
 
-        position_uv = np.array([[0, 0],
-                                [0, 1],
-                                [1, 1],
+        # Fixme: implement clipping
+
+        position_uv = np.array([[0, 1],
+                                [0, 0],
                                 [1, 0],
+                                [1, 1],
                                 ],
                                dtype='f')
 
@@ -190,7 +192,7 @@ class GlTextureVertexArray(GlVertexArrayObject):
 
     ##############################################
     
-    def _create_array(self, position, dimension):
+    def _create_vertex(self, position, dimension):
 
         """ Create the vertex array buffer for the quad from a rectangle defined by its base
         position and its dimension.
