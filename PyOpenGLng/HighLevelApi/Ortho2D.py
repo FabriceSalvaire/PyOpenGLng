@@ -54,7 +54,7 @@ from ..Tools.Interval import Interval, Interval2D
 
 ####################################################################################################
 
-XAXIS, YAXIS = range(2)
+XAXIS, YAXIS, XYAXIS = range(3)
 
 ####################################################################################################
 
@@ -212,26 +212,29 @@ class ViewportArea(object):
 
     ##############################################
     
-    def translate(self, dx, axis):
+    def translate(self, dxy, axis):
 
         """ Translate the viewport of *dx* in the *axis* direction. """
 
         # Fixme: don't report all error checks
 
-        old_axis_interval = self._area[axis]
-
-        axis_interval = self._area[axis]
-        axis_interval += dx
-        self._area[axis] = self._check_axis_interval(axis_interval, axis)
-        
-        string_format = """translate
-   %s
-  ->
-   (%s)
-  ->
-   %s
- / %s""" 
-        self._logger.debug(string_format % (old_axis_interval, axis_interval, self._area[axis], self._max_area[axis]))
+        if axis == XYAXIS:
+            interval = self._area + dxy
+            for axis in (XAXIS, YAXIS):
+                self._area[axis] = self._check_axis_interval(interval[axis], axis)
+        else:
+            # old_axis_interval = self._area[axis]
+            axis_interval = self._area[axis] + dxy
+            self._area[axis] = self._check_axis_interval(axis_interval, axis)
+ #            if self._logger.isEnabledFor(logging.DEBUG):
+ #                string_format = """translate
+ #   %s
+ #  ->
+ #   (%s)
+ #  ->
+ #   %s
+ # / %s""" 
+ #            self._logger.debug(string_format % (old_axis_interval, axis_interval, self._area[axis], self._max_area[axis]))
         self._set_reference_point()
 
 ####################################################################################################
@@ -378,11 +381,11 @@ class Ortho2D(object):
 
     ##############################################
     
-    def translate(self, dx, axis):
+    def translate(self, dxy, axis):
 
         """ Translate the viewport of *dx* in the *axis* direction. """        
 
-        self.viewport_area.translate(dx, axis)
+        self.viewport_area.translate(dxy, axis)
 
     ##############################################
 

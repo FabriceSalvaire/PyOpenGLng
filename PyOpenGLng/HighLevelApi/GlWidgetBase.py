@@ -46,7 +46,7 @@ except ImportError:
 from . import GL
 from ..Tools.Interval import IntervalInt2D
 from .GlFeatures import GlVersion, GlFeatures
-from .Ortho2D import Ortho2D, XAXIS, YAXIS, ZoomManagerAbc
+from .Ortho2D import Ortho2D, XAXIS, YAXIS, XYAXIS, ZoomManagerAbc
 
 ####################################################################################################
 
@@ -255,6 +255,13 @@ class GlWidgetBase(QOpenGLWidget):
     def translate_y(self, dy):
 
         self.glortho2d.translate(dy, YAXIS)
+        self.update()
+
+    ##############################################
+
+    def translate_xy(self, dxy):
+
+        self.glortho2d.translate(dxy, XYAXIS)
         self.update()
 
     ##############################################
