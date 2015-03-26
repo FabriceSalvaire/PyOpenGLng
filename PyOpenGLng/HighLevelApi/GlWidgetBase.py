@@ -51,6 +51,22 @@ from .Ortho2D import Ortho2D, XAXIS, YAXIS, XYAXIS, ZoomManagerAbc
 
 ####################################################################################################
 
+def opengl_context(function):
+
+    """ Decorator that makes an OpenGL widget the current widget for OpenGL operations """
+
+    def wrapper(widget, *args, **kwargs):
+
+        """ Argument widget must be a :class:`QOpenGLWidget` instance. """
+
+        widget.makeCurrent()
+        function(widget, *args, **kwargs)
+        widget.doneCurrent()
+
+    return wrapper
+
+####################################################################################################
+
 class GlWidgetBase(QOpenGLWidget):
 
     _logger = logging.getLogger(__name__)
@@ -72,13 +88,34 @@ class GlWidgetBase(QOpenGLWidget):
 
         self.glortho2d = None
 
+        self._clear_colour = (1, 1, 1, 1)
+        self._clear_bit = GL.GL_COLOR_BUFFER_BIT
+        
         self.x_step = 10
         self.y_step = 10
         self.zoom_step = 2. # must be float
 
         # self.setAutoFillBackground(False)
         # self.setAutoBufferSwap(False)
- 
+
+    ##############################################
+
+    @property
+    def clear_colour(self):
+        return self._clear_colour
+
+    @clear_colour.setter
+    def clear_colour(self, value):
+        self._clear_colour = tuple(value[:4])
+
+    @property
+    def clear_bit(self):
+        return self._clear_bit
+
+    @clear_bit.setter
+    def clear_bit(self, value):
+        self._clear_bit = value
+        
     ##############################################
 
     def initializeGL(self):
@@ -89,7 +126,19 @@ class GlWidgetBase(QOpenGLWidget):
         """    
 
         self._logger.debug('Initialise GL - Super')
-
+        
+        # if IS_PyQt5:
+            # self.initializeOpenGLFunctions()
+            # surface_format = Qt.QSurfaceFormat()
+            # surface_format.setVersion(4, 0)
+            # surface_format.setProfile(Qt.QSurfaceFormat.CoreProfile)
+            # surface_format.setSwapBehavior(Qt.QSurfaceFormat.DoubleBuffer)
+            # surface_format.setDepthBufferSize(32)
+            # self.setFormat(surface_format)
+            # surface_format = self.format()
+            # print(surface_format.version())
+            # print(surface_format.profile())
+            
         self.gl_version = GlVersion()
         self.gl_features = GlFeatures()
         # print self.gl_version
@@ -109,19 +158,20 @@ class GlWidgetBase(QOpenGLWidget):
         """
 
         self._logger.debug('Resize viewport to (%u, %u)' % (width, height))
+        print('Resize viewport to (%u, %u)' % (width, height))
 
         if not width or not height:
             raise NameError("Bad GL Widget size")
 
         # viewport corresponds to the window lower left corner x, y and viewport width, height
         GL.glViewport(0, 0, width, height)
-
+        
         if self.glortho2d is not None:
             self._logger.debug('  resize glortho2d')
             self.glortho2d.resize()
         else:
             self.init_glortho2d()
-
+            
         self.update()
 
     ##############################################
@@ -173,12 +223,12 @@ class GlWidgetBase(QOpenGLWidget):
 
         self._logger.debug('Paint OpenGL Scene')
 
-        GL.glClearColor(0,0,0,0)
-        GL.glClear(GL.GL_COLOR_BUFFER_BIT)
+        GL.glClearColor(*self._clear_colour)
+        GL.glClear(self._clear_bit)
 
         # GL.glClearStencil(0)
         # GL.glStencilMask(~0)
-        # GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT)
+        # GL.glClear(.... | GL.GL_STENCIL_BUFFER_BIT)
         
         self.paint()
 
@@ -188,8 +238,8 @@ class GlWidgetBase(QOpenGLWidget):
 
         self._logger.debug('')
 
-        if IS_QOpenGLWidget:
-            self.makeCurrent()
+        # if IS_QOpenGLWidget:
+        self.makeCurrent()
         self.update_model_view_projection_matrix()
         if IS_QOpenGLWidget:
             QOpenGLWidget.update(self)
@@ -206,11 +256,12 @@ class GlWidgetBase(QOpenGLWidget):
         position = Vector(event.x(), event.y())
 
         return self.glortho2d.window_to_gl_coordinate(position, round_to_integer)
-
+        
     ##############################################
 
     def display_all(self):
 
+        # Fixme: commented ?
         # self.glortho2d.zoom_bounding_box()
         self.update()
 
