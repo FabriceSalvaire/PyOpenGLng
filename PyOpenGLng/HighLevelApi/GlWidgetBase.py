@@ -22,7 +22,7 @@
 
 import logging
 
-import numpy as np
+import numpy as np # for Vector dtype
 
 try:
     from PyQt5 import QtCore
@@ -44,6 +44,7 @@ except ImportError:
 ####################################################################################################
 
 from . import GL
+from ..Math.Geometry import Vector
 from ..Math.Interval import IntervalInt2D
 from .GlFeatures import GlVersion, GlFeatures
 from .Ortho2D import Ortho2D, XAXIS, YAXIS, XYAXIS, ZoomManagerAbc
@@ -146,7 +147,7 @@ class GlWidgetBase(QOpenGLWidget):
 
         # reimplement method to return np.array instead of PyQt4.QtCore.QSize(width, height)
 
-        return np.array((self.width(), self.height()), dtype=np.uint)
+        return Vector(self.width(), self.height(), dtype=np.uint)
 
     ##############################################
     #
@@ -202,7 +203,7 @@ class GlWidgetBase(QOpenGLWidget):
         """ Convert mouse coordinate
         """
 
-        position = np.array((event.x(), event.y()), dtype=np.uint)
+        position = Vector(event.x(), event.y())
 
         return self.glortho2d.window_to_gl_coordinate(position, round_to_integer)
 
@@ -224,7 +225,7 @@ class GlWidgetBase(QOpenGLWidget):
     
     def zoom_at_with_scale(self, x, y, zoom_factor):
 
-        location = np.array((x, y), dtype=np.float)
+        location = Vector(x, y)
         self.glortho2d.zoom_at_with_scale(location, zoom_factor)
         self.update()
         
@@ -232,7 +233,7 @@ class GlWidgetBase(QOpenGLWidget):
     
     def zoom_at(self, x, y):
 
-        location = np.array((x, y), dtype=np.float)
+        location = Vector(x, y)
         self.glortho2d.zoom_at(location)
         self.update()
 
