@@ -33,9 +33,15 @@ from .Shader import GlShaderProgram
 
 ####################################################################################################
 
+_module_logger = logging.getLogger(__name__)
+
+####################################################################################################
+
 class GlRandomTexture(object):
 
     """ This class defines a 1D random texture. """
+
+    _logger = _module_logger.getChild('GlRandomTexture')
 
     ##############################################
     
@@ -97,10 +103,12 @@ class GlRandomTexture(object):
     
     def _set(self, width):
 
+        self._logger.info("")
+
         random_image = np.random.rand(width)
 
         self.bind()
-
+             
         level = 0
         border = 0
         internal_format = GL.GL_R32F
@@ -109,7 +117,7 @@ class GlRandomTexture(object):
         GL.glTexImage1D(GL.GL_TEXTURE_1D,
                         level, internal_format, width, border, data_format, data_type,
                         random_image)
-
+        
         self.unbind()
 
 ####################################################################################################
