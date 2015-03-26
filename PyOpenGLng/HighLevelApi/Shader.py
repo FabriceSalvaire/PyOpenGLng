@@ -277,6 +277,25 @@ Log:
             self._logger.info('Source:\n' + '\n'.join(source_lines))
             self._logger.error(log)
             for line in log.splitlines():
+                ### From vispy
+                ### def _parse_error(self, error):
+                ###     # Nvidia
+                ###     # 0(7): error C1008: undefined variable "MV"
+                ###     m = re.match(r'(\d+)\((\d+)\)\s*:\s(.*)', error)
+                ###     if m:
+                ###         return int(m.group(2)), m.group(3)
+                ###     # ATI / Intel
+                ###     # ERROR: 0:131: '{' : syntax error parse error
+                ###     m = re.match(r'ERROR:\s(\d+):(\d+):\s(.*)', error)
+                ###     if m:
+                ###         return int(m.group(2)), m.group(3)
+                ###     # Nouveau
+                ###     # 0:28(16): error: syntax error, unexpected ')', expecting '('
+                ###     m = re.match(r'(\d+):(\d+)\((\d+)\):\s(.*)', error)
+                ###     if m:
+                ###         return int(m.group(2)), m.group(4)
+                ###     # Other ...
+                ####    return None, error
                 match = re.match(r'\d\((\d+)\) : error', line)
                 # intel: # 0:18(10): error: no precision specified this scope for type `vec4'
                 if match is not None:
