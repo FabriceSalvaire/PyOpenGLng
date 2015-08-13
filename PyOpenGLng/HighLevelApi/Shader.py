@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 """ This modules provides classes to manager OpenGL Shader.
@@ -34,7 +34,7 @@
 #
 # glGetUniformBlockIndex: retrieve the index of a named uniform block
 # glGetUniformIndices: retrieves the indices of a number of uniforms within program
-# 
+#
 ####################################################################################################
 
 ####################################################################################################
@@ -72,15 +72,15 @@ class GlShader(object):
 
     The shader type can be passed to the constructor or retrieved from a source file, where a
     comment line with the following pattern must be present::
-        
+
           // #shader_type SHADER_TYPE
-        
+
     where *SHADER_TYPE* could be either *vertex*, *fragment* and *geometry*. It is case insensitive.
 
     Source files are preprocessed so as to replace line of the form::
 
       #include(file.glsl)
-    
+
     the path is relative to the parent source file.
     """
 
@@ -104,7 +104,7 @@ class GlShader(object):
                     )
 
     ##############################################
-    
+
     def __init__(self, shader_type=None, file_name=None, source_code=None):
 
         if shader_type is not None:
@@ -121,7 +121,7 @@ class GlShader(object):
         self._shader_id = GL.glCreateShader(self._shader_type)
 
     ##############################################
-    
+
     def __delx__(self):
 
         # Fixme: delx
@@ -130,19 +130,19 @@ class GlShader(object):
         GL.glDeleteShader(self._shader_id)
 
     ##############################################
-    
+
     def __bool__(self):
 
         return self._compiled
 
     ##############################################
-    
+
     def __str__(self):
 
         return self._source
 
     ##############################################
-    
+
     def clear_source(self):
 
         """ Clear the internal source code buffer. """
@@ -177,7 +177,7 @@ class GlShader(object):
             self._set_shader_type(shader_type)
 
     ##############################################
-    
+
     def load_from_string(self, source):
 
         """ Append the source string to the internal buffer. """
@@ -186,7 +186,7 @@ class GlShader(object):
         self._compiled = False
 
     ##############################################
-    
+
     def _preprocessor(self, source_code, path):
 
         """ Preprocess the source code. """
@@ -215,11 +215,11 @@ class GlShader(object):
                     raise ValueError("Malformed include at line %u" % (line_count))
             else:
                 break
-                    
+        
         return source_code
 
     ##############################################
-    
+
     def _load_from_file(self, file_name):
 
         """ Load source code from file and preprocess it. """
@@ -231,7 +231,7 @@ class GlShader(object):
         return source_code
 
     ##############################################
-    
+
     def load_from_file(self, file_name):
 
         """ Load the source code from the file given by *file_name*, preprocess it and append it to
@@ -242,7 +242,7 @@ class GlShader(object):
         self._set_shader_type_from_source_code()
 
     ##############################################
-    
+
     def compile(self):
 
         """ Compile the shader. """
@@ -327,7 +327,7 @@ class GlVariable(object):
     VARIABLE_LABEL = None
 
     ##############################################
-    
+
     def __init__(self, shader_program, name, location, gl_type, size,
                  within_uniform_block=False, offset=-1,
                  ):
@@ -346,7 +346,7 @@ class GlVariable(object):
         self._offset = offset
 
     ##############################################
-    
+
     def __repr__(self):
 
         if self._size > 1:
@@ -370,7 +370,7 @@ class GlUniform(GlVariable):
     VARIABLE_LABEL = 'Uniform'
 
     ##############################################
-    
+
     def get(self):
 
         """ Return the uniform value(s). """
@@ -379,7 +379,7 @@ class GlUniform(GlVariable):
         return self._gl_type.uniform_get_v(self._shader_program.program_id, self._location)
 
     ##############################################
-    
+
     def set(self, value):
 
         """ Set the uniform value(s). """
@@ -411,7 +411,7 @@ class GlUniformNd(GlUniform):
     """ This class is a base class for vector and matrix uniforms. """
 
     ##############################################
-    
+
     def get(self):
 
         """ Return the uniform value(s). """
@@ -422,7 +422,7 @@ class GlUniformNd(GlUniform):
         return value
 
     ##############################################
-    
+
     def _check_value(self, value):
 
         """ Check the value dimension and shape. """
@@ -439,7 +439,7 @@ class GlUniformVector(GlUniformNd):
     """ This class defines a vector uniform. """
 
     ##############################################
-    
+
     def set(self, value):
 
         """ Set the uniform value(s). """
@@ -458,7 +458,7 @@ class GlUniformMatrix(GlUniformNd):
     """ This class defines a matrix uniform. """
 
     ##############################################
-    
+
     def set(self, value):
 
         """ Set the uniform value(s). """
@@ -477,7 +477,7 @@ class GlShaderProgramUniforms(AttributeDictionaryInterfaceDescriptor):
     """ This class is a wrapper to access the uniforms within a shader program. """
 
     ##############################################
-    
+
     def __init__(self, shader_program):
 
         super(GlShaderProgramUniforms, self).__init__()
@@ -517,7 +517,7 @@ class GlUniformBlock(AttributeDictionaryInterface):
     """ This class defines an uniform block. """
 
     ##############################################
-    
+
     def __init__(self, name, location, uniforms):
 
         super(GlUniformBlock, self).__init__()
@@ -529,19 +529,19 @@ class GlUniformBlock(AttributeDictionaryInterface):
             self._dictionary[uniform._name] = uniform
 
     ##############################################
-    
+
     def uniform_block_name(self):
 
         return self._uniform_block_name
 
     ##############################################
-    
+
     def uniform_block_location(self):
 
         return self._uniform_block_location
 
     ##############################################
-    
+
     def __str__(self):
 
         text = 'Uniform Block[%2u]: %s\n' % (self.uniform_block_location(), self.uniform_block_name())
@@ -558,7 +558,7 @@ class GlShaderProgramUniformBlocks(AttributeDictionaryInterface):
     """ This class is a wrapper to access the uniform blocks within a shader program. """
 
     ##############################################
-    
+
     def __init__(self, shader_program):
 
         super(GlShaderProgramUniformBlocks, self).__init__()
@@ -611,7 +611,7 @@ class GlVertexAttribute(GlVariable):
     VARIABLE_LABEL = 'Attribute'
 
     ##############################################
-    
+
     def bind_to_buffer(self, vbo):
 
         """ Bind the vertex attribute to a Vertex Buffer Object. """
@@ -625,7 +625,7 @@ class GlShaderProgramAttributes(AttributeDictionaryInterface):
     """ This class is a wrapper to access the vertex attributes within a shader program. """
 
     ##############################################
-    
+
     def __init__(self, shader_program):
 
         super(GlShaderProgramAttributes, self).__init__()
@@ -640,7 +640,7 @@ class GlShaderProgramAttributes(AttributeDictionaryInterface):
             self._dictionary[name] = GlVertexAttribute(shader_program, name, location, gl_type, size)
 
     ##############################################
-    
+
     def __setattr__(self, name, value):
 
         raise NotImplementedError()
@@ -654,7 +654,7 @@ class GlShaderProgramInterfaceUniformBlock(object):
     """
 
     ##############################################
-    
+
     def __init__(self, name, binding_point):
 
         self.name = name
@@ -668,14 +668,14 @@ class GlShaderProgramInterfaceAttribute(object):
     """
 
     ##############################################
-    
+
     def __init__(self, name, location):
 
         self.name = name
         self.location = location
 
     ##############################################
-    
+
     def bind_to_buffer(self, vbo):
 
         """ Bind the vertex attribute to a Vertex Buffer Object. """
@@ -690,14 +690,14 @@ class GlShaderProgramInterface(object):
     """
 
     ##############################################
-    
+
     def __init__(self, uniform_blocks, attributes):
 
         self._init_uniform_blocks(uniform_blocks)
         self._init_attributes(attributes)
 
     ##############################################
-    
+
     def _init_uniform_blocks(self, uniform_blocks):
 
         self.uniform_blocks = AttributeDictionaryInterface()
@@ -706,7 +706,7 @@ class GlShaderProgramInterface(object):
             self.uniform_blocks._dictionary[name] = pair
 
     ##############################################
-    
+
     def _init_attributes(self, attributes):
 
         self.attributes = AttributeDictionaryInterface()
@@ -756,7 +756,7 @@ class GlShaderProgram(object):
     _logger = _module_logger.getChild('GlShaderProgram')
 
     ##############################################
-    
+
     def __init__(self, name):
 
         self._name = name
@@ -770,14 +770,14 @@ class GlShaderProgram(object):
         self.attributes = None
 
     ##############################################
-    
+
     def __delx__(self):
 
         self._logger("Delete Program %u" % (self.program_id))
         GL.glDeleteProgram(self.program_id)
 
     ##############################################
-    
+
     def attach_shader(self, shader):
 
         """ Attach a shader. """
@@ -788,7 +788,7 @@ class GlShaderProgram(object):
         GL.glAttachShader(self.program_id, shader._shader_id)
 
     ##############################################
-    
+
     def link(self):
 
         """ Link the program. """
@@ -806,7 +806,8 @@ Log:
 """
         self._logger.debug(message % (self._name, log))
         if not GL.glGetProgramiv(self.program_id, GL.GL_LINK_STATUS):
-            raise ValueError(log)
+            raise ValueError("Failed to link program {}\n".format(self._name)
+                             + log)
 
         self._linked = True
 
@@ -817,7 +818,7 @@ Log:
         self._logger.debug(str(self))
 
     ##############################################
-    
+
     def unbind(self):
 
         """ Unbind the shader. """
@@ -826,7 +827,7 @@ Log:
         self._active = False
 
     ##############################################
-    
+
     def bind(self):
 
         """ Bind the shader. """
@@ -835,7 +836,7 @@ Log:
         self._active = True
 
     ##############################################
-    
+
     def bind_attribute_location_array(self, name, location):
 
         """ Bind an attribute location. The program should not be linked. """
@@ -846,7 +847,7 @@ Log:
         GL.glBindAttribLocation(self.program_id, location, name)
 
     ##############################################
-    
+
     def set_program_interface(self, program_interface):
 
         """ Set the programming interface. """
@@ -856,7 +857,7 @@ Log:
             self.bind_attribute_location_array(attribute.name, attribute.location)
 
     ##############################################
-    
+
     def set_uniform_block_binding(self, name, binding_point):
 
         """ Set the binding point for an uniform block. """
@@ -865,7 +866,7 @@ Log:
         GL.glUniformBlockBinding(self.program_id, location, binding_point)
 
     ##############################################
-    
+
     def set_uniform_block_bindings(self):
 
         """ Set the uniform block binding points as defined by the programming interface. """
@@ -874,7 +875,7 @@ Log:
             self.set_uniform_block_binding(uniform_block.name, uniform_block.binding_point)
 
     ##############################################
-    
+
     def __repr__(self):
 
         text = "Shader Program '%s':\n" % (self._name)
@@ -914,20 +915,20 @@ class GlShaderManager(object):
     # Fixme: -> attributeDictionaryInterface
 
     ##############################################
-    
+
     def __init__(self):
 
         self._shaders = {}
         self._programs = {}
 
     ##############################################
-    
+
     def __contains__(self, name):
 
         return name in self._shaders or name in self._programs
 
     ##############################################
-    
+
     def __getattr__(self, name):
 
         item = self._programs.get(name, None)
@@ -939,17 +940,17 @@ class GlShaderManager(object):
         return item
 
     ##############################################
-    
+
     __getitem__ = __getattr__
 
     ##############################################
-    
+
     def has_visual(self):
 
         return bool(GL.glCreateShader)
 
     ##############################################
-    
+
     def load_from_file(self, shader_name, shader_file_name):
 
         """ Load a shader from a source file and compile it. This shader is identified by
@@ -966,7 +967,7 @@ class GlShaderManager(object):
         return shader
 
     ##############################################
-    
+
     def link_program(self, program_name, shader_list,
                      program_interface=None,
                      shader_program_class=GlShaderProgram,
