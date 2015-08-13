@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 ####################################################################################################
@@ -67,7 +67,7 @@ def interval2d_from_center_and_size(center, size):
 
     point_inf = center - size * .5
     point_sup = point_inf + size
-
+    
     return Interval2D((point_inf[0], point_sup[0]),
                       (point_inf[1], point_sup[1]))
 
@@ -76,7 +76,7 @@ def interval2d_from_center_and_size(center, size):
 class ViewportArea(object):
 
     """ This class defines a viewport area.
- 
+
     It implements an interval arithmetic using the class :class:`Tools.Interval.Interval2D`.
 
     Public Attributes:
@@ -88,20 +88,21 @@ class ViewportArea(object):
     _logger = logging.getLogger(__name__)
 
     ##############################################
-    
-    def __init__(self, max_area):
+
+    def __init__(self, max_area, bottom_up_y_axis):
 
         """ The parameter *max_area* must be an :class:`Tools.Interval.Interval2D` instance
         that defines the maximum area allowed for the viewport.
         """
 
+        self._bottom_up_y_axis = bottom_up_y_axis
         self._max_area = max_area.copy()
         self._area = max_area.copy()
-
-        self._set_reference_point()
+        
+        self._set_window_origin()
 
     ##############################################
-    
+
     def __str__(self):
 
         return str(self._area)
@@ -117,10 +118,10 @@ class ViewportArea(object):
         # Fixme: don't report all error checks
 
         max_axis_interval = self._max_area[axis]
-
+        
         inferior = axis_interval.inf < max_axis_interval.inf
         superior = max_axis_interval.sup < axis_interval.sup
-
+        
         if inferior and superior:
             # Report error via exception
             raise ValueError('out of axis area')
@@ -144,14 +145,17 @@ class ViewportArea(object):
         return area.is_included_in(self._max_area)
 
     ##############################################
-    
-    def _set_reference_point(self):
 
-        """ Set the reference point of the viewport defined as the left-bottom corner. """
+    def _set_window_origin(self):
 
-        self.ref_point = np.array([self._area.x.inf,
-                                   self._area.y.sup],
-                                  dtype=np.float)
+        """ Set the GL coordinate of the window origin (top left corner). """
+
+        x = self._area.x.inf
+        if self._bottom_up_y_axis:
+            y = self._area.y.sup
+        else:
+            y = self._area.y.inf
+        self.window_origin = np.array([x, y], dtype=np.float)
 
     ##############################################
 
@@ -190,16 +194,16 @@ class ViewportArea(object):
    %s
  / %s"""
         self._logger.debug(string_format % (self._area, area, self._max_area))
-
+        
         if self._check_area(area):
             self._area = area.copy() # Fixme: better coding ?
-            self._set_reference_point()
+            self._set_window_origin()
         else:
             intersection = area & self._max_area
             if not intersection.is_empty():
                 for axis in XAXIS, YAXIS:
                     self._area[axis] = self._check_axis_interval(area[axis], axis)
-                self._set_reference_point()
+                self._set_window_origin()
             else:
                 # Report error via exception
                 raise ValueError('Out of area')
@@ -211,7 +215,7 @@ class ViewportArea(object):
         return self._max_area
 
     ##############################################
-    
+
     def translate(self, dxy, axis):
 
         """ Translate the viewport of *dx* in the *axis* direction. """
@@ -233,9 +237,9 @@ class ViewportArea(object):
  #   (%s)
  #  ->
  #   %s
- # / %s""" 
+ # / %s"""
  #            self._logger.debug(string_format % (old_axis_interval, axis_interval, self._area[axis], self._max_area[axis]))
-        self._set_reference_point()
+        self._set_window_origin()
 
 ####################################################################################################
 
@@ -252,7 +256,7 @@ class ZoomManagerAbc(object):
     _logger = logging.getLogger(__name__)
 
     ##############################################
-    
+
     def __init__(self):
 
         """ The initial zoom factor is set to one. """
@@ -260,7 +264,7 @@ class ZoomManagerAbc(object):
         self.zoom_factor = 1
 
     ##############################################
-    
+
     def check_zoom(self, zoom_factor):
 
         """ Basic implementation to check a zoom factor, return the 2-tuple (True, zoom_factor). """
@@ -279,8 +283,6 @@ class Ortho2D(object):
 
       :attr:`display_scale`
 
-      :attr:`gl_to_window_parity`
-
       :attr:`inverse_parity_display_scale`
 
       :attr:`parity_display_scale`
@@ -295,11 +297,9 @@ class Ortho2D(object):
 
     _logger = logging.getLogger(__name__)
 
-    gl_to_window_parity = np.array([ 1, -1], dtype=np.float)
-
     ##############################################
-    
-    def __init__(self, max_area, zoom_manager, window):
+
+    def __init__(self, max_area, zoom_manager, window, bottom_up_y_axis=True):
 
         """ The parameter *max_area* must be an :class:`Tools.Interval.Interval2D` instance
         that defines the maximum area allowed for the viewport.
@@ -310,10 +310,20 @@ class Ortho2D(object):
         returning the 2-tuple (width, height).
         """
 
-        self.viewport_area = ViewportArea(max_area)
+        self.viewport_area = ViewportArea(max_area, bottom_up_y_axis)
         self.zoom_manager = zoom_manager
         self.window = window
+        self.bottom_up_y_axis = bottom_up_y_axis
 
+        # axis parity in GL frame
+        x_axis_parity = 1
+        if bottom_up_y_axis:
+            y_axis_parity = 1
+        else:
+            y_axis_parity = -1
+        self._gl_axis_parity = np.array([x_axis_parity, y_axis_parity], dtype=np.float)
+        self._window_axis_parity = np.array([x_axis_parity, -y_axis_parity], dtype=np.float)
+        
         self.zoom_at_with_scale(max_area.middle(), zoom_factor=1)
 
     ##############################################
@@ -344,7 +354,8 @@ class Ortho2D(object):
         """ Compute the display scale. """
 
         self.display_scale = self.viewport_area.size(dtype=np.float) / self.window.size()
-        self.parity_display_scale = self.display_scale * self.gl_to_window_parity
+        # in window frame
+        self.parity_display_scale = self.display_scale * self._window_axis_parity
         self.inverse_parity_display_scale = 1 / self.parity_display_scale
 
     ##############################################
@@ -355,7 +366,8 @@ class Ortho2D(object):
         must be an Numpy array.
         """
 
-        coordinate = self.viewport_area.ref_point + self.parity_display_scale * window_point
+        # reference point corresponds to the top left corner (window origin)
+        coordinate = self.viewport_area.window_origin + self.parity_display_scale * window_point
         if round_to_integer:
             return np.rint(coordinate)
         else:
@@ -369,7 +381,7 @@ class Ortho2D(object):
         must be an Numpy array.
         """
 
-        window_point = (gl_point - self.viewport_area.ref_point) * self.inverse_parity_display_scale
+        window_point = (gl_point - self.viewport_area.window_origin) * self.inverse_parity_display_scale
 
         return np.rint(window_point)
 
@@ -377,13 +389,13 @@ class Ortho2D(object):
 
     def window_to_gl_distance(self, x_window):
 
-        return self.parity_display_scale[0] * x_window
+        return self.display_scale[0] * x_window
 
     ##############################################
-    
+
     def translate(self, dxy, axis):
 
-        """ Translate the viewport of *dx* in the *axis* direction. """        
+        """ Translate the viewport of *dx* in the *axis* direction. """
 
         self.viewport_area.translate(dxy, axis)
 
@@ -402,7 +414,7 @@ class Ortho2D(object):
     ##############################################
 
     def _compute_zoom_to_fit_interval(self, interval):
-       
+
         """ Compute the zoom to fit an interval.  The parameter *interval* must be an
         :class:`Tools.Interval.Interval2D` instance.
         """
@@ -421,18 +433,18 @@ class Ortho2D(object):
         """
 
         self._logger.debug('zoom_at_with_scale %s %g' % (str(point), zoom_factor))
-
+        
         # zoom_changed unused
         zoom_changed, zoom_factor = self.zoom_manager.check_zoom(zoom_factor)
         self._logger.debug("Check Zoom: changed %s, zoom %6.1f" % (zoom_changed, zoom_factor))
-
+        
         new_area_size = self.window.size() / zoom_factor
         new_area = interval2d_from_center_and_size(point, new_area_size)
         self.viewport_area.area = new_area
         self._compute_display_scale()
 
     ##############################################
-    
+
     def zoom_at(self, center):
 
         """ Zoom the viewport centered on the point *center*.  The parameter *center* must be an
@@ -442,9 +454,9 @@ class Ortho2D(object):
         self.zoom_at_with_scale(center, self.zoom_manager.zoom_factor)
 
     ##############################################
-    
+
     def zoom_at_center(self, zoom_factor):
-        
+
         """ Zoom on the viewport center. """
 
         self.zoom_at_with_scale(self.viewport_area.center(), zoom_factor)
@@ -498,6 +510,9 @@ class Ortho2D(object):
         scale = 2. / self.viewport_area.size()
         offset *= scale
 
+        scale *= self._gl_axis_parity
+        offset *= self._gl_axis_parity
+        
         matrix = np.array([[ scale[0], 0.,       0., offset[0] ],
                            [ 0.,       scale[1], 0., offset[1] ],
                            [ 0.,       0.,       1.,        0. ],
@@ -514,12 +529,12 @@ class Ortho2D(object):
 
         matrix = self.view_matrix()
         viewport_scale = self.viewport_scale(window_size)
-
+        
         viewport_array = np.array(list(matrix.transpose().flatten()) +
                                   list(viewport_scale) +
                                   list(1./viewport_scale),
                                   dtype=np.float32)
-
+        
         return viewport_array
 
     ##############################################
@@ -527,7 +542,7 @@ class Ortho2D(object):
     def ortho2d_bounding_box(self):
 
         area = self.viewport_area.area
-
+        
         return (area.x.inf, area.x.sup, area.y.inf, area.y.sup)
 
     ##############################################
@@ -536,7 +551,7 @@ class Ortho2D(object):
 
         left, bottom, right, top = self.viewport_area.area.bounding_box()
         right = self.viewport_area.max_area.x.sup
-
+        
         return (left, bottom, right, top)
 
     ##############################################
