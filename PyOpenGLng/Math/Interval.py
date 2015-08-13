@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 """ Implements 1D and 2D Interval Arithmetic.
@@ -44,7 +44,7 @@ from .Functions import middle
 empty_interval_string = '[empty]'
 
 ####################################################################################################
-    
+
 class Interval(object):
 
     """ One-dimension Interval
@@ -53,7 +53,7 @@ class Interval(object):
     ##############################################
 
     # Fixme: better name than array ?
-    
+
     def __init__(self, *args):
 
         """ Initialise an interval
@@ -66,15 +66,15 @@ class Interval(object):
         """
 
         array = self._check_arguments(args)
-
+        
         self.inf = array[0]
         self.sup = array[1]
-
+        
         if self.inf > self.sup: # None > None = False
             raise ValueError("inf <= sup condition is false [%g, %g]" % (self.inf, self.sup))
 
     ##############################################
-    
+
     def _check_arguments(self, args):
 
         size = len(args)
@@ -84,7 +84,7 @@ class Interval(object):
             array = args
         else:
             raise ValueError("Args size > 2")
-
+        
         return array
 
     ##############################################
@@ -97,7 +97,7 @@ class Interval(object):
         return self.__class__(self.inf, self.sup)
 
     ##############################################
-    
+
     def __getitem__(self, index):
 
         if isinstance(index, slice):
@@ -105,21 +105,21 @@ class Interval(object):
                 lower = 0
             else:
                 lower = index.start
-
+            
             if index.stop is None:
                 upper = 1
             else:
                 upper = index.stop -1
-
+            
             if lower == 0 and upper == 1:
                 return self.inf, self.sup
-            elif lower == 0 and upper == 0: 
+            elif lower == 0 and upper == 0:
                 return self.inf
-            elif lower == 1 and upper == 1: 
+            elif lower == 1 and upper == 1:
                 return self.sup
             else:
                 raise IndexError("Wrong slice")
-
+        
         elif index == 0:
             return self.inf
         elif index == 1:
@@ -128,13 +128,13 @@ class Interval(object):
             raise IndexError("Index is out of range")
 
     ##############################################
-    
+
     def __repr__(self):
 
         return str(self.__class__) + ' ' + str(self)
 
     ##############################################
-    
+
     def __str__(self):
 
         if self.is_empty():
@@ -298,7 +298,7 @@ class Interval(object):
             return False
         else:
             return self.inf <= x and x <= self.sup
-                
+
     ##############################################
 
     def is_included_in(i1, i2):
@@ -307,7 +307,7 @@ class Interval(object):
         """
 
         # print '(%f <= %f and %f <= %f)' % (i2.inf, i1.inf, i1.sup, i2.sup)
-        
+
         return i2.inf <= i1.inf and i1.sup <= i2.sup
 
     ##############################################
@@ -329,27 +329,27 @@ class Interval(object):
         return self - interval_reference.inf
 
     ##############################################
-  
+
     def map_x_in(self, x):
 
         """ Return x - inf
         """
-  
+
         return x - self.inf
-  
+
     ##############################################
-  
+
     def unmap_x_in(self, x):
 
         """ Return x + inf
         """
-  
+
         return x + self.inf
 
     ##############################################
 
     # Fixme: length -> size ?
-  
+
     def length(self):
 
         """ Return sup - inf
@@ -384,11 +384,11 @@ class Interval(object):
 
         self.inf -= dx
         self.sup += dx
-
+        
         return self
 
 ####################################################################################################
-    
+
 class IntervalInt(Interval):
 
     """ One-dimension Integer Interval
@@ -397,7 +397,7 @@ class IntervalInt(Interval):
     ##############################################
 
     # Fixme: better name than array ?
-    
+
     def __init__(self, *args):
 
         """ Initialise an interval
@@ -406,24 +406,24 @@ class IntervalInt(Interval):
         """
 
         array = self._check_arguments(args)
-
+        
         if None not in array:
             array = [int(x) for x in array[:2]] # Fixme: rint ?
         # Fixme: else:
-
+        
         super(IntervalInt, self).__init__(array)
 
     ##############################################
-    
+
     def __str__(self):
 
         if self.is_empty():
             return empty_interval_string
         else:
             return '[%i, %i]' % (self.inf, self.sup)
-        
+
     ##############################################
-  
+
     def length(self):
 
         """ Return sup - inf +1
@@ -432,16 +432,16 @@ class IntervalInt(Interval):
         return self.sup - self.inf +1
 
     ##############################################
-  
+
     def length_float(self):
 
         """ Return sup - inf
         """
 
         return self.sup - self.inf
-    
+
 ####################################################################################################
-    
+
 class IntervalIntSupOpen(IntervalInt):
 
     """ One-dimension Integer Interval [inf, sup[
@@ -457,11 +457,11 @@ class IntervalIntSupOpen(IntervalInt):
         """
 
         array = self._check_arguments(args)
-
+        
         super(IntervalInt, self).__init__(args)
 
     ##############################################
-    
+
     def __str__(self):
 
         if self.is_empty():
@@ -491,11 +491,11 @@ class IntervalIntSupOpen(IntervalInt):
         """
 
         if i1.intersect(i2):
-
+            
             # i2.inf < i1.inf < i1.sup < i2.sup
             if i1.is_included_in(i2):
                 return (IntervalIntSupOpen(None, None),)
-
+            
             # i1.inf < i2.inf < i2.sup < i1.sup
             elif i2.is_included_in(i1):
                 r = []
@@ -504,15 +504,15 @@ class IntervalIntSupOpen(IntervalInt):
                 if i2.sup != i1.sup:
                     r.append(IntervalIntSupOpen(i2.sup, i1.sup))
                 return tuple(r)
-
+            
             # i1.inf < i2.inf < i1.sup < i2.sup
             elif i1.inf <= i2.inf:
                 return (IntervalIntSupOpen(i1.inf, i2.inf),)
-
+            
             # i2.inf < i1.inf < i2.sup < i1.sup
             else:
                 return (IntervalIntSupOpen(i2.sup, i1.sup),)
-
+        
         else:
             return (IntervalIntSupOpen(None, None),)
 
@@ -524,11 +524,11 @@ class IntervalIntSupOpen(IntervalInt):
         """
 
         if i1.intersect(i2):
-
+            
             # i2.inf < i1.inf < i1.sup < i2.sup
             if i1.is_included_in(i2):
                 return ((i2, False),)
-
+            
             # i1.inf < i2.inf < i2.sup < i1.sup
             elif i2.is_included_in(i1):
                 r = []
@@ -536,20 +536,20 @@ class IntervalIntSupOpen(IntervalInt):
                 r.append((i2, False))
                 if i2.sup != i1.sup: r.append((IntervalIntSupOpen(i2.sup, i1.sup), True))
                 return tuple(r)
-
+            
             # i1.inf < i2.inf < i1.sup < i2.sup
             elif i1.inf <= i2.inf:
                 return ((IntervalIntSupOpen(i1.inf, i2.inf), True),
                         (i2, False))
-
+            
             # i2.inf < i1.inf < i2.sup < i1.sup
             else:
                 return ((i2, False),
                         (IntervalIntSupOpen(i2.sup, i1.sup), True))
-
+        
         else:
             return None
-       
+
 #################################################################################
 
 class Interval2D(object):
@@ -579,7 +579,7 @@ class Interval2D(object):
         return self.__class__(self.x, self.y)
 
     ##############################################
-    
+
     def __setitem__(self, index, interval):
 
         if index == 0:
@@ -590,7 +590,7 @@ class Interval2D(object):
             raise IndexError("Index is out of range")
 
     ##############################################
-    
+
     def __getitem__(self, index):
 
         if index == 0:
@@ -607,7 +607,7 @@ class Interval2D(object):
         return str(self.x) + '*' + str(self.y)
 
     ##############################################
-    
+
     def __repr__(self):
 
         return str(self.__class__) + ' ' + str(self)
@@ -825,11 +825,11 @@ class Interval2D(object):
 
         self.x.enlarge(dx)
         self.y.enlarge(dx)
-
+        
         return self
 
 ####################################################################################################
-    
+
 class IntervalInt2D(Interval2D):
 
     """ Two-dimension Integer Interval

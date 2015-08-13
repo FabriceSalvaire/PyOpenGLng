@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 """ This modules provides geometric primitive classes. """
@@ -29,7 +29,7 @@ import numpy as np
 class Vector(np.ndarray):
 
     # Fixme: ndarray is probably not efficient for a so small array
-    
+
     """ This class implements a vector.
 
     Public attributes:
@@ -62,15 +62,15 @@ class Vector(np.ndarray):
             input_array = args
         else:
             raise ValueError("Bad argument " + str(type(obj)))
-
+        
         obj = np.asarray(input_array, dtype=dtype).view(cls)
-
+        
         # obj = np.ndarray.__new__(cls, (dimension,), dtype,
         #                          buffer=None, offset=0, strides=None, order=None)
         
         # if kwargs.get('share', False):
         #     obj = input_array.view(cls)
-
+        
         return obj
 
     ##############################################
@@ -81,7 +81,7 @@ class Vector(np.ndarray):
     #         return
 
     ##############################################
-    
+
     def __repr__(self):
 
         return 'Vector ' + str(self)
@@ -95,7 +95,7 @@ class Vector(np.ndarray):
     @x.setter
     def x(self, value):
         self[0] = value
-    
+
     @property
     def y(self):
         return self[1]
@@ -131,14 +131,14 @@ class Segment(object):
     """
 
     ##############################################
-    
+
     def __init__(self, p1, p2):
 
         self.p1 = p1
         self.p2 = p2
 
     ##############################################
-    
+
     def __repr__(self):
 
         return 'Segment ' + str(self.p1) + ' --- ' + str(self.p2)
@@ -164,7 +164,7 @@ class Rectangle(object):
     """
 
     ##############################################
-    
+
     def __init__(self, point, dimension):
 
         self.point = point

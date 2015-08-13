@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 # Note: we use functions (e.g. sin) from math module because they are faster
@@ -41,7 +41,7 @@ def translate(matrix, x, y, z):
                   [0., 0., 1., z],
                   [0., 0., 0., 1.]],
                  dtype=matrix.dtype)
-
+    
     matrix[...] = np.dot(T, matrix)
     return matrix
 
@@ -54,7 +54,7 @@ def scale(matrix, x, y, z):
                   [0., 0.,  z, 0.],
                   [0., 0., 0., 1.]],
                  dtype=matrix.dtype)
-
+    
     matrix[...] = np.dot(S, matrix)
     return matrix
 
@@ -70,7 +70,7 @@ def rotate_x(matrix, theta):
                   [0.,  s,  c, 0.],
                   [0., 0., 0., 1.]],
                  dtype=matrix.dtype)
-
+    
     matrix[...] = np.dot(R, matrix)
     return matrix
 
@@ -86,7 +86,7 @@ def rotate_y(matrix, theta):
                   [-s, 0.,  c, 0.],
                   [0., 0., 0., 1.]],
                  dtype=matrix.dtype)
-
+    
     matrix[...] = np.dot(R, matrix)
     return matrix
 
@@ -102,7 +102,7 @@ def rotate_z(matrix, theta):
                   [0., 0., 1., 0.],
                   [0., 0., 0., 1.]],
                  dtype=matrix.dtype)
-
+    
     matrix[...] = np.dot(R, matrix)
     return matrix
 
@@ -118,7 +118,7 @@ def rotate(matrix, x, y, z, angle):
     t = math.radians(angle)
     c = math.cos(t)
     s = math.sin(t)
-
+    
     n = math.sqrt(x**2 + y**2 + z**2)
     x /= n
     y /= n
@@ -130,13 +130,13 @@ def rotate(matrix, x, y, z, angle):
     sx = s * x
     sy = s * y
     sz = s * z
-
+    
     R = np.array([[cx*x + c,  cy*x - sz, cz*x + sy, 0],
                   [cx*y + sz, cy*y + c,  cz*y - sx, 0],
                   [cx*z - sy, cy*z + sx, cz*z + c,  0],
                   [0, 0, 0, 1]],
                  dtype=matrix.dtype)
-
+    
     matrix[...] = np.dot(R, matrix)
     return matrix
 
@@ -154,7 +154,7 @@ def ortho(left, right, bottom, top, near, far):
     near, far
       Specify the distances to the nearer and farther depth clipping planes.
       These values are negative if the plane is to be behind the viewer.
-    """            
+    """
 
     # vertex1 = np.array([[left], [bottom], [far]])
     # vertex2 = np.array([[right], [top], [near]])
@@ -169,7 +169,7 @@ def ortho(left, right, bottom, top, near, far):
     dx = float(right - left)
     dy = float(top - bottom)
     dz = float(near - far)
-
+    
     matrix = np.zeros((4, 4), dtype=np.float32)
     matrix[0, 0] = 2. / dx
     matrix[1, 1] = 2. / dy
@@ -178,7 +178,7 @@ def ortho(left, right, bottom, top, near, far):
     matrix[1, 3] = - (bottom + top) / dy
     matrix[2, 3] = (near + far) / dz
     matrix[3, 3] = 1.
-
+    
     return matrix
 
 ####################################################################################################
@@ -191,7 +191,7 @@ def frustum(left, right, bottom, top, near, far):
 
     bottom, top
       Specify the coordinates for the bottom and top horizontal clipping planes.
-      
+
     near, far
       Specify the distances to the near and far depth clipping planes.
       Both distances must be positive.
@@ -200,7 +200,7 @@ def frustum(left, right, bottom, top, near, far):
     dx = float(right - left)
     dy = float(top - bottom)
     dz = float(near - far)
-
+    
     matrix = np.zeros((4, 4), dtype=np.float32)
     matrix[0, 0] = 2. * near / dx
     matrix[1, 1] = 2. * near / dy
@@ -209,7 +209,7 @@ def frustum(left, right, bottom, top, near, far):
     matrix[2, 2] = (near + far) / dz
     matrix[3, 2] = -1.
     matrix[2, 3] = 2. * near * far / dz
-
+    
     return matrix
 
 ####################################################################################################
@@ -232,20 +232,19 @@ def perspective(fovy, aspect, near, far):
     far
       Specifies the distance from the viewer to the far clipping plane (always positive).
     """
-                
 
     h = math.tan(math.radians(fovy)/2) # * near
     w = h * aspect
     dz = float(near - far)
     # return frustum(-w, w, -h, h, near, far)
-
+    
     matrix = np.zeros((4, 4), dtype=np.float32)
     matrix[0, 0] = w
     matrix[1, 1] = h
     matrix[2, 2] = (near + far) / dz
     matrix[3, 2] = -1.
     matrix[2, 3] = 2. * near * far / dz
-
+    
     return matrix
 
 ####################################################################################################
@@ -261,33 +260,33 @@ def look_at(matrix, eye, center, up):
 
     up_x, up_y, up_z
     Specifies the direction of the up vector.
-    """            
+    """
 
     eye = np.array(eye, dtype=np.float32)
     center = np.array(center, dtype=np.float32)
     up = np.array(up, dtype=np.float32)
-
+    
     f = center - eye
     f /= np.sqrt(np.sum(f**2))
-
+    
     up /= np.sqrt(np.sum(up**2))
-
+    
     s = np.cross(f, up)
-
+    
     view = np.zeros((4, 4), dtype=np.float32)
     view[0,:3] = s
     view[1,:3] = up
     view[2,:3] = -f
     view[3,3] = 1.
     view[:3,3] = -eye.T
-
+    
     view[...] = np.dot(view, matrix)
     # translate(view, -eye[0], -eye[1], -eye[2])
-
+    
     return view
 
 ####################################################################################################
-# 
+#
 # End
-# 
+#
 ####################################################################################################

@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 """ This class provides tools to manage OpenGL Buffer Objects.
@@ -77,28 +77,28 @@ class GlBuffer(object):
     _target = None
 
     ##############################################
-    
+
     def __init__(self, data=None):
 
         self._gl_id = GL.glGenBuffers(1)
-
+        
         self.size = 0
         self._dtype = None
         self._dtype_nbytes = None
         self.type = None
-
+        
         if data is not None:
             self.set(data)
 
     ##############################################
-    
+
     def __del__(self):
 
         self._logger.debug("Delete Object %u" % (self._gl_id))
         GL.glDeleteBuffers([self._gl_id])
 
     ##############################################
-    
+
     def bind(self):
 
         """ Bind the buffer. """
@@ -106,7 +106,7 @@ class GlBuffer(object):
         GL.glBindBuffer(self._target, self._gl_id)
 
     ##############################################
-    
+
     def unbind(self):
 
         """ Unind the buffer. """
@@ -114,7 +114,7 @@ class GlBuffer(object):
         GL.glBindBuffer(self._target, 0)
 
     ##############################################
-    
+
     def bind_buffer_base(self, binding_point):
 
         """ Binds the buffer object buffer to the given binding point. """
@@ -122,9 +122,9 @@ class GlBuffer(object):
         GL.glBindBufferBase(self._target, binding_point, self._gl_id)
 
     ##############################################
-    
+
     def _set(self, data, usage):
-        
+
         """Set the data of the buffer.
 
         usage: Specifies the expected usage pattern of the data store. The symbolic constant must be
@@ -145,20 +145,20 @@ class GlBuffer(object):
         else:
             raise ValueError()
         self._dtype_nbytes = self._dtype.type(1).nbytes
-
+        
         # Fixme: shape?
         shape = data.shape
         if len(shape) == 2:
             self.size = data.shape[1] # xyzw
         else:
             self.size = 1
-
+        
         self.bind()
         GL.glBufferData(self._target, data, usage)
         self.unbind()
 
     ##############################################
-    
+
     def set(self, data, usage):
 
         """ Set the data of the buffer. """
@@ -173,9 +173,9 @@ class GlBuffer(object):
 
         The parameter offset lies in a linear array shape.
         """
-        
+
         self.bind()
-        print(offset, self._dtype_nbytes)
+        # print(offset, self._dtype_nbytes)
         offset = offset * self._dtype_nbytes
         GL.glBufferSubData(self._target, offset, data)
         self.unbind()
@@ -188,7 +188,7 @@ class GlBuffer(object):
 
         The parameter offset and size lies in a linear array shape.
         """
-        
+
         if data is None:
             if size is None:
                 raise ValueError("size must be provided when data is None")
@@ -198,9 +198,9 @@ class GlBuffer(object):
         offset = offset * self._dtype_nbytes
         GL.glGetBufferSubData(self._target, offset, data)
         self.unbind()
-
-        return data
         
+        return data
+
 ####################################################################################################
 
 class GlUniformBuffer(GlBuffer):
@@ -212,7 +212,7 @@ class GlUniformBuffer(GlBuffer):
     _logger = _module_logger.getChild(__name__)
 
     ##############################################
-    
+
     def set(self, data, usage=GL.GL_DYNAMIC_DRAW):
         self._set(data, usage)
 
@@ -227,17 +227,17 @@ class GlArrayBuffer(GlBuffer):
     _logger = _module_logger.getChild(__name__)
 
     ##############################################
-    
+
     def set(self, data, usage=GL.GL_STATIC_DRAW):
         self._set(data, usage)
 
     ##############################################
-    
+
     def bind_at_location(self, location):
 
         """ Bind and enable the Vertex Buffer Object at the given attribute location. """
 
-        self._logger.debug("Bind at location %u" % (location))        
+        self._logger.debug("Bind at location %u" % (location))
         self.bind()
         GL.glVertexAttribPointer(location, self.size, self.type, GL.GL_FALSE, 0, None)
         GL.glEnableVertexAttribArray(location) # cf. enable # required !
