@@ -155,7 +155,7 @@ class ViewportArea(object):
             y = self._area.y.sup
         else:
             y = self._area.y.inf
-        self.window_origin = np.array([x, y], dtype=np.float)
+        self.window_origin = np.array([x, y], dtype=np.double)
 
     ##############################################
 
@@ -163,11 +163,11 @@ class ViewportArea(object):
 
         """ Return the viewport center as an Numpy array. """
 
-        return np.array(self._area.middle(), dtype=np.float)
+        return np.array(self._area.middle(), dtype=np.double)
 
     ##############################################
 
-    def size(self, dtype=np.uint):
+    def size(self, dtype=np.double):
 
         """ Return the viewport size as an Numpy array. """
 
@@ -321,8 +321,8 @@ class Ortho2D(object):
             y_axis_parity = 1
         else:
             y_axis_parity = -1
-        self._gl_axis_parity = np.array([x_axis_parity, y_axis_parity], dtype=np.float)
-        self._window_axis_parity = np.array([x_axis_parity, -y_axis_parity], dtype=np.float)
+        self._gl_axis_parity = np.array([x_axis_parity, y_axis_parity], dtype=np.double)
+        self._window_axis_parity = np.array([x_axis_parity, -y_axis_parity], dtype=np.double)
         
         self.zoom_at_with_scale(max_area.middle(), zoom_factor=1)
 
@@ -353,7 +353,7 @@ class Ortho2D(object):
 
         """ Compute the display scale. """
 
-        self.display_scale = self.viewport_area.size(dtype=np.float) / self.window.size()
+        self.display_scale = self.viewport_area.size(dtype=np.double) / self.window.size()
         # in window frame
         self.parity_display_scale = self.display_scale * self._window_axis_parity
         self.inverse_parity_display_scale = 1 / self.parity_display_scale
@@ -419,7 +419,7 @@ class Ortho2D(object):
         :class:`Tools.Interval.Interval2D` instance.
         """
 
-        axis_scale = self.window.size() / np.array(interval.size(), dtype=np.float)
+        axis_scale = self.window.size() / np.array(interval.size(), dtype=np.double)
         axis = axis_scale.argmin()
         zoom_factor = axis_scale[axis]
 
@@ -498,7 +498,7 @@ class Ortho2D(object):
 
         """ Return the viewport scale. """
 
-        return self.viewport_area.size() / np.array(window_size, dtype='f')
+        return self.viewport_area.size() / np.array(window_size, dtype=np.double)
 
     ##############################################
 
