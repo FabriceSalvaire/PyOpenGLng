@@ -140,7 +140,7 @@ class Interval(object):
         if self.is_empty():
             return empty_interval_string
         else:
-            return '[%g, %g]' % (self.inf, self.sup)
+            return '[{}, {}]'.format(self.inf, self.sup)
 
     ##############################################
 
@@ -471,7 +471,7 @@ class IntervalIntSupOpen(IntervalInt):
                 sup_str = '+oo'
             else:
                 sup_str = str(self.sup)
-            return '[%i, %s[' % (self.inf, sup_str)
+            return '[{}, {}['.format(self.inf, sup_str)
 
     ##############################################
 
