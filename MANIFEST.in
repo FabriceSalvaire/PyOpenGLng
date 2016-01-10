@@ -13,7 +13,6 @@ include TODO.rst
 include pylintrc.ini
 include setup_data.py
 recursive-include bin *
-recursive-include doc *
 recursive-include gh-pages *
 recursive-include glx-tools *.c Makefile
 recursive-include share *
