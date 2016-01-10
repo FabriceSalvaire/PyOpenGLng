@@ -85,7 +85,7 @@ setup_dict = dict(
               'PyOpenGLng.Tools',
               'PyOpenGLng.Wrapper',
           ],
-    package_data={'PyOpenGLng.GlApi': ['*.xml', '*.pickle']},
+    package_data={'PyOpenGLng.GlApi': ['*.xml', '*.pickle', 'getter.json']},
     long_description=long_description,
     # cf. http://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
