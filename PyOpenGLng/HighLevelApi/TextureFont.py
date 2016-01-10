@@ -50,8 +50,9 @@
 
 ####################################################################################################
 
+import six
+
 import logging
-import string
 import unicodedata
 
 import numpy as np
@@ -154,7 +155,7 @@ is fixed width:      %s
 is scalable:         %s
 """
 
-        six.print_(string_template % (
+        print(string_template % (
             face.postscript_name,
             face.family_name,
             face.style_name,
@@ -181,13 +182,13 @@ is scalable:         %s
             face.is_scalable,
             ))
 
-        six.print_("Glyph Table:")
+        print("Glyph Table:")
         charcode, glyph_index = face.get_first_char()
         while glyph_index:
-            six.print_("  [%d] 0x%04lx %s %s" % (glyph_index,
+            print("  [%d] 0x%04lx %s %s" % (glyph_index,
                                                  charcode,
-                                                 chr(charcode),
-                                                 unicodedata.name(chr(charcode))))
+                                                 six.unichr(charcode),
+                                                 unicodedata.name(six.unichr(charcode))))
             # face.get_glyph_name(glyph_index) # is not available
             charcode, glyph_index = face.get_next_char(charcode, glyph_index)
 
@@ -236,7 +237,7 @@ class TextureFontSize(object):
         face = self._font._face
         charcode, glyph_index = face.get_first_char()
         while glyph_index:
-            self.load_glyph(chr(charcode))
+            self.load_glyph(six.unichr(charcode))
             charcode, glyph_index = face.get_next_char(charcode, glyph_index)
 
     ##############################################

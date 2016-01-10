@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -9,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 """ This module provides classes to handle OpenGL Data Types.
@@ -30,7 +28,7 @@ It gives access to the following functions to set and get uniform values:
 * glUniformMatrix{2|3|4|2x3|3x2|2x4|4x2|3x4|4x3}fv
 * glProgramUniform{1|2|3|4}{f|i|ui}
 * glProgramUniform{1|2|3|4}{f|i|ui}v
-* glProgramUniformMatrix{2|3|4|2x3|3x2|2x4|4x2|3x4|4x3}fv 
+* glProgramUniformMatrix{2|3|4|2x3|3x2|2x4|4x2|3x4|4x3}fv
 
 GL data types:
 
@@ -38,15 +36,15 @@ GL data types:
     GL Type   Bit Width  Description
     ======== =========== ====================================================================
     boolean    1 or more Boolean
-    byte       8         Signed two’s complement binary integer
+    byte       8         Signed two's complement binary integer
     ubyte      8         Unsigned binary integer
     char       8         Characters making up strings
-    short     16         Signed two’s complement binary integer
+    short     16         Signed two's complement binary integer
     ushort    16         Unsigned binary integer
-    int       32         Signed two’s complement binary integer
+    int       32         Signed two's complement binary integer
     uint      32         Unsigned binary integer
-    fixed     32         Signed two’s complement 16.16 scaled integer
-    int64     64         Signed two’s complement binary integer
+    fixed     32         Signed two's complement 16.16 scaled integer
+    int64     64         Signed two's complement binary integer
     uint64    64         Unsigned binary integer
     sizei     32         Non-negative binary integer size
     enum      32         Enumerated binary integer value
@@ -83,10 +81,6 @@ Correspondence of command suffix type descriptors to GL argument types:
 ####################################################################################################
 
 # __all__ = ['gl_types', 'GlVariableType', 'GlVectorType', 'GlMatrixType', 'GlSamplerType']
-
-####################################################################################################
-
-import six
 
 ####################################################################################################
 
@@ -226,7 +220,7 @@ type %(token_name)s
   dtype                 %(dtype)s
 """
 
-        six.print_(template % self.__dict__)
+        print(template % self.__dict__)
 
 ####################################################################################################
 
@@ -238,7 +232,7 @@ class GlVariableType(GlType):
     shape = (1,)
 
     ##############################################
-    
+
     def __init__(self, data_type):
 
         keyword = str(data_type)
@@ -258,7 +252,7 @@ class GlVectorType(GlType):
     number_of_dimensions = 1
 
     ##############################################
-    
+
     def __init__(self, data_type, size):
 
         letter = gl_data_type_to_prototype_letter[int(data_type)]
@@ -286,7 +280,7 @@ class GlMatrixType(GlType):
     number_of_dimensions = 2
 
     ##############################################
-    
+
     def __init__(self, data_type, number_of_rows, number_of_columns):
 
         if number_of_rows == number_of_columns:
@@ -310,7 +304,7 @@ class GlSamplerType(GlType):
     """ This class defines a sampler type. """
 
     ##############################################
-    
+
     def __init__(self, data_type, token_name, keyword):
 
         if data_type != gl_data_type.float:
@@ -334,9 +328,9 @@ class GlTypes(dict):
     """ This class stores the OpenGL types in a dictionary indexed by the token name. """
 
     ##############################################
-    
+
     def __init__(self, gl_types):
-    
+
         super(GlTypes, self).__init__()
 
         for gl_type in gl_types:
@@ -361,7 +355,7 @@ for data_type in (
     gl_data_type.double,
     ):
     gl_type_list.append(GlVariableType(data_type))
-                        
+
 # Vector types
 for data_type in (
     gl_data_type.bool,
@@ -408,7 +402,7 @@ for data_type in (
         gl_type_list.append(GlSamplerType(data_type, token_name, keyword))
 
 ####################################################################################################
-#    
+#
 # OpenGL 4.2 TODO
 #
 ####################################################################################################

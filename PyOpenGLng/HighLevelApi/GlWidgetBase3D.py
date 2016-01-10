@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 ####################################################################################################
@@ -68,15 +68,15 @@ class GlWidgetBase3D(QOpenGLWidget):
 
         # self.setAutoFillBackground(False)
         # self.setAutoBufferSwap(False)
- 
+
     ##############################################
 
     def initializeGL(self):
 
         """ Initialise any required resources
-        
+
         It is called just once before paintGL.
-        """    
+        """
 
         self._logger.debug('Initialise GL - Super')
         
@@ -94,7 +94,7 @@ class GlWidgetBase3D(QOpenGLWidget):
     def resizeGL(self, width, height):
 
         """ Set up the projection and viewport
-        
+
         Resize Event
         """
 
@@ -127,7 +127,7 @@ class GlWidgetBase3D(QOpenGLWidget):
     # The widget's rendering context will become the current context and initializeGL() will be called if
     # it hasn't already been called.
     #
-        
+
     ##############################################
 
     def paintGL(self):
@@ -143,7 +143,7 @@ class GlWidgetBase3D(QOpenGLWidget):
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
         self.paint()
-        
+
     ##############################################
 
     def update(self):

@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 """ This module gives access to the OpenGL version and features.
@@ -62,7 +62,7 @@ class GlVersion(object):
     _GLSL_VERSION_STRING_PATTERN = '(?P<major>\d+)\.(?P<minor>\d+).*'
 
     ##############################################
-    
+
     @staticmethod
     def _version_from_match(match):
         kwargs = {key:int(value)
@@ -72,7 +72,7 @@ class GlVersion(object):
         return RevisionVersion(kwargs)
 
     ##############################################
-    
+
     def __init__(self):
 
         self.vendor_string = GL.glGetString(GL.GL_VENDOR)
@@ -111,13 +111,13 @@ class GlFeatures(object):
     """
 
     ##############################################
-    
+
     def __init__(self):
 
         self.extensions = GL.glGetString(GL.GL_EXTENSIONS).split(' ')
 
     ##############################################
-    
+
     def __contains__(self, extension):
 
         """ Test whether a particular extension is supported. """

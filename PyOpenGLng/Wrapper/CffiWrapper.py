@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 """This module implements a CFFI wrapper for OpenGL based on information provided by the OpenGL
@@ -305,7 +305,7 @@ class ArrayWrapper(ParameterWrapperBase):
 class OutputArrayWrapper(ArrayWrapper):
 
     """ Translate an output array parameter.
-    
+
     If the pointer is generic, then the array is passed as an Numpy array and the size is specified
     in byte. <<CHECK>>
 
@@ -534,7 +534,7 @@ class GlCommandWrapper(object):
                 else:
                     parameter_list = self._parameter_wrappers
                 parameter_list.append(parameter_wrapper)
-                
+        
         return_type = command.return_type
         if return_type.type == 'GLsync':
             raise NotImplementedError
@@ -841,13 +841,13 @@ class CffiWrapper(object):
     ##############################################
 
     def called_commands(self):
-        
+
         return [command for command in self.commands if command.call_counter]
 
     ##############################################
 
     def reset_call_counter(self):
-        
+
         for command in self.commands:
             command.reset_call_counter()
 
@@ -867,7 +867,7 @@ class ErrorContextManager(object):
         pass
     
     ##############################################
-    
+
     def __exit__(self, type_, value, traceback):
 
         self._wrapper.check_error()

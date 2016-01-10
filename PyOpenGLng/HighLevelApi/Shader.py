@@ -39,7 +39,7 @@
 
 ####################################################################################################
 
-from six.moves import xrange
+from six import with_metaclass
 
 ####################################################################################################
 
@@ -894,7 +894,8 @@ Log:
 
 ####################################################################################################
 
-class GlShaderManager(object, metaclass=SingletonMetaClass):
+# class GlShaderManager(object, metaclass=SingletonMetaClass):
+class GlShaderManager(with_metaclass(SingletonMetaClass, object)):
 
     """ This class provides a shader manager where each shader or program are identified by a name
     and the shader sources are loaded from files.

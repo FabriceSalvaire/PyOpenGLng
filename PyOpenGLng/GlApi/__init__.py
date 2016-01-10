@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 """This module implements an Oriented Object interface to the `OpenGL XML API Registry
@@ -58,7 +58,7 @@ import os
 if six.PY3:
     import pickle
 else:
-    import pickle as pickle
+    import cPickle as pickle
 
 from lxml import etree
 
@@ -1481,7 +1481,7 @@ class GlSpecParser(object):
     def _validate(self, relax_ng_file_path):
 
         """ Validate the XML file using the given RelaxNG schema. """
-        
+
         relax_ng = etree.RelaxNG(file=relax_ng_file_path)
         relax_ng.validate(self._tree)
 
@@ -1496,7 +1496,7 @@ class GlSpecParser(object):
         be a dictionary where the keys correspond to the source keys and the values to the
         destination keys.
         """
-        
+
         new_dict = {}
         for key, value in six.iteritems(source_dict):
             if renaming is not None and key in renaming:
@@ -1855,7 +1855,7 @@ class CachedGlSpecParser(object):
             profile = '-' + profile
         else:
             profile = ''
-            
+        
         return os.path.join(cache_path,
                             '{}-{}{}.pickle'.format(api, api_number, profile))
 
@@ -1881,7 +1881,7 @@ class CachedGlSpecParser(object):
 
         pickle_api_file_path = self._pickle_api_file_path(api, api_number, profile)
         if os.path.exists(pickle_api_file_path):
-            self._logger.info('Load pickled API')
+            self._logger.info('Load pickled API {}'.format(pickle_api_file_path))
             with open(pickle_api_file_path, read_mode) as f:
                 obj = pickle.load(f)
             return obj

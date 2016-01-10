@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,20 +7,16 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
-
-####################################################################################################
-
-import six
 
 ####################################################################################################
 
@@ -145,34 +141,34 @@ def draw_filled_rectangle_f(x1, y1, x2, y2):
     GL.glEnd()
 
 ####################################################################################################
-    
+
 class GlLine(object):
-    
+
     ##############################################
-    
+
     def __init__(self, p0, p1):
-        
+
         self.x0, self.y0 = p0.x, p0.y
         self.x1, self.y1 = p1.x, p1.y
-        
+
     ##############################################
-    
+
     def paint(self):
 
         draw_line_f(self.x0, self.y0, self.x1, self.y1)
-        
+
 ####################################################################################################
 
 class GlBoundingBox(object):
 
     ##############################################
-    
+
     def __init__(self, x_min, y_min, x_max, y_max):
 
         self.x_min, self.y_min, self.x_max, self.y_max = x_min, y_min, x_max, y_max
 
     ##############################################
-    
+
     def paint(self):
 
         draw_rectangle_f(self.x_min, self.y_min, self.x_max, self.y_max)
@@ -182,7 +178,7 @@ class GlBoundingBox(object):
 class GlRect(GlBoundingBox):
 
     ##############################################
-    
+
     def __init__(self, p0, width, height):
 
         x_min, y_min = p0
@@ -195,7 +191,7 @@ class GlRect(GlBoundingBox):
 class GlCentredSquare(GlBoundingBox):
 
     ##############################################
-    
+
     def __init__(self, p0, size):
 
         x, y = p0

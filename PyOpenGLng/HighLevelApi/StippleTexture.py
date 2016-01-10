@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,22 +7,18 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 """ This modules provides tools to manage stipple texture. """
-
-####################################################################################################
-
-from six.moves import xrange
 
 ####################################################################################################
 
@@ -39,7 +35,7 @@ class GlStippleTexture(object):
     """ This class defines a 1D stipple texture. """
 
     ##############################################
-    
+
     def __init__(self, stipple_pattern):
 
         self._create_texture()
@@ -48,13 +44,13 @@ class GlStippleTexture(object):
             self.set(stipple_pattern)
 
     ##############################################
-    
+
     def __del__(self):
 
         GL.glDeleteTextures([self._gl_textures_id])
 
     ##############################################
-    
+
     def bind(self):
 
         """ Bind the texture. """
@@ -63,7 +59,7 @@ class GlStippleTexture(object):
         GL.glBindTexture(GL.GL_TEXTURE_1D, self._gl_textures_id) # [0]
 
     ##############################################
-    
+
     def unbind(self):
 
         """ Unbind the texture. """
@@ -72,7 +68,7 @@ class GlStippleTexture(object):
         GL.glBindTexture(GL.GL_TEXTURE_1D, 0)
 
     ##############################################
-    
+
     def _create_texture(self):
 
         """ Create the texture. """
@@ -87,7 +83,7 @@ class GlStippleTexture(object):
         self.unbind()
 
     ##############################################
-    
+
     def set(self, stipple_pattern):
 
         """ Set the stipple pattern.
@@ -107,7 +103,7 @@ class GlStippleTexture(object):
             else:
                 value = 0
             stipple_pattern_image[i] = value
- 
+
         self.bind()
 
         level = 0

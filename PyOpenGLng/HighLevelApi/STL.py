@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,21 +7,16 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
-
-####################################################################################################
-
-import six
-from six.moves import xrange
 
 ####################################################################################################
 
@@ -113,7 +108,7 @@ class StlParser(object):
 
         header = stream.read(80)
         number_of_triangles = struct.unpack('<I', stream.read(4))[0]
-        six.print_(number_of_triangles)
+        print(number_of_triangles)
 
         positions = np.zeros((3*number_of_triangles, 3), dtype=np.float32)
         normals = np.zeros(positions.shape, dtype=np.float32)
@@ -130,13 +125,13 @@ class StlParser(object):
         # Center the solid
         for i in range(3):
             positions[:,i] -= .5*(positions[:,i].max() + positions[:,i].min())
-        six.print_(positions[:,0].min(), positions[:,1].min(), positions[:,2].min())
-        six.print_(positions[:,0].max(), positions[:,1].max(), positions[:,2].max())
+        print(positions[:,0].min(), positions[:,1].min(), positions[:,2].min())
+        print(positions[:,0].max(), positions[:,1].max(), positions[:,2].max())
 
         # normal, 3 vertex
         # dtype = np.dtype('12<f4, <u2')
         # data = np.memmap(file_handle, mode='r', dtype=dtype, shape=number_of_triangles)
-        # six.print_(data[0])
+        # print(data[0])
 
         self.positions = positions
         self.normals = normals

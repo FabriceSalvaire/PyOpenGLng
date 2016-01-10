@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -7,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 ####################################################################################################
@@ -35,10 +35,6 @@ The aim of these classes has to be used by a Geometry Shader.
 
 ####################################################################################################
 
-from six.moves import xrange
-
-####################################################################################################
-
 import logging
 import numpy as np
 
@@ -55,7 +51,7 @@ class GlLinesVertexArray(GlVertexArrayObject):
     """ Base class to draw primitives as lines. """
 
     ##############################################
-    
+
     def __init__(self, objects=None):
 
         super(GlLinesVertexArray, self).__init__()
@@ -67,13 +63,13 @@ class GlLinesVertexArray(GlVertexArrayObject):
             self.set(objects)
 
     ##############################################
-    
+
     def set(self, objects):
 
         raise NotImplementedError
 
     ##############################################
-    
+
     def bind_to_shader(self, shader_program_interface_attribute):
 
         """ Bind the vertex array to the shader program interface attribute.
@@ -84,7 +80,7 @@ class GlLinesVertexArray(GlVertexArrayObject):
         self.unbind()
 
     ##############################################
-    
+
     def draw(self):
 
         """ Draw the vertex array as lines. """
@@ -102,13 +98,13 @@ class GlSegmentVertexArray(GlLinesVertexArray):
     _logger = logging.getLogger(__name__)
 
     ##############################################
-    
+
     def __init__(self, segments=None):
 
         super(GlSegmentVertexArray, self).__init__(objects=segments)
 
     ##############################################
-    
+
     def set(self, segments):
 
         """ Set the vertex array from an iterable of segments. """
@@ -133,13 +129,13 @@ class GlRectangleVertexArray(GlLinesVertexArray):
     """ Base class to draw rectangles primitives as lines. """
 
     ##############################################
-    
+
     def __init__(self, rectangles=None):
 
         super(GlRectangleVertexArray, self).__init__(objects=rectangles)
 
     ##############################################
-    
+
     def set(self, rectangles):
 
         """ Set the vertex array from an iterable of rectangles. """
@@ -164,7 +160,7 @@ class TriangleVertexArray(GlVertexArrayObject):
     # Fixme: 3d
 
     ##############################################
-    
+
     def __init__(self, items=None):
 
         super(TriangleVertexArray, self).__init__()
@@ -178,7 +174,7 @@ class TriangleVertexArray(GlVertexArrayObject):
             self.set(*items)
 
     ##############################################
-    
+
     def set(self, positions, normals, colours):
 
         """ Set the vertex array from an iterable of triangles. """
@@ -196,7 +192,7 @@ class TriangleVertexArray(GlVertexArrayObject):
         self._colours_buffer.set(colours)
 
     ##############################################
-    
+
     def bind_to_shader(self, shader_program_interface):
 
         """ Bind the vertex array to the shader program interface attribute.
@@ -211,7 +207,7 @@ class TriangleVertexArray(GlVertexArrayObject):
         self.unbind()
 
     ##############################################
-    
+
     def draw(self):
 
         """ Draw the vertex array as lines. """

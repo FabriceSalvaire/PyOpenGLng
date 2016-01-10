@@ -42,6 +42,13 @@ def merge_include(src_lines, doc_path, included_rst_files=None):
 
 ####################################################################################################
 
+# Python 2 compatibility
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
+
+
 # Utility function to read the README file.
 # Used for the long_description.
 def read(file_name):
@@ -71,7 +78,7 @@ long_description = read('README.txt')
 
 setup_dict = dict(
     name='PyOpenGLng',
-    version='0.1.1',
+    version='0.1.2',
     author='Fabrice Salvaire',
     author_email='fabrice.salvaire@orange.fr',
     description='An experimental OpenGL wrapper for Python using ctypes or CFFI',
