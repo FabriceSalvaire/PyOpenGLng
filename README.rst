@@ -32,6 +32,26 @@
    :target: https://travis-ci.org/FabriceSalvaire/PyOpenGLng
    :alt: PyOpenGLng build status @travis-ci.org
 
+.. |Pypi Download| image:: https://img.shields.io/pypi/dm/PyOpenGLng.svg
+   :target: https://pypi.python.org/pypi/PyOpenGLng
+   :alt: PyOpenGLng Download per month
+
+.. |Pypi Version| image:: https://img.shields.io/pypi/v/PyOpenGLng.svg
+   :target: https://pypi.python.org/pypi/PyOpenGLng
+   :alt: PyOpenGLng last version
+
+.. |Pypi License| image:: https://img.shields.io/pypi/l/PyOpenGLng.svg
+   :target: https://pypi.python.org/pypi/PyOpenGLng
+   :alt: PyOpenGLng license
+
+.. |Pypi Format| image:: https://img.shields.io/pypi/format/PyOpenGLng.svg
+   :target: https://pypi.python.org/pypi/PyOpenGLng
+   :alt: PyOpenGLng format
+
+.. |Pypi Python Version| image:: https://img.shields.io/pypi/pyversions/PyOpenGLng.svg
+   :target: https://pypi.python.org/pypi/PyOpenGLng
+   :alt: PyOpenGLng python version
+
 .. End
 .. -*- Mode: rst -*-
 
@@ -82,6 +102,13 @@ Written by `Fabrice Salvaire <http://www.fabrice-salvaire.fr>`_.
 
 ..
   |Build Status|
+
+|Pypi License|
+|Pypi Python Version|
+
+|Pypi Version|
+|Pypi Format|
+|Pypi Download|
 
 -----
 

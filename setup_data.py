@@ -1,5 +1,5 @@
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2013 Salvaire Fabrice
 #
@@ -7,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>. 
-# 
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 ####################################################################################################
 
 ####################################################################################################
@@ -55,11 +55,13 @@ def read(file_name):
     doc_path = os.path.join(source_path, 'doc', 'sphinx', 'source')
 
     # Read and merge includes
-    with open(absolut_file_name) as f:
-        lines = f.readlines()
-    text = merge_include(lines, doc_path)
-
-    return text
+    try:
+        with open(absolut_file_name) as f:
+            lines = f.readlines()
+        text = merge_include(lines, doc_path)
+        return text
+    except FileNotFoundError:
+        return ''
 
 ####################################################################################################
 
@@ -69,7 +71,7 @@ long_description = read('README.txt')
 
 setup_dict = dict(
     name='PyOpenGLng',
-    version='0.1.0',
+    version='0.1.1',
     author='Fabrice Salvaire',
     author_email='fabrice.salvaire@orange.fr',
     description='An experimental OpenGL wrapper for Python using ctypes or CFFI',
@@ -79,6 +81,7 @@ setup_dict = dict(
     packages=['PyOpenGLng',
               'PyOpenGLng.GlApi',
               'PyOpenGLng.HighLevelApi',
+              'PyOpenGLng.Math',
               'PyOpenGLng.Tools',
               'PyOpenGLng.Wrapper',
           ],
@@ -91,7 +94,7 @@ setup_dict = dict(
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.4",
         ],
     # install_requires=[
     #     'pyqt>=4.9',
