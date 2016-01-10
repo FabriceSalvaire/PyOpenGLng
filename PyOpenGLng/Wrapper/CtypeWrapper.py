@@ -665,7 +665,7 @@ class GlCommandWrapper(object):
     def _manual_page(self):
 
         command_name = str(self._command)
-        for name in ['man' + str(i) for i in xrange(4, 1, -1)]:
+        for name in ['man' + str(i) for i in range(4, 1, -1)]:
             # Fixme: use API version mapping
             manual = self._wrapper._manuals[name]
             if command_name in manual:
@@ -800,7 +800,7 @@ class CtypeWrapper(object):
                     if six.PY3:
                         rebinded_method = types.MethodType(method, self)
                     else:
-                        rebinded_method = types.MethodType(method.im_func, self, self.__class__)
+                        rebinded_method = types.MethodType(method.__func__, self, self.__class__)
                     setattr(self, command_name, rebinded_method)
                 else:
                     setattr(self, command_name, command_wrapper)

@@ -467,7 +467,7 @@ class IntervalIntSupOpen(IntervalInt):
         if self.is_empty():
             return empty_interval_string
         else:
-            if self.sup == sys.maxint:
+            if self.sup == sys.maxsize:
                 sup_str = '+oo'
             else:
                 sup_str = str(self.sup)

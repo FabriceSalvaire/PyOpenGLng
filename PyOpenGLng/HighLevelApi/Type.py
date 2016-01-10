@@ -468,7 +468,7 @@ gl_types = GlTypes(gl_type_list)
 
 if __name__ == '__main__':
 
-    for gl_type in gl_types.itervalues():
+    for gl_type in gl_types.values():
         gl_type.print_object()
 
 ####################################################################################################

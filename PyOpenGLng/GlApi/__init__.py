@@ -58,7 +58,7 @@ import os
 if six.PY3:
     import pickle
 else:
-    import cPickle as pickle
+    import pickle as pickle
 
 from lxml import etree
 

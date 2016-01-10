@@ -31,7 +31,7 @@ import os
 def parent_directory_of(file_name, step=1):
     
     directory = os.path.realpath(file_name)
-    for i in xrange(step):
+    for i in range(step):
         directory = os.path.dirname(directory)
     return directory
 

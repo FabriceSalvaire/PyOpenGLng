@@ -70,9 +70,9 @@ for file_name in glob.glob('*.py'):
     gl_constants = gl_constants.union(analyser.gl_constants)
 
 for function in sorted(gl_functions):
-    print function
+    print(function)
 for constant in sorted(gl_constants):
-    print constant
+    print(constant)
     
 ####################################################################################################
 #

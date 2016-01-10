@@ -39,7 +39,7 @@ ffi = FFI()
 
 ####################################################################################################
 
-from PythonicWrapper import PythonicWrapper
+from .PythonicWrapper import PythonicWrapper
 import PyOpenGLng.Config as Config
 
 ####################################################################################################
@@ -125,7 +125,7 @@ class GlEnums(object):
 
     def __iter__(self):
 
-        for attribute in sorted(self.__dict__.iterkeys()):
+        for attribute in sorted(self.__dict__.keys()):
             if attribute.startswith('GL_'):
                 yield attribute
 
@@ -141,7 +141,7 @@ class GlCommands(object):
         #     if attribute.startswith('gl'):
         #         yield value
 
-        for attribute in sorted(self.__dict__.iterkeys()):
+        for attribute in sorted(self.__dict__.keys()):
             if attribute.startswith('gl'):
                 yield getattr(self, attribute)
 
@@ -640,7 +640,7 @@ class GlCommandWrapper(object):
     def _manual_page(self):
 
         command_name = str(self._command)
-        for name in ['man' + str(i) for i in xrange(4, 1, -1)]:
+        for name in ['man' + str(i) for i in range(4, 1, -1)]:
             # Fixme: use API version mapping
             manual = self._wrapper._manuals[name]
             if command_name in manual:
@@ -693,7 +693,7 @@ class GlCommandWrapper(object):
     def help(self):
 
         # Fixme: help(instance)
-        print self.__doc__
+        print(self.__doc__)
 
     ##############################################
 
@@ -766,7 +766,7 @@ class CffiWrapper(object):
     def _reload_library(self, api_commands):
 
         api_definition = ''
-        for command in api_commands.itervalues():
+        for command in api_commands.values():
             prototype = command.prototype(with_size=False)
             if 'GLDEBUGPROC' not in prototype and 'GLsync' not in prototype: # Fixme:
                 api_definition += prototype + ';\n'
@@ -779,14 +779,14 @@ class CffiWrapper(object):
         self._reload_library(api_commands)
 
         gl_commands = GlCommands()
-        for command in api_commands.itervalues():
+        for command in api_commands.values():
             try:
                 command_name = str(command)
                 command_wrapper = GlCommandWrapper(self, command)
                 # store enumerants and commands at the same level
                 if hasattr(PythonicWrapper, command_name):
                     method = getattr(PythonicWrapper, command_name)
-                    rebinded_method = types.MethodType(method.im_func, self, self.__class__)
+                    rebinded_method = types.MethodType(method.__func__, self, self.__class__)
                     setattr(self, command_name, rebinded_method)
                 else:
                     setattr(self, command_name, command_wrapper)

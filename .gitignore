@@ -1,0 +1,7 @@
+*~
+*.pyc
+.bzr
+.bzrignore
+build
+doc/sphinx/build
+doc/sphinx/source/api

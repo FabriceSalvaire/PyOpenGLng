@@ -116,7 +116,7 @@ class GlSegmentVertexArray(GlLinesVertexArray):
         self._number_of_objects = len(segments)
 
         vertex = np.zeros((2*self._number_of_objects, 2), dtype='f') # dtype=np.float
-        for i in xrange(self._number_of_objects):
+        for i in range(self._number_of_objects):
             segment = segments[i]
             j = 2*i
             vertex[j] = segment.p1
@@ -147,7 +147,7 @@ class GlRectangleVertexArray(GlLinesVertexArray):
         self._number_of_objects = len(rectangles)
 
         vertex = np.zeros((2*self._number_of_objects, 2), dtype='f') # dtype=np.float
-        for i in xrange(self._number_of_objects):
+        for i in range(self._number_of_objects):
             rectangle = rectangles[i]
             j = 2*i
             vertex[j] = rectangle.point

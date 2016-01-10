@@ -273,7 +273,7 @@ Log:
             last_line = len(source_lines) -1
             # Fixme: count digit of last_line
             source_lines = ['%3u| ' % (location) + source_lines[location]
-                            for location in xrange(last_line +1)]
+                            for location in range(last_line +1)]
             self._logger.info('Source:\n' + '\n'.join(source_lines))
             self._logger.error(log)
             for line in log.splitlines():
@@ -484,7 +484,7 @@ class GlShaderProgramUniforms(AttributeDictionaryInterfaceDescriptor):
 
         program_id = shader_program.program_id
         number_of_active_uniforms = GL.glGetProgramiv(program_id, GL.GL_ACTIVE_UNIFORMS)
-        for i in xrange(number_of_active_uniforms):
+        for i in range(number_of_active_uniforms):
 
             name, length, size, gl_type_id = GL.glGetActiveUniform(program_id, i, 1000)
             location = GL.glGetUniformLocation(program_id, name)
@@ -566,7 +566,7 @@ class GlShaderProgramUniformBlocks(AttributeDictionaryInterface):
         program_id = shader_program.program_id
 
         number_of_active_uniform_blocks = GL.glGetProgramiv(program_id, GL.GL_ACTIVE_UNIFORM_BLOCKS)
-        for uniform_block_location in xrange(number_of_active_uniform_blocks):
+        for uniform_block_location in range(number_of_active_uniform_blocks):
             uniform_block_name = GL.glGetActiveUniformBlockName(program_id, uniform_block_location)
             indices = GL.glGetActiveUniformBlockiv(program_id, uniform_block_location,
                                                    GL.GL_UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES)
@@ -633,7 +633,7 @@ class GlShaderProgramAttributes(AttributeDictionaryInterface):
         program_id = shader_program.program_id
         
         number_of_active_attributes = GL.glGetProgramiv(program_id, GL.GL_ACTIVE_ATTRIBUTES)
-        for i in xrange(number_of_active_attributes):
+        for i in range(number_of_active_attributes):
             name, length, size, gl_type_id =  GL.glGetActiveAttrib(program_id, i, 1000)
             location = GL.glGetAttribLocation(program_id, name)
             gl_type = GlType.gl_types[gl_type_id]
@@ -894,7 +894,7 @@ Log:
 
 ####################################################################################################
 
-class GlShaderManager(object):
+class GlShaderManager(object, metaclass=SingletonMetaClass):
 
     """ This class provides a shader manager where each shader or program are identified by a name
     and the shader sources are loaded from files.
@@ -909,8 +909,6 @@ class GlShaderManager(object):
 
       'fixed_fragment' in shader_manager
     """
-
-    __metaclass__ = SingletonMetaClass
 
     # Fixme: -> attributeDictionaryInterface
 

@@ -94,7 +94,7 @@ class AttributeDictionaryInterface(object):
 
         """ Iterate over the dictionary. """
 
-        for uniform in self._dictionary.values():
+        for uniform in list(self._dictionary.values()):
             yield uniform
 
     ##############################################

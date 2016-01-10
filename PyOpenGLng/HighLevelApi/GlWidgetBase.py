@@ -158,7 +158,7 @@ class GlWidgetBase(QOpenGLWidget):
         """
 
         self._logger.debug('Resize viewport to (%u, %u)' % (width, height))
-        print('Resize viewport to (%u, %u)' % (width, height))
+        print(('Resize viewport to (%u, %u)' % (width, height)))
         
         if not width or not height:
             raise NameError("Bad widget size")

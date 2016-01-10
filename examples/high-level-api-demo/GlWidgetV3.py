@@ -20,7 +20,7 @@
 
 ####################################################################################################
 
-from __future__ import division
+
 
 import six
 from six.moves import xrange
@@ -152,11 +152,11 @@ class GlWidget(GlWidgetBase):
         y_min, y_max = -100, 100
        
         segments = []
-        for x in xrange(x_min, x_max +1, step):
+        for x in range(x_min, x_max +1, step):
             p1 = Point(x, y_min)
             p2 = Point(x, y_max)
             segments.append(Segment(p1, p2))
-        for y in xrange(y_min, y_max +1, step):
+        for y in range(y_min, y_max +1, step):
             p1 = Point(y_min, y)
             p2 = Point(y_max, y)
             segments.append(Segment(p1, p2))
@@ -181,7 +181,7 @@ class GlWidget(GlWidgetBase):
         number_of_planes = 3
         data = np.zeros((height, width, number_of_planes),
                         data_type)
-        for c in xrange(width):
+        for c in range(width):
             data[:,c,:] = int((float(c+1) / width) * intensity_max)
         # data[...] = intensity_max
         # print data
@@ -198,7 +198,7 @@ class GlWidget(GlWidgetBase):
         from PIL import Image
         image = Image.open('flower.png')
         data = np.asarray(image, dtype=np.uint8)
-        print(data.shape)
+        print((data.shape))
         self.texture_vertex_array2 = GlTextureVertexArray(position=Point(-5, -5), dimension=Offset(width, height))
         self.texture_vertex_array2.set(image=data)
         self.texture_vertex_array2.bind_to_shader(self.shader_manager.texture_shader_program.interface.attributes)

@@ -118,17 +118,17 @@ class StlParser(object):
         positions = np.zeros((3*number_of_triangles, 3), dtype=np.float32)
         normals = np.zeros(positions.shape, dtype=np.float32)
 
-        for i in xrange(number_of_triangles):
+        for i in range(number_of_triangles):
             j = 3*i
             normals[j:j+3] = struct.unpack('<fff', stream.read(12))
-            for k in xrange(3):
+            for k in range(3):
                 positions[j+k] = struct.unpack('<fff', stream.read(12))
             stream.read(2)
             # struct.unpack('<H', stream.read(2))
         # stream.seek(84)
 
         # Center the solid
-        for i in xrange(3):
+        for i in range(3):
             positions[:,i] -= .5*(positions[:,i].max() + positions[:,i].min())
         six.print_(positions[:,0].min(), positions[:,1].min(), positions[:,2].min())
         six.print_(positions[:,0].max(), positions[:,1].max(), positions[:,2].max())

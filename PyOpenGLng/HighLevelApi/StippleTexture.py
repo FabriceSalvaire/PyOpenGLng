@@ -101,7 +101,7 @@ class GlStippleTexture(object):
         width = 16
 
         stipple_pattern_image = np.zeros((width), dtype=np.uint8)
-        for i in xrange(width):
+        for i in range(width):
             if stipple_pattern & (1 << i):
                 value = 0xFF
             else:

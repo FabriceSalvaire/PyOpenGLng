@@ -20,7 +20,7 @@
 
 ####################################################################################################
 
-from __future__ import division
+
 
 import six
 from six.moves import xrange
@@ -161,11 +161,11 @@ class GlWidget(GlWidgetBase):
         y_min, y_max = -1000, 1000
        
         segments = []
-        for x in xrange(x_min, x_max +1, step):
+        for x in range(x_min, x_max +1, step):
             p1 = Point(x, y_min)
             p2 = Point(x, y_max)
             segments.append(Segment(p1, p2))
-        for y in xrange(y_min, y_max +1, step):
+        for y in range(y_min, y_max +1, step):
             p1 = Point(y_min, y)
             p2 = Point(y_max, y)
             segments.append(Segment(p1, p2))
@@ -272,7 +272,7 @@ class GlWidget(GlWidgetBase):
         number_of_planes = 3
         data = np.zeros((height, width, number_of_planes),
                         data_type)
-        for c in xrange(width):
+        for c in range(width):
             data[:,c,:] = int((float(c+1) / width) * intensity_max)
         # data[...] = intensity_max
         # six.print_(data)

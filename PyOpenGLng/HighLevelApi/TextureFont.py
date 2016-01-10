@@ -192,8 +192,8 @@ is scalable:         %s
         while glyph_index:
             six.print_("  [%d] 0x%04lx %s %s" % (glyph_index,
                                                  charcode,
-                                                 unichr(charcode),
-                                                 unicodedata.name(unichr(charcode))))
+                                                 chr(charcode),
+                                                 unicodedata.name(chr(charcode))))
             # face.get_glyph_name(glyph_index) # is not available
             charcode, glyph_index = face.get_next_char(charcode, glyph_index)
 
@@ -242,7 +242,7 @@ class TextureFontSize(object):
         face = self._font._face
         charcode, glyph_index = face.get_first_char()
         while glyph_index:
-            self.load_glyph(six.unichr(charcode))
+            self.load_glyph(six.chr(charcode))
             charcode, glyph_index = face.get_next_char(charcode, glyph_index)
 
     ##############################################
@@ -337,7 +337,7 @@ class TextureFontSize(object):
 
         # Generate kerning
         # Fixme: exhaustive?
-        for glyph2 in self._glyphs.values():
+        for glyph2 in list(self._glyphs.values()):
             self._set_kerning(glyph, glyph2)
             self._set_kerning(glyph2, glyph)
 
