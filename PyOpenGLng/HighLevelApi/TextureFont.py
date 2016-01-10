@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-
 ####################################################################################################
-# 
+#
 # PyOpenGLng - An OpenGL Python Wrapper with a High Level API.
 # Copyright (C) 2014 Fabrice Salvaire
 #
@@ -9,15 +7,15 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 ####################################################################################################
 
 ####################################################################################################
@@ -49,10 +47,6 @@
 ####################################################################################################
 
 """ Texture font class """
-
-####################################################################################################
-
-import six
 
 ####################################################################################################
 
@@ -242,18 +236,18 @@ class TextureFontSize(object):
         face = self._font._face
         charcode, glyph_index = face.get_first_char()
         while glyph_index:
-            self.load_glyph(six.chr(charcode))
+            self.load_glyph(chr(charcode))
             charcode, glyph_index = face.get_next_char(charcode, glyph_index)
 
     ##############################################
- 
+
     def load_from_string(self, charcodes):
 
         for charcode in charcodes:
             self.load_glyph(charcode)
 
     ##############################################
- 
+
     def _set_face_transfrom(self):
 
         face = self._font._face
@@ -270,10 +264,11 @@ class TextureFontSize(object):
         delta = freetype.Vector(0, 0)
         face.set_transform(matrix, delta)
 
-        freetype.set_lcd_filter(freetype.FT_LCD_FILTER_LIGHT)
+        # Require FreeType compiled with LCD filtering
+        # freetype.set_lcd_filter(freetype.FT_LCD_FILTER_LIGHT)
 
     ##############################################
- 
+
     def load_glyph(self, charcode):
 
         if charcode in self._glyphs:
@@ -425,7 +420,7 @@ class TextureGlyph(object):
         return self._kerning.get(charcode, 0)
 
 ####################################################################################################
-# 
+#
 # End
-# 
+#
 ####################################################################################################
