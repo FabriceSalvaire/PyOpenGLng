@@ -309,7 +309,7 @@ class TextureFontSize(object):
         data = np.array(bitmap.buffer).reshape(rows, pitch)
         data = data[:,:width].astype(np.ubyte)
         data = data.reshape(rows, width//atlas.depth, atlas.depth)
-        
+
         # Gamma correction
         # gamma = 1.5
         # Z = (data/255.0)**gamma

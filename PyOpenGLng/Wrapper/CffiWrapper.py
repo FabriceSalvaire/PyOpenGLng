@@ -534,7 +534,7 @@ class GlCommandWrapper(object):
                 else:
                     parameter_list = self._parameter_wrappers
                 parameter_list.append(parameter_wrapper)
-        
+
         return_type = command.return_type
         if return_type.type == 'GLsync':
             raise NotImplementedError
@@ -865,7 +865,7 @@ class ErrorContextManager(object):
 
     def __enter__(self):
         pass
-    
+
     ##############################################
 
     def __exit__(self, type_, value, traceback):

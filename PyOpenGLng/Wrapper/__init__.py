@@ -71,7 +71,7 @@ def init(wrapper='ctypes', api='gl', api_number=None, profile='core', check_api_
     if check_api_number:
         if version_string is None:
             raise ValueError("An OpenGL context is required to retrieve the OpenGL implementation version")
-       
+
         match = re.match(r'^(?P<major>\d+)\.(?P<minor>\d+).*', version_string)
         if match is not None:
             __api_number__ = ApiNumber('.'.join(match.groups()))
@@ -98,7 +98,7 @@ def init(wrapper='ctypes', api='gl', api_number=None, profile='core', check_api_
 
     with TimerContextManager(_module_logger, 'Wrapper'):
         GL = Wrapper(gl_spec, api, api_number, profile, manuals)
-        
+
     return GL
 
 ####################################################################################################

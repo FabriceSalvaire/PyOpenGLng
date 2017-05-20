@@ -119,7 +119,7 @@ class TextureAtlas:
     @property
     def data(self):
         return self._data
-        
+
     ##############################################
 
     def set_region(self, region, data):
@@ -229,7 +229,7 @@ class TextureAtlas:
         node = self._nodes[index]
         x, y = node[0], node[1]
         width_left = width        
-        
+
         if x + width > self._width:
             return -1
 

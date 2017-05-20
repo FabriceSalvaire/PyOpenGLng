@@ -62,7 +62,7 @@ class GlRenderBuffer(object):
         self.bind()
         target = GL.GL_RENDERBUFFER
         GL.glRenderbufferStorage(target, internal_format, width, height)
-        
+
     ##############################################
     
     def __del__(self):
@@ -75,7 +75,7 @@ class GlRenderBuffer(object):
     @property
     def id(self):
         return self._gl_id
-        
+
     ##############################################
     
     def bind(self):
@@ -112,7 +112,7 @@ class GlFrameBuffer(object):
 
         self._gl_id = GL.glGenFrameBuffers(1)
         self._attachments = set()
-        
+
     ##############################################
     
     def __del__(self):
@@ -197,7 +197,7 @@ class GlFrameBuffer(object):
     ##############################################
 
     def draw(self):
-    
+
         self.bind()
         GL.glDrawBuffers(list(self._attachments))
         # set viewport to texture size

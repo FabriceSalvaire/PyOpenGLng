@@ -215,7 +215,7 @@ class GlShader(object):
                     raise ValueError("Malformed include at line %u" % (line_count))
             else:
                 break
-        
+
         return source_code
 
     ##############################################
@@ -631,7 +631,7 @@ class GlShaderProgramAttributes(AttributeDictionaryInterface):
         super(GlShaderProgramAttributes, self).__init__()
 
         program_id = shader_program.program_id
-        
+
         number_of_active_attributes = GL.glGetProgramiv(program_id, GL.GL_ACTIVE_ATTRIBUTES)
         for i in range(number_of_active_attributes):
             name, length, size, gl_type_id =  GL.glGetActiveAttrib(program_id, i, 1000)

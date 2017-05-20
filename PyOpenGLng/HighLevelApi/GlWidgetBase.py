@@ -76,21 +76,21 @@ class GlWidgetBase(QOpenGLWidget):
     def __init__(self, parent):
 
         self._logger.debug('Initialise GlWidgetBase')
-        
+
         super(GlWidgetBase, self).__init__(parent)
-        
+
         if not IS_QOpenGLWidget:
             if not self.format().directRendering():
                 QMessageBox.critical(None,
                                      'Error',
                                      "The Image Viewer requires an OpenGL direct rendering")
                 raise NameError('Indirect Rendering')
-        
+
         self.glortho2d = None
-        
+
         self._clear_colour = (1, 1, 1, 1)
         self._clear_bit = GL.GL_COLOR_BUFFER_BIT
-        
+
         self.x_step = 10
         self.y_step = 10
         self.zoom_step = 2. # must be float
@@ -124,9 +124,9 @@ class GlWidgetBase(QOpenGLWidget):
 
         It is called just once before paintGL.
         """
-        
+
         self._logger.debug('Initialise GL - Super')
-        
+
         # if IS_PyQt5:
             # self.initializeOpenGLFunctions()
             # surface_format = Qt.QSurfaceFormat()
@@ -159,19 +159,19 @@ class GlWidgetBase(QOpenGLWidget):
 
         self._logger.debug('Resize viewport to (%u, %u)' % (width, height))
         print(('Resize viewport to (%u, %u)' % (width, height)))
-        
+
         if not width or not height:
             raise NameError("Bad widget size")
-        
+
         # viewport corresponds to the window lower left corner x, y and viewport width, height
         GL.glViewport(0, 0, width, height)
-        
+
         if self.glortho2d is not None:
             self._logger.debug('  resize glortho2d')
             self.glortho2d.resize()
         else:
             self.init_glortho2d()
-        
+
         self.update()
 
     ##############################################
@@ -179,16 +179,16 @@ class GlWidgetBase(QOpenGLWidget):
     def init_glortho2d(self, max_area=None, zoom_manager=None, reverse_y_axis=False):
 
         self._logger.debug('Initialise Ortho2D - Super')
-        
+
         if max_area is None:
             area_size = 10**3
             max_area = IntervalInt2D([-area_size, area_size], [-area_size, area_size])
             self._logger.debug('  use default max area ' + str(max_area))
-        
+
         if zoom_manager is None:
             self._logger.debug('  use default ZoomManagerAbc')
             zoom_manager = ZoomManagerAbc()
-        
+
         self.glortho2d = Ortho2D(max_area, zoom_manager, self, reverse_y_axis)
 
     ##############################################
@@ -222,10 +222,10 @@ class GlWidgetBase(QOpenGLWidget):
         """
 
         self._logger.debug('Paint OpenGL Scene')
-        
+
         GL.glClearColor(*self._clear_colour)
         GL.glClear(self._clear_bit)
-        
+
         # GL.glClearStencil(0)
         # GL.glStencilMask(~0)
         # GL.glClear(.... | GL.GL_STENCIL_BUFFER_BIT)
@@ -237,7 +237,7 @@ class GlWidgetBase(QOpenGLWidget):
     def update(self):
 
         self._logger.debug('')
-        
+
         # if IS_QOpenGLWidget:
         self.makeCurrent()
         self.update_model_view_projection_matrix()
@@ -254,7 +254,7 @@ class GlWidgetBase(QOpenGLWidget):
         """
 
         position = Vector(event.x(), event.y())
-        
+
         return self.glortho2d.window_to_gl_coordinate(position, round_to_integer)
 
     ##############################################
@@ -321,44 +321,44 @@ class GlWidgetBase(QOpenGLWidget):
     def keyPressEvent(self, event):
 
         self._logger.debug('Key press event ' + str(event.key()))
-        
+
         key = event.key()
         if   key == QtCore.Qt.Key_Left:
             self.translate_x(-self.x_step)
-        
+
         elif key == QtCore.Qt.Key_Right:
             self.translate_x( self.x_step)
-        
+
         elif key == QtCore.Qt.Key_Down:
             self.translate_y(-self.y_step)
-        
+
         elif key == QtCore.Qt.Key_Up:
             self.translate_y( self.y_step)
-        
+
         elif key == QtCore.Qt.Key_R:
             self.display_all()
-        
+
         elif key == QtCore.Qt.Key_1:
             self.zoom_one()
-        
+
         elif key == QtCore.Qt.Key_Plus:
             zoom_factor = self.glortho2d.zoom_manager.zoom_factor * self.zoom_step
             # print "Key + zoom %.3f -> %.3f" % (self.glortho2d.zoom_manager.zoom_factor, zoom_factor)
             self.glortho2d.zoom_at_center(zoom_factor)
             self.update()
-        
+
         elif key == QtCore.Qt.Key_Minus:
             zoom_factor = self.glortho2d.zoom_manager.zoom_factor / self.zoom_step
             # print "Key - zoom %.3f -> %.3f" % (self.glortho2d.zoom_manager.zoom_factor, zoom_factor)
             self.glortho2d.zoom_at_center(zoom_factor)
             self.update()
-        
+
         elif key == QtCore.Qt.Key_K:
             self.delete_objects()
-        
+
         elif key == QtCore.Qt.Key_S:
             self.set_objects()
-        
+
         else:
             self.parent().keyPressEvent(event)
 
@@ -377,10 +377,10 @@ class GlWidgetBase(QOpenGLWidget):
     def wheel_zoom(self, event):
 
         self._logger.debug('Wheel Zoom')
-        
+
         position = self.window_to_gl_coordinate(event)
         zoom_factor = self.glortho2d.zoom_manager.zoom_factor
-        
+
         if IS_PyQt5:
             delta = event.angleDelta().y()
         else:
@@ -389,7 +389,7 @@ class GlWidgetBase(QOpenGLWidget):
             zoom_factor *= self.zoom_step
         else:
             zoom_factor /= self.zoom_step
-        
+
         self.glortho2d.zoom_at_with_scale(position, zoom_factor)
         self.update()
 

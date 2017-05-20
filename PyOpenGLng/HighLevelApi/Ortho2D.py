@@ -70,7 +70,7 @@ def interval2d_from_center_and_size(center, size):
 
     point_inf = center - size * .5
     point_sup = point_inf + size
-    
+
     return Interval2D((point_inf[0], point_sup[0]),
                       (point_inf[1], point_sup[1]))
 
@@ -101,7 +101,7 @@ class ViewportArea(object):
         self._bottom_up_y_axis = bottom_up_y_axis
         self._max_area = max_area.copy()
         self._area = max_area.copy()
-        
+
         self._set_window_origin()
 
     ##############################################
@@ -121,10 +121,10 @@ class ViewportArea(object):
         # Fixme: don't report all error checks
 
         max_axis_interval = self._max_area[axis]
-        
+
         inferior = axis_interval.inf < max_axis_interval.inf
         superior = max_axis_interval.sup < axis_interval.sup
-        
+
         if inferior and superior:
             # Report error via exception
             raise ValueError('out of axis area')
@@ -197,7 +197,7 @@ class ViewportArea(object):
    %s
  / %s"""
         self._logger.debug(string_format % (self._area, area, self._max_area))
-        
+
         if self._check_area(area):
             self._area = area.copy() # Fixme: better coding ?
             self._set_window_origin()
@@ -326,7 +326,7 @@ class Ortho2D(object):
             y_axis_parity = -1
         self._gl_axis_parity = np.array([x_axis_parity, y_axis_parity], dtype=np.double)
         self._window_axis_parity = np.array([x_axis_parity, -y_axis_parity], dtype=np.double)
-        
+
         self.zoom_at_with_scale(max_area.middle(), zoom_factor=1)
 
     ##############################################
@@ -436,11 +436,11 @@ class Ortho2D(object):
         """
 
         self._logger.debug('zoom_at_with_scale %s %g' % (str(point), zoom_factor))
-        
+
         # zoom_changed unused
         zoom_changed, zoom_factor = self.zoom_manager.check_zoom(zoom_factor)
         self._logger.debug("Check Zoom: changed %s, zoom %6.1f" % (zoom_changed, zoom_factor))
-        
+
         new_area_size = self.window.size() / zoom_factor
         new_area = interval2d_from_center_and_size(point, new_area_size)
         self.viewport_area.area = new_area
@@ -515,7 +515,7 @@ class Ortho2D(object):
 
         scale *= self._gl_axis_parity
         offset *= self._gl_axis_parity
-        
+
         matrix = np.array([[ scale[0], 0.,       0., offset[0] ],
                            [ 0.,       scale[1], 0., offset[1] ],
                            [ 0.,       0.,       1.,        0. ],
@@ -532,12 +532,12 @@ class Ortho2D(object):
 
         matrix = self.view_matrix()
         viewport_scale = self.viewport_scale(window_size)
-        
+
         viewport_array = np.array(list(matrix.transpose().flatten()) +
                                   list(viewport_scale) +
                                   list(1./viewport_scale),
                                   dtype=np.float32)
-        
+
         return viewport_array
 
     ##############################################
@@ -545,7 +545,7 @@ class Ortho2D(object):
     def ortho2d_bounding_box(self):
 
         area = self.viewport_area.area
-        
+
         return (area.x.inf, area.x.sup, area.y.inf, area.y.sup)
 
     ##############################################
@@ -554,7 +554,7 @@ class Ortho2D(object):
 
         left, bottom, right, top = self.viewport_area.area.bounding_box()
         right = self.viewport_area.max_area.x.sup
-        
+
         return (left, bottom, right, top)
 
     ##############################################

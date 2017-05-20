@@ -39,7 +39,7 @@ from PyOpenGLng.Math.Transforms import *
 class GlWidget(GlWidgetBase3D):
 
     logger = logging.getLogger(__name__)
- 
+
     ##############################################
     
     def __init__(self, parent):
@@ -187,7 +187,7 @@ class GlWidget(GlWidgetBase3D):
         shader_program = self.shader_manager.fixed_colour_shader_program
         shader_program.bind()
         self.object_vertex_array.draw()
-        
+
         shader_program.unbind()
 
 ####################################################################################################

@@ -66,10 +66,10 @@ class Interval(object):
         """
 
         array = self._check_arguments(args)
-        
+
         self.inf = array[0]
         self.sup = array[1]
-        
+
         if self.inf > self.sup: # None > None = False
             raise ValueError("inf <= sup condition is false [%g, %g]" % (self.inf, self.sup))
 
@@ -84,7 +84,7 @@ class Interval(object):
             array = args
         else:
             raise ValueError("Args size > 2")
-        
+
         return array
 
     ##############################################
@@ -105,12 +105,12 @@ class Interval(object):
                 lower = 0
             else:
                 lower = index.start
-            
+
             if index.stop is None:
                 upper = 1
             else:
                 upper = index.stop -1
-            
+
             if lower == 0 and upper == 1:
                 return self.inf, self.sup
             elif lower == 0 and upper == 0:
@@ -119,7 +119,7 @@ class Interval(object):
                 return self.sup
             else:
                 raise IndexError("Wrong slice")
-        
+
         elif index == 0:
             return self.inf
         elif index == 1:
@@ -384,7 +384,7 @@ class Interval(object):
 
         self.inf -= dx
         self.sup += dx
-        
+
         return self
 
 ####################################################################################################
@@ -406,7 +406,7 @@ class IntervalInt(Interval):
         """
 
         array = self._check_arguments(args)
-        
+
         if None not in array:
             array = [int(x) for x in array[:2]] # Fixme: rint ?
         # Fixme: else:
@@ -457,7 +457,7 @@ class IntervalIntSupOpen(IntervalInt):
         """
 
         array = self._check_arguments(args)
-        
+
         super(IntervalInt, self).__init__(args)
 
     ##############################################
@@ -491,11 +491,11 @@ class IntervalIntSupOpen(IntervalInt):
         """
 
         if i1.intersect(i2):
-            
+
             # i2.inf < i1.inf < i1.sup < i2.sup
             if i1.is_included_in(i2):
                 return (IntervalIntSupOpen(None, None),)
-            
+
             # i1.inf < i2.inf < i2.sup < i1.sup
             elif i2.is_included_in(i1):
                 r = []
@@ -504,15 +504,15 @@ class IntervalIntSupOpen(IntervalInt):
                 if i2.sup != i1.sup:
                     r.append(IntervalIntSupOpen(i2.sup, i1.sup))
                 return tuple(r)
-            
+
             # i1.inf < i2.inf < i1.sup < i2.sup
             elif i1.inf <= i2.inf:
                 return (IntervalIntSupOpen(i1.inf, i2.inf),)
-            
+
             # i2.inf < i1.inf < i2.sup < i1.sup
             else:
                 return (IntervalIntSupOpen(i2.sup, i1.sup),)
-        
+
         else:
             return (IntervalIntSupOpen(None, None),)
 
@@ -524,11 +524,11 @@ class IntervalIntSupOpen(IntervalInt):
         """
 
         if i1.intersect(i2):
-            
+
             # i2.inf < i1.inf < i1.sup < i2.sup
             if i1.is_included_in(i2):
                 return ((i2, False),)
-            
+
             # i1.inf < i2.inf < i2.sup < i1.sup
             elif i2.is_included_in(i1):
                 r = []
@@ -536,17 +536,17 @@ class IntervalIntSupOpen(IntervalInt):
                 r.append((i2, False))
                 if i2.sup != i1.sup: r.append((IntervalIntSupOpen(i2.sup, i1.sup), True))
                 return tuple(r)
-            
+
             # i1.inf < i2.inf < i1.sup < i2.sup
             elif i1.inf <= i2.inf:
                 return ((IntervalIntSupOpen(i1.inf, i2.inf), True),
                         (i2, False))
-            
+
             # i2.inf < i1.inf < i2.sup < i1.sup
             else:
                 return ((i2, False),
                         (IntervalIntSupOpen(i2.sup, i1.sup), True))
-        
+
         else:
             return None
 
@@ -825,7 +825,7 @@ class Interval2D(object):
 
         self.x.enlarge(dx)
         self.y.enlarge(dx)
-        
+
         return self
 
 ####################################################################################################

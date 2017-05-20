@@ -51,7 +51,7 @@ texture_shader_program_interface = GlShaderProgramInterface(uniform_blocks=('vie
                                                                         'position_uv'))
 
 if shader_manager.has_visual():
-    
+
     for shader_name in (
         'fixed_colour_vertex_shader',
         'simple_fragment_shader',
@@ -59,7 +59,7 @@ if shader_manager.has_visual():
         'texture_vertex_shader',
         ):
         shader_manager.load_from_file(shader_name, ConfigPath.glsl(shader_name + '.glsl'))
-    
+
     for args in (
         {'program_name':'fixed_shader_program',
          'shader_list':('fixed_colour_vertex_shader',

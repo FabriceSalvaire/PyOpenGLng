@@ -108,7 +108,7 @@ class GlRandomTexture(object):
         random_image = np.random.rand(width)
 
         self.bind()
-             
+
         level = 0
         border = 0
         internal_format = GL.GL_R32F
@@ -117,7 +117,7 @@ class GlRandomTexture(object):
         GL.glTexImage1D(GL.GL_TEXTURE_1D,
                         level, internal_format, width, border, data_format, data_type,
                         random_image)
-        
+
         self.unbind()
 
 ####################################################################################################

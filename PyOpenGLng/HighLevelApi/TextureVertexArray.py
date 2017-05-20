@@ -50,13 +50,13 @@ class GlTextureVertexArray(GlVertexArrayObject):
         """
 
         super(GlTextureVertexArray, self).__init__()
-        
+
         if self._uv_vbo is None:
             self._create_uv_vbo()
-        
+
         self._create_vertex(position, dimension)
         self._create_texture()
-        
+
         if image is not None:
             self.set(image, integer_internal_format)
 
@@ -95,9 +95,9 @@ class GlTextureVertexArray(GlVertexArrayObject):
         """ Create the texture. """
 
         self._gl_textures_id = GL.glGenTextures(1)
-        
+
         self._bind_texture()
-        
+
         # Fixme:
         #  - ok?
         #  - use a sampler
@@ -106,9 +106,9 @@ class GlTextureVertexArray(GlVertexArrayObject):
         GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_BORDER) # ?
         GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR) # ?
         GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR) # ?
-        
+
         GL.glPixelStorei(GL.GL_UNPACK_ALIGNMENT, 1) # 1 means byte-alignment
-        
+
         self._unbind_texture()
 
     ##############################################
@@ -124,7 +124,7 @@ class GlTextureVertexArray(GlVertexArrayObject):
         """
 
         self._bind_texture()
-        
+
         if image.ndim == 2:
             height, width = image.shape
             number_of_planes = 1
@@ -132,7 +132,7 @@ class GlTextureVertexArray(GlVertexArrayObject):
             height, width, number_of_planes = image.shape
         else:
             ValueError("Image dimension %u is not supported" % (image.ndim))
-        
+
         if number_of_planes == 1:
             format_name = 'GL_RED'
         elif number_of_planes == 2:
@@ -146,7 +146,7 @@ class GlTextureVertexArray(GlVertexArrayObject):
         if integer_internal_format:
             format_name += '_INTEGER'
         data_format = getattr(GL, format_name)
-        
+
         if image.dtype == np.uint8:
             data_type = GL.GL_UNSIGNED_BYTE
             if integer_internal_format:
@@ -164,14 +164,14 @@ class GlTextureVertexArray(GlVertexArrayObject):
             internal_format = GL.GL_RGBA32F
         else:
             raise ValueError("Image data type %s is not supported" % (str(image.dtype)))
-        
+
         level = 0
         border = 0
         # Fixme: check speed
         GL.glTexImage2D(GL.GL_TEXTURE_2D,
                         level, internal_format, width, height, border, data_format, data_type,
                         image)
-        
+
         self._unbind_texture()
 
     ##############################################
@@ -196,7 +196,7 @@ class GlTextureVertexArray(GlVertexArrayObject):
                                 [1, 1],
                                 ],
                                dtype='f')
-        
+
         self._uv_vbo = GlArrayBuffer(position_uv)
 
     ##############################################
@@ -213,7 +213,7 @@ class GlTextureVertexArray(GlVertexArrayObject):
                            [position.x + dimension.x, position.y],
                            ],
                           dtype='f') # dtype=np.float
-        
+
         self._vertex_vbo = GlArrayBuffer(vertex)
 
     ##############################################
@@ -230,10 +230,10 @@ class GlTextureVertexArray(GlVertexArrayObject):
         # Bind the vertex array object and record the vertex attribute bindings
 
         self.bind()
-        
+
         shader_program_interface.position_uv.bind_to_buffer(self._uv_vbo)
         shader_program_interface.position.bind_to_buffer(self._vertex_vbo)
-        
+
         # Texture unit as default
         # shader_program.uniforms.texture0 = 0
         

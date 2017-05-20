@@ -52,9 +52,9 @@ class PythonicWrapper(object):
     ##############################################
 
     def glGetActiveUniformBlockiv(self, program, index, pname):
-    
+
         """ Query information about an active uniform block. """
-    
+
         # Check index
         number_of_uniform_blocks = self.glGetProgramiv(program, self.GL_ACTIVE_UNIFORM_BLOCKS)
         # if not(0 <= index < number_of_uniform_blocks):
@@ -77,9 +77,9 @@ class PythonicWrapper(object):
     ##############################################
 
     def glGetActiveUniformBlockName(self, program, index):
-    
+
         """ Retrieve the name of an active uniform block. """
-    
+
         number_of_uniform_blocks = self.glGetProgramiv(program, self.GL_ACTIVE_UNIFORM_BLOCKS)
         if index < 0 or index >= number_of_uniform_blocks:
             raise IndexError("Index %s out of range 0 to %i" % (index, number_of_uniform_blocks -1))
@@ -87,15 +87,15 @@ class PythonicWrapper(object):
         max_name_length = self.glGetProgramiv(program, self.GL_ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH)
         name, name_length = self.commands.glGetActiveUniformBlockName(program, index, max_name_length)
         return name
-    
+
     ##############################################    
 
     def glGetActiveUniformsiv(self, program, indices, pname):
-    
+
         """ Returns information about several active uniform variables for the specified program
         object.
         """
-    
+
         try:
             indices = list(indices)
         except TypeError:

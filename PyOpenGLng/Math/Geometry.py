@@ -46,7 +46,7 @@ class Vector(np.ndarray):
 
         dimension = 2
         dtype = kwargs.get('dtype', np.float32)
-        
+
         number_of_args = len(args)
         if not number_of_args:
             input_array = (0, 0)
@@ -62,9 +62,9 @@ class Vector(np.ndarray):
             input_array = args
         else:
             raise ValueError("Bad argument " + str(type(obj)))
-        
+
         obj = np.asarray(input_array, dtype=dtype).view(cls)
-        
+
         # obj = np.ndarray.__new__(cls, (dimension,), dtype,
         #                          buffer=None, offset=0, strides=None, order=None)
         

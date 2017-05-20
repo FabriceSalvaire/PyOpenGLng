@@ -38,7 +38,7 @@ class TimerContextManager(object):
     def __enter__(self):
 
         self._start = time.clock()
-    
+
     ##############################################
     
     def __exit__(self, type_, value, traceback):

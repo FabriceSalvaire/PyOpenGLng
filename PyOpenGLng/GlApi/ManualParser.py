@@ -74,7 +74,7 @@ class Manual(dict):
                 manuals[manual.name] = manual
 
         return manuals
-    
+
     ##############################################
 
     def __init__(self, name):
@@ -154,7 +154,7 @@ class ManualParser(object):
                            'PartialD', 'DoubleVerticalBar', 'Prime', 'LeftFloor', 'RightFloor',
                            'LeftCeiling', 'RightCeiling', 'VerticalBar'):
                 xml_source = xml_source.replace('&' + entity + ';', '')
-                
+
         root = etree.fromstring(xml_source.encode('utf-8'))
         functions = [node.text for node in root.findall('refnamediv/refname')]
         purpose = root.find('refnamediv/refpurpose').text

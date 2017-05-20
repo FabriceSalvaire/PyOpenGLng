@@ -70,7 +70,7 @@ class ImageTexture(object):
     @property
     def id(self):
         return self._gl_id
-        
+
     ##############################################
     
     def bind(self):

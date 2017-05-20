@@ -81,12 +81,12 @@ class GlBuffer(object):
     def __init__(self, data=None):
 
         self._gl_id = GL.glGenBuffers(1)
-        
+
         self.size = 0
         self._dtype = None
         self._dtype_nbytes = None
         self.type = None
-        
+
         if data is not None:
             self.set(data)
 
@@ -145,14 +145,14 @@ class GlBuffer(object):
         else:
             raise ValueError()
         self._dtype_nbytes = self._dtype.type(1).nbytes
-        
+
         # Fixme: shape?
         shape = data.shape
         if len(shape) == 2:
             self.size = data.shape[1] # xyzw
         else:
             self.size = 1
-        
+
         self.bind()
         GL.glBufferData(self._target, data, usage)
         self.unbind()
@@ -193,12 +193,12 @@ class GlBuffer(object):
             if size is None:
                 raise ValueError("size must be provided when data is None")
             data = np.zeros((size,), dtype=self._dtype)
-        
+
         self.bind()
         offset = offset * self._dtype_nbytes
         GL.glGetBufferSubData(self._target, offset, data)
         self.unbind()
-        
+
         return data
 
 ####################################################################################################

@@ -79,7 +79,7 @@ class GlWidgetBase3D(QOpenGLWidget):
         """
 
         self._logger.debug('Initialise GL - Super')
-        
+
         self.gl_version = GlVersion()
         self.gl_features = GlFeatures()
         # print self.gl_version

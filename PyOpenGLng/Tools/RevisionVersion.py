@@ -89,7 +89,7 @@ class RevisionVersion(object):
             self.suffix = version[3] if len(version) == 4 else None
         else:
             raise ValueError('Bad argument')
-        
+
         # Check the given values
         for x in self.major, self.minor, self.revision:
             if x >= self.base:
@@ -106,7 +106,7 @@ class RevisionVersion(object):
     def __int__(self):
 
         """ Compute an integer from the revision numbering """
-        
+
         return (self.major * self.base + self.minor) * self.base + self.revision           
 
     ##############################################
@@ -148,7 +148,7 @@ class RevisionVersion(object):
         """ Test if Va < Vb """
 
         return int(a) < int(b)
-   
+
     ##############################################
 
     def version_string(self):

@@ -60,7 +60,7 @@ text_shader_program_interface = GlShaderProgramInterface(uniform_blocks=('viewpo
 random_texture = GlRandomTexture(size=1000, texture_unit=1)
 
 if shader_manager.has_visual():
-    
+
     for shader_path in (
         #
         'vertex-shader/fixed_colour_vertex_shader',
@@ -85,7 +85,7 @@ if shader_manager.has_visual():
         ):
         shader_name = os.path.basename(shader_path)
         shader_manager.load_from_file(shader_name, ConfigPath.glsl(shader_path + '.glsl'))
-    
+
     for args in (
         {'program_name':'fixed_shader_program',
          'shader_list':('fixed_colour_vertex_shader',

@@ -80,7 +80,7 @@ def draw_line_f(x1, y1, x2, y2):
 
         GL.glBegin(GL.GL_POINTS)
         GL.glVertex2f(x1, y1)
-        
+
     else:
         GL.glBegin(GL.GL_LINES)
         GL.glVertex2f(x1, y1)

@@ -73,7 +73,7 @@ for function in sorted(gl_functions):
     print(function)
 for constant in sorted(gl_constants):
     print(constant)
-    
+
 ####################################################################################################
 #
 # End

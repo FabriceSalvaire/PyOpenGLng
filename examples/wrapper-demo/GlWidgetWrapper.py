@@ -41,7 +41,7 @@ from PyOpenGLng.HighLevelApi.GlWidgetBase import GlWidgetBase
 class GlWidget(GlWidgetBase):
 
     logger = logging.getLogger(__name__)
- 
+
     ##############################################
     
     def __init__(self, parent):

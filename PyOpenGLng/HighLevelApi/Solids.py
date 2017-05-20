@@ -116,7 +116,7 @@ def cube(width, height, depth):
     colour4 = (1, 0, 0, 1)
     colour8 = (1, 0, 0, 1)
     colour6 = (1, 0, 0, 1)
-    
+
     colour1 = (0, 1, 0, 1)
     colour3 = (0, 1, 0, 1)
     colour7 = (0, 1, 0, 1)
@@ -136,7 +136,7 @@ def cube(width, height, depth):
         colour4, colour2, colour6,  # near
         colour8, colour4, colour6], # near
                          dtype=np.float32)
-    
+
     return TriangleVertexArray((positions, normals, colours))
 
 ####################################################################################################
@@ -240,7 +240,7 @@ def unit_torus():
             vertexes.append(vertex3)
             vertexes.append(vertex2)
             vertexes.append(vertex4)
-        
+
     positions = np.array(vertexes, dtype=np.float32)
 
     return positions, compute_normals(positions)

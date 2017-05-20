@@ -89,7 +89,7 @@ class GlWidget(GlWidgetBase):
 
         GL.glEnable(GL.GL_POINT_SMOOTH)
         GL.glEnable(GL.GL_LINE_SMOOTH)
-        
+
         # self.qglClearColor(QtCore.Qt.black)
         # GL.glPointSize(5.)
         # GL.glLineWidth(3.)
@@ -148,7 +148,7 @@ class GlWidget(GlWidgetBase):
         step = 10
         x_min, x_max = -100, 100
         y_min, y_max = -100, 100
-       
+
         segments = []
         for x in range(x_min, x_max +1, step):
             p1 = Point(x, y_min)
@@ -174,7 +174,7 @@ class GlWidget(GlWidgetBase):
             data_type = np.uint16
         intensity_max = 2**depth -1
         integer_internal_format = True
-        
+
         height, width = 10, 10
         number_of_planes = 3
         data = np.zeros((height, width, number_of_planes),

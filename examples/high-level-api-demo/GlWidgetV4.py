@@ -102,7 +102,7 @@ class GlWidget(GlWidgetBase):
         # Require compatibility profile
         GL.glEnable(GL.GL_POINT_SMOOTH)
         GL.glEnable(GL.GL_LINE_SMOOTH)
-        
+
         self._init_shader()
         self.create_vertex_array_objects()
 
@@ -157,7 +157,7 @@ class GlWidget(GlWidgetBase):
         step = 100
         x_min, x_max = -1000, 1000
         y_min, y_max = -1000, 1000
-       
+
         segments = []
         for x in range(x_min, x_max +1, step):
             p1 = Point(x, y_min)
@@ -232,7 +232,7 @@ class GlWidget(GlWidgetBase):
                       )
         self.rectangle_vertex_array = GlRectangleVertexArray(rectangles)
         self.rectangle_vertex_array.bind_to_shader(self.position_shader_interface.attributes.position)
-        
+
         centred_rectangles = (Rectangle(Point(0, 0), Offset(1, 1)),
                               )
         self.centred_rectangle_vertex_array = GlRectangleVertexArray(centred_rectangles)
@@ -265,7 +265,7 @@ class GlWidget(GlWidgetBase):
             data_type = np.uint16
         intensity_max = 2**depth -1
         integer_internal_format = True
-        
+
         height, width = 10, 10
         number_of_planes = 3
         data = np.zeros((height, width, number_of_planes),
@@ -279,7 +279,7 @@ class GlWidget(GlWidgetBase):
         self.texture_vertex_array1 = GlTextureVertexArray(position=Point(0, 0), dimension=Offset(width, height), image=data,
                                                           integer_internal_format=integer_internal_format)
         self.texture_vertex_array1.bind_to_shader(self.shader_manager.texture_shader_program.interface.attributes)
-        
+
         # self.texture_vertex_array2 = GlTextureVertexArray(position=Point(-5, -5), dimension=Offset(width, height))
         # self.texture_vertex_array2.set(image=data//2, integer_internal_format=integer_internal_format)
         # self.texture_vertex_array2.bind_to_shader(self.shader_manager.texture_shader_program.interface.attributes)
@@ -418,18 +418,18 @@ class GlWidget(GlWidgetBase):
         GL.glLineWidth(2.)
         shader_program.uniforms.colour = (0., 1., 1.)
         self.segment_vertex_array2.draw()
-        
+
         GL.glLineWidth(2.)
         shader_program.uniforms.colour = (1., 0., 0.)
         # six.print_('colour', shader_program.uniforms.colour)
         self.segment_vertex_array3.draw()
-        
+
         shader_program = self.shader_manager.rectangle_shader_program
         shader_program.bind()
         GL.glLineWidth(2.)
         shader_program.uniforms.colour = (1., 0., 1.)
         self.rectangle_vertex_array.draw()
-        
+
         shader_program = self.shader_manager.centred_rectangle_shader_program
         shader_program.bind()
         GL.glLineWidth(2.)

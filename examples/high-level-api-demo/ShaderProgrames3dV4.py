@@ -49,7 +49,7 @@ basic_shader_program_interface = GlShaderProgramInterface(uniform_blocks=('viewp
                                                                       'colour'))
 
 if shader_manager.has_visual():
-    
+
     for shader_path in (
         #
         'vertex-shader/fixed_colour_vertex_shader_3d',
@@ -61,7 +61,7 @@ if shader_manager.has_visual():
         ):
         shader_name = os.path.basename(shader_path)
         shader_manager.load_from_file(shader_name, ConfigPath.glsl(shader_path + '.glsl'))
-    
+
     for args in (
         {'program_name':'basic_shader_program',
          'shader_list':('varying_colour_vertex_shader_3d',

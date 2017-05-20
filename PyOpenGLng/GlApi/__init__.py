@@ -105,7 +105,7 @@ class NameDict(dict):
     ##############################################
 
     def register(self, item):
-        
+
         """ Add the object to the dictionnary using its *name* attribute as a key. """
 
         if item.name in self:
@@ -540,7 +540,7 @@ class Enums(object):
     ##############################################
 
     def register(self, enum, primary_registration=True):
-        
+
         """ Register an enumerant. If the flag *primary_registration* is set then the enumerant back
         reference is set.
         """
@@ -715,7 +715,7 @@ class Commands(NameDict):
 ####################################################################################################
 
 class Command(object):
-    
+
     """ This class defines an OpenGL command.
 
     Public Attributes:
@@ -974,7 +974,7 @@ class Parameter(object):
                 self.size_parameter = length
         except TypeError:
             pass
- 
+
     ##############################################
 
     def __str__(self):
@@ -986,7 +986,7 @@ class Parameter(object):
     def _format_type(self, type_string, with_size=True):
 
         """ Format a type, add ``const``, ``*`` and ``[]`` if they are relevant. """
-        
+
         if self.const:
             type_string = 'const ' + type_string
         if self.pointer:
@@ -996,7 +996,7 @@ class Parameter(object):
                 type_string += ' [%s]' % self.size_parameter
             elif self.array_size is not None:
                 type_string += ' [%u]' % self.array_size
-        
+
         return type_string
 
     ##############################################
@@ -1502,7 +1502,7 @@ class GlSpecParser(object):
             if renaming is not None and key in renaming:
                 key = renaming[key]
             new_dict[key] = value
-        
+
         return new_dict
 
     ##############################################
@@ -1738,7 +1738,7 @@ class GlSpecParser(object):
     def _parse_extension(self, extension_node):
 
         """ Parse ``<extension>`` tags. """
-        
+
         kwargs = dict(extension_node.attrib)
         extension = Extension(**kwargs)
         self.extension_list.append(extension)
@@ -1855,7 +1855,7 @@ class CachedGlSpecParser(object):
             profile = '-' + profile
         else:
             profile = ''
-        
+
         return os.path.join(cache_path,
                             '{}-{}{}.pickle'.format(api, api_number, profile))
 

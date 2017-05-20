@@ -268,7 +268,7 @@ class GlVectorType(GlType):
         uniform_set = str(size) + uniform_get
 
         super(GlVectorType, self).__init__(token_name, keyword, data_type, uniform_get, uniform_set)
-        
+
         self.shape = (size,)
 
 ####################################################################################################
