@@ -69,7 +69,7 @@ _module_logger = logging.getLogger(__name__)
 ####################################################################################################
 
 def from_64th_point(x):
-    return x/64.
+    return x//64.
 
 def to_64th_point(x):
     return x*64
@@ -258,7 +258,7 @@ class TextureFontSize(object):
                            horizontal_scale*resolution, resolution)
         # Matrix cooeficients are expressed in 16.16 fixed-point units.
         # 2**16 = 0x10000L = 65536
-        matrix = freetype.Matrix(int(2**16/horizontal_scale), 0,
+        matrix = freetype.Matrix(int(2**16//horizontal_scale), 0,
                                  0, 2**16)
         # The vector coordinates are expressed in 1/64th of a pixel
         # (also known as 26.6 fixed-point numbers).
@@ -299,7 +299,7 @@ class TextureFontSize(object):
         # Glyphes are separated by a margin
         # margin = 1 # px
         # dimension are given in pixel thus we correct the bitmap width
-        x, y, w, h = atlas.get_region(width/atlas.depth +2, rows +2)
+        x, y, w, h = atlas.get_region(width//atlas.depth +2, rows +2)
         if x == -1:
             raise NameError("Cannot allocate glyph in atlas")
         x, y = x+1, y+1
@@ -308,7 +308,7 @@ class TextureFontSize(object):
         # Remove padding
         data = np.array(bitmap.buffer).reshape(rows, pitch)
         data = data[:,:width].astype(np.ubyte)
-        data = data.reshape(rows, width/atlas.depth, atlas.depth)
+        data = data.reshape(rows, width//atlas.depth, atlas.depth)
         
         # Gamma correction
         # gamma = 1.5
